@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0c0a1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Anime Diary">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Anime Diary — Личный аниме-дневник</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230c0a1a'/%3E%3Ccircle cx='50' cy='50' r='34' fill='none' stroke='%23ff6ec7' stroke-width='3.5'/%3E%3Ccircle cx='50' cy='50' r='16' fill='%23ff6ec7' opacity='0.5'/%3E%3C/svg%3E">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root, html[data-theme="dark"] {
+  --bg-deep: #0c0a1a; --bg-surface: #15122a; --bg-elevated: #1e1a38; --bg-hover: #262046;
+  --border-subtle: #2e2852; --border-glow: #453a78;
+  --accent-pink: #ff6ec7; --accent-purple: #a78bfa; --accent-cyan: #5ce1e6; --accent-yellow: #fde047; --accent-green: #34d399;
+  --text-primary: #f5f0ff; --text-secondary: #b8a8e0; --text-muted: #8574b0;
+  --shadow-accent: rgba(255, 110, 199, 0.4);
+  --card-bg-from: rgba(30, 26, 56, 0.9);
+  --card-bg-to: rgba(21, 18, 42, 0.95);
+}
+html[data-theme="light"] {
+  --bg-deep: #faf5ee; --bg-surface: #ffffff; --bg-elevated: #fff9f4; --bg-hover: #fef2e8;
+  --border-subtle: #f0dccb; --border-glow: #e8b8a0;
+  --accent-pink: #db2777; --accent-purple: #7c3aed; --accent-cyan: #0891b2; --accent-yellow: #ca8a04; --accent-green: #059669;
+  --text-primary: #2d1f2e; --text-secondary: #6b4a6e; --text-muted: #9d85a0;
+  --shadow-accent: rgba(219, 39, 119, 0.22);
+  --card-bg-from: rgba(255, 255, 255, 0.95);
+  --card-bg-to: rgba(255, 249, 244, 0.98);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(--bg-deep); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; position: relative; transition: background 0.3s, color 0.3s; }
+.heading { font-family: 'Outfit', sans-serif; letter-spacing: -0.025em; }
+#sakura-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.petal { position: absolute; width: 14px; height: 14px; background: radial-gradient(circle at 30% 30%, #ffb3e0, var(--accent-pink) 60%, #d94f9e); border-radius: 100% 0 100% 0; opacity: 0.35; animation: fall linear infinite; will-change: transform; }
+html[data-theme="light"] .petal { opacity: 0.22; }
+@keyframes fall { 0% { transform: translateY(-10vh) translateX(0) rotate(0deg); } 100% { transform: translateY(110vh) translateX(80px) rotate(720deg); } }
+.star { position: absolute; width: 2px; height: 2px; background: #fff; border-radius: 50%; opacity: 0.25; animation: twinkle ease-in-out infinite; box-shadow: 0 0 4px #fff; }
+html[data-theme="light"] .star { background: var(--accent-pink); box-shadow: 0 0 4px var(--accent-pink); opacity: 0.35; }
+@keyframes twinkle { 0%, 100% { opacity: 0.15; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.6); } }
+.ambient-glow { position: absolute; border-radius: 50%; filter: blur(110px); pointer-events: none; animation: drift 25s ease-in-out infinite alternate; }
+.ambient-glow-1 { top: -15%; left: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(255,110,199,0.2), transparent 70%); }
+.ambient-glow-2 { bottom: -15%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(167,139,250,0.18), transparent 70%); animation-delay: -12s; }
+.ambient-glow-3 { top: 40%; left: 40%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(92,225,230,0.1), transparent 70%); animation-delay: -6s; }
+@keyframes drift { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(60px, 40px) scale(1.15); } }
+.anime-card { background: linear-gradient(160deg, var(--card-bg-from) 0%, var(--card-bg-to) 100%); border: 1px solid var(--border-subtle); border-radius: 20px; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
+.anime-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255,110,199,0.06), transparent 40%); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.anime-card:hover { border-color: var(--accent-pink); transform: translateY(-5px); box-shadow: 0 20px 40px -12px var(--shadow-accent), 0 0 30px rgba(255, 110, 199, 0.15); }
+.anime-card:hover::before { opacity: 1; }
+.poster-wrap { overflow: hidden; }
+.poster-wrap img { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+.anime-card:hover .poster-wrap img { transform: scale(1.08); }
+.tab-btn { padding: 9px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary); background: transparent; border: 1px solid transparent; cursor: pointer; transition: all 0.25s; display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+.tab-btn svg { width: 15px; height: 15px; }
+.tab-btn:hover { color: var(--text-primary); background: var(--bg-hover); border-color: var(--border-subtle); }
+.tab-btn.active { background: linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-purple) 100%); color: #fff; box-shadow: 0 6px 18px var(--shadow-accent), inset 0 1px 0 rgba(255,255,255,0.25); border-color: transparent; }
+.ep-progress { height: 6px; background: rgba(128,128,128,0.15); border-radius: 999px; overflow: hidden; position: relative; }
+.ep-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-pink) 0%, var(--accent-purple) 50%, var(--accent-cyan) 100%); border-radius: 999px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px var(--shadow-accent); position: relative; overflow: hidden; }
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; border: 1px solid; }
+.badge-watching { background: rgba(92,225,230,0.12); color: var(--accent-cyan); border-color: rgba(92,225,230,0.4); }
+.badge-completed { background: rgba(52,211,153,0.12); color: var(--accent-green); border-color: rgba(52,211,153,0.4); }
+.badge-on_hold { background: rgba(253,224,71,0.12); color: var(--accent-yellow); border-color: rgba(253,224,71,0.4); }
+.badge-dropped { background: rgba(244,63,94,0.12); color: #f43f5e; border-color: rgba(244,63,94,0.4); }
+.badge-planned { background: rgba(167,139,250,0.12); color: var(--accent-purple); border-color: rgba(167,139,250,0.4); }
+.badge-rewatching { background: rgba(255,110,199,0.12); color: var(--accent-pink); border-color: rgba(255,110,199,0.4); }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; }
+.score-circle { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 15px; background: linear-gradient(135deg, rgba(255,110,199,0.25), rgba(167,139,250,0.25)); border: 1.5px solid var(--accent-pink); color: var(--accent-pink); box-shadow: 0 0 16px var(--shadow-accent), inset 0 0 8px rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px); }
+.form-input, .form-select, .form-textarea { width: 100%; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 10px 14px; color: var(--text-primary); font-size: 13px; outline: none; transition: all 0.2s; font-family: inherit; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent-pink); box-shadow: 0 0 0 3px var(--shadow-accent); background: var(--bg-elevated); }
+.form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
+.form-select option { background: var(--bg-surface); color: var(--text-primary); }
+.form-textarea { resize: vertical; min-height: 80px; }
+input[type="range"].score-slider, input[type="range"].criteria-slider { width: 100%; height: 6px; -webkit-appearance: none; appearance: none; background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple), var(--accent-cyan)); border-radius: 999px; outline: none; }
+input[type="range"].score-slider::-webkit-slider-thumb, input[type="range"].criteria-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid var(--accent-pink); cursor: pointer; box-shadow: 0 0 12px var(--shadow-accent); }
+input[type="range"].score-slider::-moz-range-thumb, input[type="range"].criteria-slider::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid var(--accent-pink); cursor: pointer; }
+.modal-backdrop { position: fixed; inset: 0; background: rgba(6, 4, 16, 0.88); backdrop-filter: blur(12px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.28s; }
+html[data-theme="light"] .modal-backdrop { background: rgba(250, 245, 238, 0.88); }
+.modal-backdrop.show { opacity: 1; pointer-events: auto; }
+.modal-content { transform: scale(0.94) translateY(12px); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+.modal-backdrop.show .modal-content { transform: scale(1) translateY(0); }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.fade-up { animation: fadeUp 0.55s cubic-bezier(0.4, 0, 0.2, 1) both; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { animation: spin 1s linear infinite; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--accent-pink), var(--accent-purple)); border-radius: 10px; }
+.btn-primary { background: linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-purple) 100%); color: #fff; font-weight: 700; padding: 10px 20px; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px var(--shadow-accent), inset 0 1px 0 rgba(255,255,255,0.2); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 24px var(--shadow-accent), inset 0 1px 0 rgba(255,255,255,0.2); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.btn-secondary { background: var(--bg-elevated); color: var(--text-primary); padding: 10px 20px; border-radius: 12px; border: 1px solid var(--border-subtle); cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+.btn-secondary:hover { border-color: var(--accent-pink); color: var(--accent-pink); transform: translateY(-1px); }
+.btn-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); color: var(--text-secondary); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 14px; }
+.btn-icon:hover { color: var(--accent-pink); border-color: var(--accent-pink); transform: translateY(-1px); background: var(--bg-hover); }
+.view { display: none; } .view.active { display: block; }
+.anime-table th { text-align: left; padding: 14px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); border-bottom: 1px solid var(--border-subtle); cursor: pointer; user-select: none; transition: color 0.2s; background: var(--bg-surface); position: sticky; top: 0; }
+.anime-table th:hover { color: var(--accent-pink); }
+.anime-table td { padding: 14px 16px; border-bottom: 1px solid var(--border-subtle); font-size: 13px; }
+.anime-table tr { transition: background 0.15s; }
+.anime-table tr:hover td { background: var(--bg-hover); }
+.stat-card { background: linear-gradient(160deg, var(--card-bg-from), var(--card-bg-to)); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 20px; position: relative; overflow: hidden; transition: all 0.25s; }
+.stat-card:hover { border-color: var(--border-glow); transform: translateY(-2px); }
+.stat-card::before { content: ''; position: absolute; top: -40%; right: -20%; width: 140px; height: 140px; background: radial-gradient(circle, var(--shadow-accent), transparent 70%); pointer-events: none; }
+.ep-btn { width: 28px; height: 28px; border-radius: 8px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); color: var(--text-secondary); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; font-weight: 700; transition: all 0.15s; }
+.ep-btn:hover { background: var(--accent-pink); color: #fff; border-color: var(--accent-pink); transform: scale(1.05); }
+.suggest-item { padding: 10px 12px; cursor: pointer; display: flex; gap: 12px; align-items: center; border-radius: 12px; transition: all 0.18s; border: 1px solid transparent; }
+.suggest-item:hover { background: var(--bg-hover); border-color: var(--border-glow); transform: translateX(3px); }
+.suggest-item img { width: 42px; height: 58px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid var(--border-subtle); }
+.cal-day { aspect-ratio: 1; min-height: 60px; border-radius: 12px; background: var(--bg-surface); border: 1px solid var(--border-subtle); cursor: pointer; transition: all 0.18s; padding: 6px; display: flex; flex-direction: column; gap: 3px; font-size: 12px; }
+.cal-day:hover { border-color: var(--accent-pink); background: var(--bg-hover); transform: scale(1.03); }
+.cal-day.today { border-color: var(--accent-pink); box-shadow: 0 0 0 2px var(--shadow-accent); }
+.cal-day.has-event { background: linear-gradient(135deg, var(--bg-elevated), var(--bg-surface)); }
+.cal-day.other-month { opacity: 0.3; }
+.cal-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.cal-dot-start { background: var(--accent-cyan); box-shadow: 0 0 4px var(--accent-cyan); }
+.cal-dot-finish { background: var(--accent-pink); box-shadow: 0 0 4px var(--accent-pink); }
+#wrapped-canvas { max-width: 100%; height: auto; border-radius: 20px; box-shadow: 0 20px 50px -10px var(--shadow-accent); border: 2px solid var(--accent-pink); cursor: pointer; transition: transform 0.2s; }
+#wrapped-canvas:hover { transform: scale(1.01); }
+.franchise-card { background: linear-gradient(160deg, var(--card-bg-from), var(--card-bg-to)); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; transition: all 0.28s; }
+.franchise-card:hover { border-color: var(--accent-purple); transform: translateY(-2px); box-shadow: 0 10px 30px -8px var(--shadow-accent); }
+.hero-card { position: relative; border-radius: 24px; overflow: hidden; border: 1px solid var(--border-glow); background: linear-gradient(135deg, rgba(255,110,199,0.08), rgba(167,139,250,0.08)); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.4); }
+.bento-card { background: linear-gradient(160deg, var(--card-bg-from), var(--card-bg-to)); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 20px; transition: all 0.28s; position: relative; overflow: hidden; }
+.bento-card:hover { border-color: var(--border-glow); transform: translateY(-3px); box-shadow: 0 12px 28px -8px var(--shadow-accent); }
+html[data-theme="light"] [class*="bg-[#15122a]"] { background: var(--bg-surface) !important; }
+html[data-theme="light"] [class*="bg-[#0c0a1a]"] { background: var(--bg-deep) !important; }
+html[data-theme="light"] [class*="bg-[#1e1a38]"] { background: var(--bg-elevated) !important; }
+html[data-theme="light"] [class*="bg-[#262046]"] { background: var(--bg-hover) !important; }
+html[data-theme="light"] [class*="bg-[#0c0a1a]/"] { background: rgba(250, 245, 238, 0.92) !important; }
+html[data-theme="light"] [class*="bg-[#15122a]/"] { background: rgba(255, 255, 255, 0.94) !important; }
+html[data-theme="light"] .text-white:not([class*="bg-"]) { color: var(--text-primary) !important; }
+html[data-theme="light"] [class*="text-[#f5f0ff]"] { color: var(--text-primary) !important; }
+html[data-theme="light"] [class*="text-[#b8a8e0]"] { color: var(--text-secondary) !important; }
+html[data-theme="light"] [class*="text-[#8574b0]"] { color: var(--text-muted) !important; }
+html[data-theme="light"] [class*="border-[#2e2852]"] { border-color: var(--border-subtle) !important; }
+html[data-theme="light"] [class*="border-[#453a78]"] { border-color: var(--border-glow) !important; }
+html[data-theme="light"] header { background: rgba(250, 245, 238, 0.92) !important; }
+.hint-banner { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 9px 12px; border-radius: 10px; background: rgba(255, 110, 199, 0.08); border: 1px solid rgba(255, 110, 199, 0.25); color: var(--text-secondary); }
+.crit-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: rgba(128, 128, 128, 0.06); }
+.crit-bar { height: 8px; background: rgba(128, 128, 128, 0.1); border-radius: 999px; overflow: hidden; flex: 1; }
+.crit-bar-fill { height: 100%; border-radius: 999px; transition: width 0.4s; }
+.empty-state { text-align: center; padding: 60px 20px; }
+.empty-state-icon { font-size: 64px; margin-bottom: 12px; opacity: 0.5; }
+.cache-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; padding: 2px 6px; border-radius: 6px; background: rgba(92,225,230,0.15); color: var(--accent-cyan); font-weight: 700; }
+.progress-bar-wrap { height: 8px; background: rgba(128,128,128,0.15); border-radius: 999px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple)); border-radius: 999px; transition: width 0.3s; }
+</style>
+</head>
+<body>
+
+<div id="sakura-bg">
+  <div class="ambient-glow ambient-glow-1"></div>
+  <div class="ambient-glow ambient-glow-2"></div>
+  <div class="ambient-glow ambient-glow-3"></div>
+</div>
+
+<header class="sticky top-0 z-40 border-b border-[#2e2852] bg-[#0c0a1a]/85 backdrop-blur-xl">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4 flex-wrap">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#ff6ec7] to-[#a78bfa] flex items-center justify-center" style="box-shadow: 0 8px 24px var(--shadow-accent);">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg>
+      </div>
+      <div>
+        <h1 class="heading text-xl sm:text-2xl font-black text-white tracking-tight">Anime Diary</h1>
+        <p id="header-stats" class="text-[11px] sm:text-xs text-[#b8a8e0] mt-0.5">Загрузка...</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <div class="relative">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8574b0]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="search-input" type="text" placeholder="Поиск..." class="form-input pl-9 w-full sm:w-52" style="padding-top:8px;padding-bottom:8px;">
+      </div>
+      <button onclick="toggleBackgroundAnimation()" id="anim-toggle" class="btn-icon" title="Пауза/старт анимации фона">
+        <svg id="anim-icon-on" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m-4-8H3m18 0h-5m-2.5-6.5L17 5m-9 9l-2.5 2.5m14 0L17 14M8 5l1.5 2.5"/></svg>
+        <svg id="anim-icon-off" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+      </button>
+      <button onclick="toggleTheme()" class="btn-icon" title="Переключить тему">
+        <svg id="theme-icon-dark" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg id="theme-icon-light" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button onclick="openDataMenu()" class="btn-icon" title="Данные (бэкап)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      </button>
+      <button onclick="openAddModal()" class="btn-primary">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="hidden sm:inline">Добавить</span>
+      </button>
+    </div>
+  </div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pb-3 flex gap-1.5 overflow-x-auto">
+    <button class="tab-btn active" data-view="overview" onclick="switchView('overview')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Обзор</button>
+    <button class="tab-btn" data-view="grid" onclick="switchView('grid')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Все</button>
+    <button class="tab-btn" data-view="table" onclick="switchView('table')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Таблица</button>
+    <button class="tab-btn" data-view="watching" onclick="switchView('watching')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4z"/></svg>Смотрю</button>
+    <button class="tab-btn" data-view="planned" onclick="switchView('planned')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>В планах</button>
+    <button class="tab-btn" data-view="collections" onclick="switchView('collections')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Коллекции</button>
+    <button class="tab-btn" data-view="calendar" onclick="switchView('calendar')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Календарь</button>
+    <button class="tab-btn" data-view="stats" onclick="switchView('stats')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Статистика</button>
+    <button class="tab-btn" data-view="wrapped" onclick="switchView('wrapped')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/></svg>Итоги</button>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 relative z-10">
+  <div id="filters-bar" class="mb-6 flex gap-2 flex-wrap items-center">
+    <select id="filter-status" onchange="applyFilters()" class="form-select" style="width:auto;padding:8px 12px;font-size:12px;"><option value="">Все статусы</option><option value="watching">Смотрю</option><option value="completed">Просмотрено</option><option value="on_hold">Отложено</option><option value="dropped">Брошено</option><option value="planned">В планах</option><option value="rewatching">Пересматриваю</option></select>
+    <select id="filter-type" onchange="applyFilters()" class="form-select" style="width:auto;padding:8px 12px;font-size:12px;"><option value="">Все типы</option><option value="TV">TV</option><option value="Movie">Movie</option><option value="OVA">OVA</option><option value="ONA">ONA</option><option value="Special">Special</option></select>
+    <select id="filter-genre" onchange="applyFilters()" class="form-select" style="width:auto;padding:8px 12px;font-size:12px;"><option value="">Все жанры</option></select>
+    <input id="filter-year-from" type="number" placeholder="Год от" onchange="applyFilters()" class="form-input" style="width:auto;padding:8px 12px;font-size:12px;min-width:90px;" min="1960" max="2035">
+    <input id="filter-year-to" type="number" placeholder="Год до" onchange="applyFilters()" class="form-input" style="width:auto;padding:8px 12px;font-size:12px;min-width:90px;" min="1960" max="2035">
+    <input id="filter-studio" list="studio-datalist" placeholder="Студия" onchange="applyFilters()" class="form-input" style="width:auto;padding:8px 12px;font-size:12px;min-width:120px;">
+    <datalist id="studio-datalist"></datalist>
+    <select id="filter-length" onchange="applyFilters()" class="form-select" style="width:auto;padding:8px 12px;font-size:12px;">
+      <option value="">Любая длина</option>
+      <option value="short">Короткое (1–13)</option>
+      <option value="medium">Среднее (14–50)</option>
+      <option value="long">Длинное (50+)</option>
+    </select>
+    <label class="flex items-center gap-2 text-xs text-[#b8a8e0] cursor-pointer"><input type="checkbox" id="filter-fav" onchange="applyFilters()" class="w-4 h-4" style="accent-color: var(--accent-pink);"> ♥ Избранные</label>
+    <label class="flex items-center gap-2 text-xs text-[#b8a8e0] cursor-pointer"><input type="checkbox" id="filter-has-score" onchange="applyFilters()" class="w-4 h-4" style="accent-color: var(--accent-pink);"> С оценкой</label>
+    <button onclick="resetFilters()" class="btn-secondary" style="padding:8px 12px;font-size:12px;">Сбросить</button>
+    <span id="filter-count" class="text-xs font-bold ml-1" style="color:var(--accent-pink);"></span>
+  </div>
+  <div id="view-overview" class="view active"></div>
+  <div id="view-grid" class="view"></div>
+  <div id="view-table" class="view"></div>
+  <div id="view-watching" class="view"></div>
+  <div id="view-planned" class="view"></div>
+  <div id="view-collections" class="view"></div>
+  <div id="view-calendar" class="view"></div>
+  <div id="view-stats" class="view"></div>
+  <div id="view-wrapped" class="view"></div>
+</main>
+
+<!-- ADD/EDIT MODAL -->
+<div id="add-modal" class="modal-backdrop">
+  <div class="modal-content bg-[#15122a] border border-[#2e2852] rounded-2xl max-w-3xl w-full max-h-[92vh] overflow-y-auto">
+    <div class="sticky top-0 bg-[#15122a] border-b border-[#2e2852] px-6 py-4 flex items-center justify-between z-10">
+      <div><h2 id="modal-title" class="heading text-xl font-black text-white">Добавить аниме</h2><p class="text-xs text-[#8574b0] mt-0.5">Найдите на Shikimori/MAL или заполните вручную</p></div>
+      <button onclick="closeAddModal()" class="btn-icon">✕</button>
+    </div>
+    <div class="p-6 space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">🔍 Найти аниме</label>
+        <div class="flex gap-2">
+          <input id="search-anime-input" type="text" placeholder="Например: Атака титанов, Твоё имя..." class="form-input flex-1" onkeydown="if(event.key==='Enter') searchAnime()">
+          <button onclick="searchAnime()" class="btn-secondary" id="search-btn">Найти</button>
+        </div>
+        <p class="text-[11px] text-[#8574b0] mt-1.5">Shikimori (RU) → MAL как резерв · Кэш 30 минут</p>
+        <div id="search-results" class="mt-2 max-h-72 overflow-y-auto space-y-1"></div>
+      </div>
+      <div class="border-t border-[#2e2852] pt-4"><p class="text-xs text-[#8574b0] italic mb-3">Или заполните вручную:</p></div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <div id="poster-preview" class="w-full aspect-[3/4] bg-[#0c0a1a] border border-[#2e2852] rounded-xl overflow-hidden flex items-center justify-center"><span class="text-5xl" style="color:var(--border-glow);">🎴</span></div>
+          <label class="mt-2 block text-xs font-bold text-[#b8a8e0] cursor-pointer"><span class="btn-secondary w-full justify-center">📷 Загрузить постер</span><input type="file" accept="image/*" class="hidden" onchange="handlePosterUpload(event)"></label>
+        </div>
+        <div class="md:col-span-2 space-y-3">
+          <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Название *</label><input id="f-title" type="text" class="form-input" placeholder="Провожающая в последний путь Фрирен" oninput="updateTitleSuggestions()"><div id="franchise-hint" class="hidden mt-2 space-y-1.5"></div></div>
+          <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Оригинальное название</label><input id="f-titleJP" type="text" class="form-input" placeholder="Frieren / 葬送のフリーレン"></div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Тип</label><select id="f-type" class="form-select"><option value="TV">TV сериал</option><option value="Movie">Фильм</option><option value="OVA">OVA</option><option value="ONA">ONA</option><option value="Special">Спешл</option></select></div>
+            <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Год</label><input id="f-year" type="number" class="form-input" placeholder="2023" min="1960" max="2035"></div>
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Студия</label><input id="f-studio" type="text" class="form-input" placeholder="Madhouse"></div>
+        <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Жанры</label><input id="f-genres" type="text" class="form-input" placeholder="Приключения, Драма"></div>
+      </div>
+      <div class="grid grid-cols-3 gap-3">
+        <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Всего эпизодов</label><input id="f-episodesTotal" type="number" class="form-input" placeholder="28" min="0"></div>
+        <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Просмотрено</label><input id="f-episodesWatched" type="number" class="form-input" placeholder="0" min="0"></div>
+        <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Статус</label><select id="f-status" class="form-select"><option value="watching">Смотрю</option><option value="completed">Просмотрено</option><option value="on_hold">Отложено</option><option value="dropped">Брошено</option><option value="planned">В планах</option><option value="rewatching">Пересматриваю</option></select></div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Дата начала</label><input id="f-startDate" type="date" class="form-input"></div>
+        <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Дата окончания</label><input id="f-finishDate" type="date" class="form-input"></div>
+      </div>
+      <div class="bg-[#0c0a1a]/50 border border-[#2e2852] rounded-xl p-4">
+        <div class="flex items-center justify-between mb-3"><h3 class="text-xs font-bold text-[#b8a8e0] uppercase tracking-wider">⭐ Общий балл</h3><span id="score-display" class="heading text-2xl font-black" style="color:var(--accent-pink);">—</span></div>
+        <input id="f-score" type="range" min="0" max="10" step="0.5" value="0" class="score-slider" oninput="updateScoreDisplay(this.value)">
+        <div class="mt-4 pt-4 border-t border-[#2e2852]">
+          <div class="flex items-center justify-between mb-3"><h3 class="text-xs font-bold text-[#b8a8e0] uppercase tracking-wider">📊 Детальная оценка</h3><button type="button" onclick="applyCriteriaAverage()" class="text-xs font-bold px-2 py-1 rounded-md border border-[#2e2852] hover:border-[#ff6ec7]" style="color:var(--accent-pink);">Применить среднее</button></div>
+          <div class="space-y-3">
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-bold text-[#b8a8e0]">📖 Сюжет</span><span id="crit-story-val" class="font-bold" style="color:var(--accent-cyan);">—</span></div><input id="f-crit-story" type="range" min="0" max="10" step="0.5" value="0" class="criteria-slider" oninput="updateCriteriaDisplay('story', this.value)"></div>
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-bold text-[#b8a8e0]">🎨 Анимация</span><span id="crit-animation-val" class="font-bold" style="color:var(--accent-purple);">—</span></div><input id="f-crit-animation" type="range" min="0" max="10" step="0.5" value="0" class="criteria-slider" oninput="updateCriteriaDisplay('animation', this.value)"></div>
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-bold text-[#b8a8e0]">🎵 Музыка</span><span id="crit-music-val" class="font-bold" style="color:var(--accent-yellow);">—</span></div><input id="f-crit-music" type="range" min="0" max="10" step="0.5" value="0" class="criteria-slider" oninput="updateCriteriaDisplay('music', this.value)"></div>
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-bold text-[#b8a8e0]">👥 Персонажи</span><span id="crit-characters-val" class="font-bold" style="color:var(--accent-pink);">—</span></div><input id="f-crit-characters" type="range" min="0" max="10" step="0.5" value="0" class="criteria-slider" oninput="updateCriteriaDisplay('characters', this.value)"></div>
+          </div>
+        </div>
+      </div>
+      <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Заметки</label><textarea id="f-notes" class="form-textarea" placeholder="Любимые моменты, персонажи..."></textarea></div>
+      <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" id="f-favorite" class="w-4 h-4" style="accent-color: var(--accent-pink);"><span class="font-bold" style="color:var(--accent-pink);">♥ В избранное</span></label>
+      <div class="flex gap-2 justify-end pt-3 border-t border-[#2e2852]">
+        <button onclick="closeAddModal()" class="btn-secondary">Отмена</button>
+        <button onclick="saveAnime()" class="btn-primary"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EPISODE MODAL -->
+<div id="ep-modal" class="modal-backdrop">
+  <div class="modal-content bg-[#15122a] border border-[#2e2852] rounded-2xl max-w-md w-full p-6">
+    <div class="flex items-center justify-between mb-4"><h2 id="ep-modal-title" class="heading text-lg font-black text-white">Эпизоды</h2><button onclick="closeEpModal()" class="btn-icon">✕</button></div>
+    <div id="ep-modal-content"></div>
+  </div>
+</div>
+
+<!-- DATA MENU -->
+<div id="data-modal" class="modal-backdrop">
+  <div class="modal-content bg-[#15122a] border border-[#2e2852] rounded-2xl max-w-md w-full p-6">
+    <div class="flex items-center justify-between mb-4"><h2 class="heading text-lg font-black text-white">Данные</h2><button onclick="closeDataMenu()" class="btn-icon">✕</button></div>
+    <div id="storage-info" class="bg-[#0c0a1a]/50 border border-[#2e2852] rounded-xl p-3 text-xs mb-4">
+      <div class="flex justify-between mb-1"><span class="text-[#8574b0]">Тайтлов:</span><b id="info-count" class="text-white">0</b></div>
+      <div class="flex justify-between mb-1"><span class="text-[#8574b0]">Постеров:</span><b id="info-posters" class="text-white">0</b></div>
+      <div class="flex justify-between mb-1"><span class="text-[#8574b0]">Размер:</span><b id="info-size" class="text-white">—</b></div>
+      <div class="flex justify-between"><span class="text-[#8574b0]">Service Worker:</span><b id="info-sw" class="text-white">—</b></div>
+    </div>
+    <div class="space-y-2">
+      <button onclick="openImportModal()" class="btn-primary w-full justify-center">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+        Импорт из Shikimori
+      </button>
+      <button onclick="exportData()" class="btn-primary w-full justify-center">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Скачать бэкап (JSON)
+      </button>
+      <label class="btn-secondary w-full justify-center cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+        Импорт JSON
+        <input type="file" accept=".json" class="hidden" onchange="importData(event)">
+      </label>
+      <button onclick="clearAllData()" class="btn-secondary w-full justify-center" style="color:#f43f5e;border-color:rgba(244,63,94,0.4);">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z"/></svg>
+        Очистить всё
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT SHIKIMORI MODAL -->
+<div id="import-modal" class="modal-backdrop">
+  <div class="modal-content bg-[#15122a] border border-[#2e2852] rounded-2xl max-w-md w-full p-6">
+    <div class="flex items-center justify-between mb-4"><h2 class="heading text-lg font-black text-white">Импорт из Shikimori</h2><button onclick="closeImportModal()" class="btn-icon">✕</button></div>
+    <p class="text-xs text-[#8574b0] mb-4">Введите ваш ник на shikimori.one. Импортируем все аниме из вашего списка: название, статус, оценку, прогресс, дату добавления и постер. Жанры и студии не импортируются — их можно дополнить позже.</p>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Ник на Shikimori</label>
+        <input id="shiki-nickname" type="text" class="form-input" placeholder="например: username" onkeydown="if(event.key==='Enter') startImport()">
+      </div>
+      <div id="import-status" class="text-xs text-[#b8a8e0]"></div>
+      <div id="import-progress" class="progress-bar-wrap hidden"><div class="progress-bar-fill" style="width:0%"></div></div>
+      <button onclick="startImport()" id="import-btn" class="btn-primary w-full justify-center">Импортировать</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#1e1a38] border rounded-xl px-5 py-3 shadow-2xl z-[200] opacity-0 pointer-events-none transition-all duration-300 text-sm font-semibold text-white flex items-center gap-2" style="border-color:var(--accent-pink);transform:translate(-50%,20px);">
+  <span id="toast-icon">✓</span><span id="toast-text">Сохранено</span>
+</div>
+
+<footer class="text-center text-xs text-[#8574b0] py-8 relative z-10">Anime Diary · Личный аниме-дневник</footer>
+
+<script>
+/* ==================== CONSTANTS ==================== */
+const STATUS_LABELS = { watching: 'Смотрю', completed: 'Просмотрено', on_hold: 'Отложено', dropped: 'Брошено', planned: 'В планах', rewatching: 'Пересматриваю' };
+const STATUS_COLORS = { watching: '#5ce1e6', completed: '#34d399', on_hold: '#fde047', dropped: '#f43f5e', planned: '#a78bfa', rewatching: '#ff6ec7' };
+const CRITERIA_LABELS = { story: 'Сюжет', animation: 'Анимация', music: 'Музыка', characters: 'Персонажи' };
+const CRITERIA_COLORS = { story: '#5ce1e6', animation: '#a78bfa', music: '#fde047', characters: '#ff6ec7' };
+const CRITERIA_ICONS = { story: '📖', animation: '🎨', music: '🎵', characters: '👥' };
+const API_CACHE_TTL = 30 * 60 * 1000;
+const FILTERS_STORAGE_KEY = 'anime_diary_filters_v1';
+
+const SAMPLE_ANIME = [
+  { id: 'a1', title: 'Провожающая в последний путь Фрирен', titleJP: '葬送のフリーレン / Frieren', type: 'TV', year: 2023, studio: 'Madhouse', genres: ['Приключения', 'Драма', 'Фэнтези'], episodesTotal: 28, episodesWatched: 28, status: 'completed', score: 10, favorite: true, notes: 'Абсолютный шедевр. История об эльфийке-маге.', poster: 'https://cdn.myanimelist.net/images/anime/1015/138006l.jpg', addedAt: Date.now() - 86400000 * 20, startDate: '2026-10-01', finishDate: '2026-10-25', criteria: { story: 10, animation: 10, music: 10, characters: 10 } },
+  { id: 'a2', title: 'Стальной алхимик: Братство', titleJP: '鋼の錬金術師 / Fullmetal Alchemist: Brotherhood', type: 'TV', year: 2009, studio: 'Bones', genres: ['Экшен', 'Приключения', 'Драма', 'Фэнтези'], episodesTotal: 64, episodesWatched: 64, status: 'completed', score: 10, favorite: true, notes: 'Эталон приключенческого аниме.', poster: 'https://cdn.myanimelist.net/images/anime/1223/96541l.jpg', addedAt: Date.now() - 86400000 * 60, startDate: '2026-08-10', finishDate: '2026-09-15', criteria: { story: 10, animation: 9, music: 10, characters: 10 } },
+  { id: 'a3', title: 'Врата Штейна', titleJP: 'Steins;Gate', type: 'TV', year: 2011, studio: 'White Fox', genres: ['Драма', 'Фантастика', 'Триллер'], episodesTotal: 24, episodesWatched: 24, status: 'completed', score: 9.5, favorite: true, notes: 'Путешествия во времени сделаны идеально.', poster: 'https://cdn.myanimelist.net/images/anime/1935/127974l.jpg', addedAt: Date.now() - 86400000 * 90, startDate: '2026-07-01', finishDate: '2026-07-20', criteria: { story: 10, animation: 8, music: 9, characters: 10 } },
+  { id: 'a4', title: 'Атака титанов', titleJP: '進撃の巨人 / Shingeki no Kyojin', type: 'TV', year: 2013, studio: 'Wit Studio', genres: ['Экшен', 'Драма', 'Фэнтези'], episodesTotal: 89, episodesWatched: 89, status: 'completed', score: 9, favorite: false, notes: 'Масштаб, мрачность и твисты.', poster: 'https://cdn.myanimelist.net/images/anime/10/47347l.jpg', addedAt: Date.now() - 86400000 * 200, startDate: '2026-04-01', finishDate: '2026-06-30', criteria: { story: 9, animation: 9, music: 10, characters: 8 } },
+  { id: 'a5', title: 'Твоё имя', titleJP: '君の名は。 / Your Name', type: 'Movie', year: 2016, studio: 'CoMix Wave Films', genres: ['Драма', 'Романтика'], episodesTotal: 1, episodesWatched: 1, status: 'completed', score: 9.5, favorite: true, notes: 'Синкай на пике.', poster: 'https://cdn.myanimelist.net/images/anime/5/87048l.jpg', addedAt: Date.now() - 86400000 * 40, startDate: '2026-10-05', finishDate: '2026-10-05', criteria: { story: 9, animation: 10, music: 10, characters: 9 } },
+  { id: 'a6', title: 'Унесённые призраками', titleJP: '千と千尋の神隠し / Spirited Away', type: 'Movie', year: 2001, studio: 'Studio Ghibli', genres: ['Приключения', 'Фэнтези'], episodesTotal: 1, episodesWatched: 1, status: 'completed', score: 10, favorite: true, notes: 'Миядзаки в лучшем виде.', poster: 'https://cdn.myanimelist.net/images/anime/6/79597l.jpg', addedAt: Date.now() - 86400000 * 300, criteria: { story: 10, animation: 10, music: 10, characters: 10 } },
+  { id: 'a7', title: 'Семья шпиона', titleJP: 'SPY×FAMILY', type: 'TV', year: 2022, studio: 'Wit Studio', genres: ['Экшен', 'Комедия', 'Повседневность'], episodesTotal: 37, episodesWatched: 25, status: 'watching', score: 8.5, favorite: false, notes: 'Милая, смешная, добрая.', poster: 'https://cdn.myanimelist.net/images/anime/1441/122795l.jpg', addedAt: Date.now() - 86400000 * 10, startDate: '2026-10-15', criteria: { story: 8, animation: 9, music: 8, characters: 9 } },
+  { id: 'a8', title: 'Магическая битва', titleJP: '呪術廻戦 / Jujutsu Kaisen', type: 'TV', year: 2020, studio: 'MAPPA', genres: ['Экшен', 'Сверхъестественное'], episodesTotal: 47, episodesWatched: 20, status: 'on_hold', score: 8, favorite: false, notes: 'Красивая анимация, но не зацепило.', poster: 'https://cdn.myanimelist.net/images/anime/1171/109222l.jpg', addedAt: Date.now() - 86400000 * 30, startDate: '2026-09-10' },
+  { id: 'a9', title: 'Человек-бензопила', titleJP: 'チェンソーマン / Chainsaw Man', type: 'TV', year: 2022, studio: 'MAPPA', genres: ['Экшен', 'Комедия', 'Ужасы'], episodesTotal: 12, episodesWatched: 0, status: 'planned', score: 0, favorite: false, notes: 'Все хвалят.', poster: 'https://cdn.myanimelist.net/images/anime/1806/126216l.jpg', addedAt: Date.now() - 86400000 * 5 },
+  { id: 'a10', title: 'Мушиши', titleJP: '蟲師 / Mushishi', type: 'TV', year: 2005, studio: 'Artland', genres: ['Приключения', 'Мистика'], episodesTotal: 26, episodesWatched: 26, status: 'completed', score: 9, favorite: true, notes: 'Медитативное аниме.', poster: 'https://cdn.myanimelist.net/images/anime/2/73862l.jpg', addedAt: Date.now() - 86400000 * 150, criteria: { story: 9, animation: 9, music: 10, characters: 9 } },
+  { id: 'a11', title: 'Тетрадь смерти', titleJP: 'デスノート / Death Note', type: 'TV', year: 2006, studio: 'Madhouse', genres: ['Триллер', 'Детектив'], episodesTotal: 37, episodesWatched: 37, status: 'completed', score: 9, favorite: false, notes: 'Легендарное противостояние Лайта и L.', poster: 'https://cdn.myanimelist.net/images/anime/9/9453l.jpg', addedAt: Date.now() - 86400000 * 120, startDate: '2026-06-01', finishDate: '2026-06-18', criteria: { story: 10, animation: 8, music: 9, characters: 9 } },
+  { id: 'a12', title: 'Ванпанчмен', titleJP: 'ワンパンマン / One Punch Man', type: 'TV', year: 2015, studio: 'Madhouse', genres: ['Экшен', 'Комедия', 'Пародия'], episodesTotal: 12, episodesWatched: 12, status: 'completed', score: 8.5, favorite: false, notes: 'Озвучка и юмор на высоте.', poster: 'https://cdn.myanimelist.net/images/anime/12/76049l.jpg', addedAt: Date.now() - 86400000 * 80, startDate: '2026-05-10', finishDate: '2026-05-20', criteria: { story: 8, animation: 9, music: 8, characters: 9 } },
+  { id: 'a13', title: 'Вайолет Эвергарден', titleJP: 'ヴァイオレット・エヴァーガーデン / Violet Evergarden', type: 'TV', year: 2018, studio: 'Kyoto Animation', genres: ['Драма', 'Романтика'], episodesTotal: 13, episodesWatched: 13, status: 'completed', score: 9.5, favorite: true, notes: 'Визуально безупречное, каждая серия — эмоциональный удар.', poster: 'https://cdn.myanimelist.net/images/anime/1795/95088l.jpg', addedAt: Date.now() - 86400000 * 55, startDate: '2026-09-01', finishDate: '2026-09-14', criteria: { story: 9, animation: 10, music: 10, characters: 10 } },
+  { id: 'a14', title: 'Ковбой Бибоп', titleJP: 'カウボーイビバップ / Cowboy Bebop', type: 'TV', year: 1998, studio: 'Sunrise', genres: ['Экшен', 'Драма', 'Фантастика', 'Джаз'], episodesTotal: 26, episodesWatched: 26, status: 'completed', score: 9.5, favorite: true, notes: 'Вечная классика. Джаз, нео-нуар, космос.', poster: 'https://cdn.myanimelist.net/images/anime/4/19644l.jpg', addedAt: Date.now() - 86400000 * 250, criteria: { story: 9, animation: 9, music: 10, characters: 10 } },
+  { id: 'a15', title: 'Форма голоса', titleJP: '聲の形 / A Silent Voice', type: 'Movie', year: 2016, studio: 'Kyoto Animation', genres: ['Драма', 'Романтика', 'Школа'], episodesTotal: 1, episodesWatched: 1, status: 'completed', score: 9.5, favorite: true, notes: 'Трогательная история о буллинге и прощении.', poster: 'https://cdn.myanimelist.net/images/anime/1122/96435l.jpg', addedAt: Date.now() - 86400000 * 25, startDate: '2026-10-20', finishDate: '2026-10-20', criteria: { story: 9, animation: 10, music: 9, characters: 10 } }
+];
+
+/* ==================== STATE ==================== */
+let animeList = [];
+let currentView = 'overview';
+let editingId = null;
+let uploadedPoster = '';
+let currentFilters = { status: '', type: '', genre: '', favorite: false, hasScore: false, yearFrom: '', yearTo: '', studio: '', length: '', search: '' };
+let sortState = { col: 'title', dir: 1 };
+let currentCalendarDate = new Date();
+let currentWrappedYear = new Date().getFullYear();
+let db = null;
+let bgAnimationEnabled = true;
+let isSearching = false;
+
+/* ==================== DEBOUNCE ==================== */
+function debounce(fn, wait) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), wait);
+  };
+}
+
+/* ==================== SERVICE WORKER ==================== */
+async function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+  const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  if (location.protocol !== 'https:' && !isLocalhost) {
+    console.info('[SW] requires HTTPS or localhost — skipped');
+    return;
+  }
+  try {
+    const reg = await navigator.serviceWorker.register('./sw.js');
+    console.log('[SW] Registered:', reg.scope);
+    reg.addEventListener('updatefound', () => {
+      const nw = reg.installing;
+      if (!nw) return;
+      nw.addEventListener('statechange', () => {
+        if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+          showToast('Доступно обновление — перезагрузите страницу 🔄', '🔄');
+        }
+      });
+    });
+  } catch (e) {
+    console.warn('[SW] Registration failed:', e);
+  }
+}
+
+/* ==================== INDEXEDDB ==================== */
+function initDB() {
+  return new Promise((res, rej) => {
+    if (!window.indexedDB) return rej(new Error('No IndexedDB'));
+    const req = indexedDB.open('AnimeDiaryDB', 2);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('anime')) d.createObjectStore('anime', { keyPath: 'id' });
+      if (!d.objectStoreNames.contains('apiCache')) d.createObjectStore('apiCache', { keyPath: 'key' });
+    };
+    req.onsuccess = e => { db = e.target.result; res(); };
+    req.onerror = e => rej(e.target.error);
+  });
+}
+function idbGetAll() { return new Promise((res, rej) => { const tx = db.transaction('anime', 'readonly'); const r = tx.objectStore('anime').getAll(); r.onsuccess = () => res(r.result || []); r.onerror = () => rej(r.error); }); }
+function idbPutAll(list) { return new Promise((res, rej) => { const tx = db.transaction('anime', 'readwrite'); const s = tx.objectStore('anime'); list.forEach(a => s.put(a)); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); }); }
+function idbPut(a) { return new Promise((res, rej) => { const tx = db.transaction('anime', 'readwrite'); const r = tx.objectStore('anime').put(a); r.onsuccess = () => res(); r.onerror = () => rej(r.error); }); }
+function idbDelete(id) { return new Promise((res, rej) => { const tx = db.transaction('anime', 'readwrite'); const r = tx.objectStore('anime').delete(id); r.onsuccess = () => res(); r.onerror = () => rej(r.error); }); }
+function idbClear() { return new Promise((res, rej) => { const tx = db.transaction('anime', 'readwrite'); const r = tx.objectStore('anime').clear(); r.onsuccess = () => res(); r.onerror = () => rej(r.error); }); }
+
+/* API cache in IndexedDB */
+function apiCacheGet(key) {
+  return new Promise((res) => {
+    if (!db) return res(null);
+    try {
+      const tx = db.transaction('apiCache', 'readonly');
+      const r = tx.objectStore('apiCache').get(key);
+      r.onsuccess = () => res(r.result || null);
+      r.onerror = () => res(null);
+    } catch (e) { res(null); }
+  });
+}
+function apiCachePut(key, data) {
+  return new Promise((res) => {
+    if (!db) return res();
+    try {
+      const tx = db.transaction('apiCache', 'readwrite');
+      tx.objectStore('apiCache').put({ key, data, ts: Date.now() });
+      tx.oncomplete = () => res();
+      tx.onerror = () => res();
+    } catch (e) { res(); }
+  });
+}
+function apiCacheCleanup() {
+  if (!db) return;
+  try {
+    const tx = db.transaction('apiCache', 'readwrite');
+    const store = tx.objectStore('apiCache');
+    const all = store.getAll();
+    all.onsuccess = () => {
+      const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+      all.result.forEach(item => { if (item.ts < cutoff) store.delete(item.key); });
+    };
+  } catch (e) {}
+}
+
+/* ==================== STORAGE ==================== */
+async function loadAnime() {
+  try { await initDB(); } catch (e) { console.warn('IDB init failed:', e); }
+  const initialized = localStorage.getItem('anime_diary_initialized_v4') === '1';
+  if (db) {
+    try {
+      const fromDB = await idbGetAll();
+      if (fromDB.length > 0 || initialized) { animeList = fromDB; return; }
+    } catch (e) {}
+  }
+  const tryLoad = key => {
+    try { const p = JSON.parse(localStorage.getItem(key) || '[]'); return Array.isArray(p) ? p : []; } catch { return []; }
+  };
+  const b4 = tryLoad('anime_diary_backup_v4');
+  if (b4.length > 0) { animeList = b4; return; }
+  if (!initialized) {
+    animeList = JSON.parse(JSON.stringify(SAMPLE_ANIME));
+    localStorage.setItem('anime_diary_initialized_v4', '1');
+    saveAnime();
+  } else { animeList = []; }
+}
+function saveAnime() {
+  if (db) idbPutAll(animeList).catch(e => console.warn(e));
+  try {
+    const backup = animeList.map(a => { const c = { ...a }; if (c.poster && c.poster.length > 25000) c.poster = undefined; return c; });
+    localStorage.setItem('anime_diary_backup_v4', JSON.stringify(backup));
+    localStorage.setItem('anime_diary_initialized_v4', '1');
+  } catch (e) {}
+}
+
+/* ==================== THEME ==================== */
+function initTheme() {
+  const saved = localStorage.getItem('anime_diary_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  updateThemeIcon(saved);
+}
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('anime_diary_theme', next);
+  updateThemeIcon(next);
+  if (currentView === 'stats') renderStats();
+  if (currentView === 'wrapped') renderWrapped();
+}
+function updateThemeIcon(theme) {
+  const d = document.getElementById('theme-icon-dark'), l = document.getElementById('theme-icon-light');
+  if (!d || !l) return;
+  if (theme === 'light') { d.classList.add('hidden'); l.classList.remove('hidden'); }
+  else { d.classList.remove('hidden'); l.classList.add('hidden'); }
+}
+function toggleBackgroundAnimation() {
+  bgAnimationEnabled = !bgAnimationEnabled;
+  const bg = document.getElementById('sakura-bg');
+  const onIcon = document.getElementById('anim-icon-on'), offIcon = document.getElementById('anim-icon-off');
+  bg.style.display = bgAnimationEnabled ? '' : 'none';
+  if (bgAnimationEnabled) { onIcon.classList.remove('hidden'); offIcon.classList.add('hidden'); }
+  else { onIcon.classList.add('hidden'); offIcon.classList.remove('hidden'); }
+  localStorage.setItem('anime_diary_bg_enabled', bgAnimationEnabled ? '1' : '0');
+}
+
+/* ==================== HELPERS ==================== */
+function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+function showToast(msg, icon = '✓') {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = msg;
+  document.getElementById('toast-icon').textContent = icon;
+  t.style.opacity = '1'; t.style.transform = 'translate(-50%, 0)';
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translate(-50%, 20px)'; }, 2400);
+}
+function totalTimeHours() {
+  const mins = animeList.filter(a => a.type !== 'Movie').reduce((s, a) => s + ((a.episodesWatched || 0) * 24), 0)
+    + animeList.filter(a => a.type === 'Movie').reduce((s, a) => s + ((a.episodesWatched || 0) * 100), 0);
+  return Math.round(mins / 60);
+}
+function averageScore() {
+  const s = animeList.filter(a => a.score > 0);
+  if (!s.length) return 0;
+  return (s.reduce((sum, a) => sum + a.score, 0) / s.length).toFixed(2);
+}
+function hasPoster(a) { return a.poster && a.poster.length > 50; }
+function posterOf(a) { return hasPoster(a) ? a.poster : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400"><rect fill="%230c0a1a" width="300" height="400"/><text x="150" y="210" text-anchor="middle" fill="%23453a78" font-size="80">🎴</text></svg>'; }
+function updateHeaderStats() {
+  const total = animeList.length;
+  const eps = animeList.reduce((s, a) => s + (a.episodesWatched || 0), 0);
+  document.getElementById('header-stats').textContent = `${total} тайтлов • ${eps} эпизодов • ~${totalTimeHours()} ч`;
+}
+
+/* ==================== FILTERS ==================== */
+function populateGenreFilter() {
+  const g = new Set();
+  const studios = new Set();
+  animeList.forEach(a => {
+    (a.genres || []).forEach(x => g.add(x));
+    if (a.studio) studios.add(a.studio);
+  });
+  const sel = document.getElementById('filter-genre');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Все жанры</option>' + [...g].sort().map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+  if ([...g].includes(cur)) sel.value = cur;
+  const dl = document.getElementById('studio-datalist');
+  dl.innerHTML = [...studios].sort().map(x => `<option value="${esc(x)}"></option>`).join('');
+}
+function saveFiltersState() {
+  const state = {
+    status: document.getElementById('filter-status').value,
+    type: document.getElementById('filter-type').value,
+    genre: document.getElementById('filter-genre').value,
+    favorite: document.getElementById('filter-fav').checked,
+    hasScore: document.getElementById('filter-has-score').checked,
+    yearFrom: document.getElementById('filter-year-from').value,
+    yearTo: document.getElementById('filter-year-to').value,
+    studio: document.getElementById('filter-studio').value,
+    length: document.getElementById('filter-length').value,
+    search: document.getElementById('search-input').value
+  };
+  try { localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+function loadFiltersState() {
+  try {
+    const raw = localStorage.getItem(FILTERS_STORAGE_KEY);
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    if (s.status) document.getElementById('filter-status').value = s.status;
+    if (s.type) document.getElementById('filter-type').value = s.type;
+    if (s.genre) document.getElementById('filter-genre').value = s.genre;
+    document.getElementById('filter-fav').checked = !!s.favorite;
+    document.getElementById('filter-has-score').checked = !!s.hasScore;
+    if (s.yearFrom) document.getElementById('filter-year-from').value = s.yearFrom;
+    if (s.yearTo) document.getElementById('filter-year-to').value = s.yearTo;
+    if (s.studio) document.getElementById('filter-studio').value = s.studio;
+    if (s.length) document.getElementById('filter-length').value = s.length;
+    if (s.search) document.getElementById('search-input').value = s.search;
+  } catch (e) {}
+}
+function readFiltersFromUI() {
+  currentFilters = {
+    status: document.getElementById('filter-status').value,
+    type: document.getElementById('filter-type').value,
+    genre: document.getElementById('filter-genre').value,
+    favorite: document.getElementById('filter-fav').checked,
+    hasScore: document.getElementById('filter-has-score').checked,
+    yearFrom: document.getElementById('filter-year-from').value,
+    yearTo: document.getElementById('filter-year-to').value,
+    studio: document.getElementById('filter-studio').value.trim().toLowerCase(),
+    length: document.getElementById('filter-length').value,
+    search: document.getElementById('search-input').value.trim().toLowerCase()
+  };
+}
+function applyFilters() {
+  readFiltersFromUI();
+  saveFiltersState();
+  renderCurrentView();
+}
+function resetFilters() {
+  document.getElementById('filter-status').value = '';
+  document.getElementById('filter-type').value = '';
+  document.getElementById('filter-genre').value = '';
+  document.getElementById('filter-fav').checked = false;
+  document.getElementById('filter-has-score').checked = false;
+  document.getElementById('filter-year-from').value = '';
+  document.getElementById('filter-year-to').value = '';
+  document.getElementById('filter-studio').value = '';
+  document.getElementById('filter-length').value = '';
+  document.getElementById('search-input').value = '';
+  applyFilters();
+}
+function getFilteredAnime(base = null) {
+  let list = [...animeList];
+  if (base) list = list.filter(base);
+  const f = currentFilters;
+  if (f.status) list = list.filter(a => a.status === f.status);
+  if (f.type) list = list.filter(a => a.type === f.type);
+  if (f.genre) list = list.filter(a => (a.genres || []).includes(f.genre));
+  if (f.favorite) list = list.filter(a => a.favorite);
+  if (f.hasScore) list = list.filter(a => a.score > 0);
+  if (f.studio) list = list.filter(a => (a.studio || '').toLowerCase().includes(f.studio));
+  const from = parseInt(f.yearFrom, 10);
+  const to = parseInt(f.yearTo, 10);
+  if (!isNaN(from)) list = list.filter(a => (a.year || 0) >= from);
+  if (!isNaN(to)) list = list.filter(a => (a.year || 0) <= to);
+  if (f.length) {
+    list = list.filter(a => {
+      const n = a.episodesTotal || 0;
+      if (n === 0) return false;
+      if (f.length === 'short') return n >= 1 && n <= 13;
+      if (f.length === 'medium') return n >= 14 && n <= 50;
+      if (f.length === 'long') return n > 50;
+      return true;
+    });
+  }
+  if (f.search) {
+    const q = f.search;
+    list = list.filter(a =>
+      (a.title || '').toLowerCase().includes(q) ||
+      (a.titleJP || '').toLowerCase().includes(q) ||
+      (a.studio || '').toLowerCase().includes(q) ||
+      (a.genres || []).join(' ').toLowerCase().includes(q) ||
+      (a.notes || '').toLowerCase().includes(q)
+    );
+  }
+  return list;
+}
+
+/* ==================== VIEW SWITCHER ==================== */
+function switchView(v) {
+  currentView = v;
+  document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+  renderCurrentView();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function renderCurrentView() {
+  readFiltersFromUI();
+  const filtered = getFilteredAnime();
+  const counter = document.getElementById('filter-count');
+  if (counter) counter.textContent = filtered.length !== animeList.length ? `${filtered.length} из ${animeList.length}` : '';
+  if (currentView === 'overview') renderOverview();
+  else if (currentView === 'grid') renderGrid(filtered);
+  else if (currentView === 'table') renderTable(filtered);
+  else if (currentView === 'watching') renderGrid(getFilteredAnime(a => a.status === 'watching' || a.status === 'rewatching'));
+  else if (currentView === 'planned') renderGrid(getFilteredAnime(a => a.status === 'planned' || a.status === 'on_hold'));
+  else if (currentView === 'collections') renderCollections();
+  else if (currentView === 'calendar') renderCalendar();
+  else if (currentView === 'stats') renderStats();
+  else if (currentView === 'wrapped') renderWrapped();
+}
+
+/* ==================== CARD ==================== */
+function renderAnimeCard(a) {
+  const progress = a.episodesTotal > 0 ? Math.min(100, (a.episodesWatched / a.episodesTotal) * 100) : 0;
+  const scoreBadge = a.score > 0 ? `<div class="absolute top-2 right-2 score-circle" style="width:36px;height:36px;font-size:12px;">${a.score}</div>` : '';
+  const favBadge = a.favorite ? `<div class="absolute top-2 left-2 w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-sm" style="background:rgba(255,110,199,0.9);color:#fff;font-size:14px;box-shadow:0 0 12px var(--shadow-accent);">♥</div>` : '';
+  return `
+    <div class="anime-card p-2.5 cursor-pointer group" onclick="openEditModal('${a.id}')">
+      <div class="poster-wrap relative aspect-[3/4] rounded-xl overflow-hidden bg-[#0c0a1a] mb-2.5">
+        <img src="${esc(posterOf(a))}" alt="${esc(a.title)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+        ${favBadge}${scoreBadge}
+      </div>
+      <h3 class="font-bold text-[13px] text-white line-clamp-2 leading-tight min-h-[34px] mb-1.5">${esc(a.title)}</h3>
+      <div class="mb-1.5"><span class="badge badge-${a.status}" style="font-size:10px;padding:3px 9px;"><span class="status-dot"></span>${STATUS_LABELS[a.status]}</span></div>
+      ${a.episodesTotal > 0 ? `<div class="ep-progress mb-1"><div class="ep-progress-fill" style="width:${progress}%"></div></div><div class="text-[10px] font-semibold flex justify-between" style="color:var(--text-muted);"><span>${a.episodesWatched}/${a.episodesTotal} эп.</span><span>${a.year || ''}</span></div>` : `<div class="text-[10px] font-semibold" style="color:var(--text-muted);">${a.year || ''} • ${a.type || ''}</div>`}
+    </div>`;
+}
+
+/* ==================== OVERVIEW ==================== */
+function renderOverview() {
+  const c = document.getElementById('view-overview');
+  if (animeList.length === 0) {
+    c.innerHTML = `<div class="fade-up empty-state"><div class="empty-state-icon">🎴</div><h3 class="heading text-2xl font-black text-white mb-2">Добро пожаловать!</h3><p class="text-sm mb-5" style="color:var(--text-muted);">Дневник пуст. Начните с первого тайтла или импортируйте список из Shikimori.</p><div class="flex gap-2 justify-center flex-wrap"><button onclick="openAddModal()" class="btn-primary">+ Добавить</button><button onclick="openImportModal()" class="btn-secondary">⬇ Импорт из Shikimori</button></div></div>`;
+    return;
+  }
+  const watching = animeList.filter(a => a.status === 'watching' || a.status === 'rewatching');
+  const heroAnime = watching[0] || [...animeList].sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0))[0];
+  const heroProgress = heroAnime.episodesTotal > 0 ? (heroAnime.episodesWatched / heroAnime.episodesTotal) * 100 : 0;
+  const recent = [...animeList].sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0)).slice(0, 6);
+  const yearNow = new Date().getFullYear();
+  const ys = yearAnimeStats(yearNow);
+  const favorites = animeList.filter(a => a.favorite).length;
+
+  c.innerHTML = `
+    <div class="fade-up space-y-6">
+      <div class="hero-card p-5 md:p-7">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-center relative z-10">
+          <div class="md:col-span-3 flex justify-center md:justify-start">
+            <div class="w-32 md:w-40 aspect-[3/4] rounded-2xl overflow-hidden border border-[#453a78] shadow-2xl cursor-pointer" onclick="openEditModal('${heroAnime.id}')">
+              <img src="${esc(posterOf(heroAnime))}" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+          </div>
+          <div class="md:col-span-9 text-center md:text-left">
+            <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-2">
+              <span class="badge badge-${heroAnime.status}"><span class="status-dot"></span>${STATUS_LABELS[heroAnime.status]}</span>
+              ${heroAnime.favorite ? '<span class="badge" style="background:rgba(255,110,199,0.15);color:var(--accent-pink);border-color:var(--accent-pink);">♥ Избранное</span>' : ''}
+              ${heroAnime.score > 0 ? `<span class="badge badge-planned">★ ${heroAnime.score}</span>` : ''}
+            </div>
+            <h2 class="heading text-2xl md:text-3xl font-black text-white mb-1.5">${esc(heroAnime.title)}</h2>
+            <p class="text-xs md:text-sm mb-4" style="color:var(--text-secondary);">${esc(heroAnime.studio || '')}${heroAnime.year ? ' • ' + heroAnime.year : ''} • ${heroAnime.type}</p>
+            ${heroAnime.episodesTotal > 0 ? `<div class="max-w-md mx-auto md:mx-0 mb-4"><div class="flex justify-between text-xs mb-1.5" style="color:var(--text-secondary);"><span>Прогресс</span><b style="color:var(--accent-pink);">${heroAnime.episodesWatched} / ${heroAnime.episodesTotal} эп.</b></div><div class="ep-progress"><div class="ep-progress-fill" style="width:${heroProgress}%"></div></div></div>` : ''}
+            <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+              <button onclick="openEpModal('${heroAnime.id}')" class="btn-primary">▶ Продолжить</button>
+              <button onclick="openEditModal('${heroAnime.id}')" class="btn-secondary">Редактировать</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="bento-card"><div class="flex items-center justify-between mb-1"><span class="text-[11px] font-bold uppercase tracking-wider" style="color:var(--text-muted);">Тайтлов</span></div><div class="heading text-3xl font-black" style="color:var(--accent-pink);">${animeList.length}</div></div>
+        <div class="bento-card"><div class="flex items-center justify-between mb-1"><span class="text-[11px] font-bold uppercase tracking-wider" style="color:var(--text-muted);">Эпизодов</span></div><div class="heading text-3xl font-black" style="color:var(--accent-purple);">${animeList.reduce((s, a) => s + (a.episodesWatched || 0), 0)}</div></div>
+        <div class="bento-card"><div class="flex items-center justify-between mb-1"><span class="text-[11px] font-bold uppercase tracking-wider" style="color:var(--text-muted);">Часов</span></div><div class="heading text-3xl font-black" style="color:var(--accent-cyan);">${totalTimeHours()}</div></div>
+        <div class="bento-card"><div class="flex items-center justify-between mb-1"><span class="text-[11px] font-bold uppercase tracking-wider" style="color:var(--text-muted);">Ср. балл</span></div><div class="heading text-3xl font-black" style="color:var(--accent-yellow);">${averageScore()}</div></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="bento-card cursor-pointer" onclick="currentWrappedYear=${yearNow}; switchView('wrapped')">
+          <div class="flex items-center gap-3 mb-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(255,110,199,0.15);color:var(--accent-pink);">✨</div><div><div class="text-xs font-bold uppercase tracking-wider" style="color:var(--text-muted);">Итоги</div><div class="heading text-base font-black text-white">${yearNow} год</div></div></div>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div><div class="heading text-xl font-black" style="color:var(--accent-pink);">${ys.finished}</div><div class="text-[10px]" style="color:var(--text-muted);">тайтлов</div></div>
+            <div><div class="heading text-xl font-black" style="color:var(--accent-purple);">${ys.episodes}</div><div class="text-[10px]" style="color:var(--text-muted);">эпизодов</div></div>
+            <div><div class="heading text-xl font-black" style="color:var(--accent-cyan);">${ys.hours}</div><div class="text-[10px]" style="color:var(--text-muted);">часов</div></div>
+          </div>
+        </div>
+        <div class="bento-card cursor-pointer" onclick="document.getElementById('filter-fav').checked=true; applyFilters(); switchView('grid')">
+          <div class="flex items-center gap-3 mb-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(255,110,199,0.15);color:var(--accent-pink);">♥</div><div><div class="text-xs font-bold uppercase tracking-wider" style="color:var(--text-muted);">Избранное</div><div class="heading text-base font-black text-white">${favorites} тайтлов</div></div></div>
+          <p class="text-xs" style="color:var(--text-secondary);">Любимые истории. Отфильтровать по ♥ →</p>
+        </div>
+      </div>
+
+      ${watching.length > 0 ? `<div><div class="flex items-center justify-between mb-3"><h2 class="heading text-lg font-black text-white">▶ Смотрю сейчас</h2><button onclick="switchView('watching')" class="text-xs font-bold" style="color:var(--accent-pink);">Все →</button></div><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">${watching.slice(0, 6).map(renderAnimeCard).join('')}</div></div>` : ''}
+
+      <div><div class="flex items-center justify-between mb-3"><h2 class="heading text-lg font-black text-white">🆕 Недавно добавленные</h2><button onclick="switchView('grid')" class="text-xs font-bold" style="color:var(--accent-pink);">Все →</button></div><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">${recent.map(renderAnimeCard).join('')}</div></div>
+    </div>`;
+}
+
+/* ==================== GRID/TABLE ==================== */
+function renderGrid(list) {
+  let c = currentView === 'watching' ? document.getElementById('view-watching') : currentView === 'planned' ? document.getElementById('view-planned') : document.getElementById('view-grid');
+  if (list.length === 0) { c.innerHTML = `<div class="fade-up empty-state"><div class="empty-state-icon">🎴</div><h3 class="heading text-xl font-black text-white mb-2">Здесь пусто</h3><p class="text-sm mb-4" style="color:var(--text-muted);">${currentFilters.search || currentFilters.status || currentFilters.genre ? 'Нет результатов с этими фильтрами' : 'Добавьте первое аниме'}</p><button onclick="${currentFilters.search || currentFilters.status || currentFilters.genre ? 'resetFilters()' : 'openAddModal()'}" class="btn-primary">${currentFilters.search || currentFilters.status || currentFilters.genre ? 'Сбросить фильтры' : '+ Добавить'}</button></div>`; return; }
+  c.innerHTML = `<div class="fade-up grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">${list.map(renderAnimeCard).join('')}</div>`;
+}
+function renderTable(list) {
+  const c = document.getElementById('view-table');
+  if (list.length === 0) { c.innerHTML = '<div class="empty-state" style="color:var(--text-muted);">Ничего не найдено</div>'; return; }
+  const sorted = [...list].sort((a, b) => {
+    let va = a[sortState.col], vb = b[sortState.col];
+    if (typeof va === 'string') va = va.toLowerCase();
+    if (typeof vb === 'string') vb = vb.toLowerCase();
+    if (va < vb) return -1 * sortState.dir;
+    if (va > vb) return 1 * sortState.dir;
+    return 0;
+  });
+  const th = (k, l) => `<th onclick="sortTable('${k}')">${l}${sortState.col === k ? (sortState.dir === 1 ? ' ▲' : ' ▼') : ''}</th>`;
+  c.innerHTML = `<div class="fade-up anime-card overflow-hidden"><div class="overflow-x-auto"><table class="anime-table w-full"><thead><tr><th style="width:60px;"></th>${th('title', 'Название')}${th('type', 'Тип')}${th('year', 'Год')}${th('episodesWatched', 'Эп.')}${th('status', 'Статус')}${th('score', 'Оценка')}<th>Действия</th></tr></thead><tbody>${sorted.map(a => `<tr><td><img src="${esc(posterOf(a))}" style="width:40px;height:56px;object-fit:cover;border-radius:6px;"></td><td><div class="font-bold text-white text-[13px]">${esc(a.title)}</div>${a.studio ? `<div class="text-[11px]" style="color:var(--accent-purple);">${esc(a.studio)}</div>` : ''}</td><td style="color:var(--text-secondary);">${a.type || '—'}</td><td style="color:var(--text-secondary);">${a.year || '—'}</td><td style="color:var(--text-secondary);"><b style="color:var(--text-primary);">${a.episodesWatched}</b>/${a.episodesTotal || '?'}</td><td><span class="badge badge-${a.status}"><span class="status-dot"></span>${STATUS_LABELS[a.status]}</span></td><td>${a.score > 0 ? `<span class="heading font-black" style="color:var(--accent-pink);font-size:16px;">${a.score}</span>` : '<span style="color:var(--text-muted);">—</span>'}</td><td><div class="flex gap-1"><button class="btn-icon" onclick="openEpModal('${a.id}')" title="+1">+1</button><button class="btn-icon" onclick="openEditModal('${a.id}')">✎</button><button class="btn-icon" onclick="deleteAnime('${a.id}')" style="color:#f43f5e;">🗑</button></div></td></tr>`).join('')}</tbody></table></div></div>`;
+}
+function sortTable(col) { if (sortState.col === col) sortState.dir *= -1; else { sortState.col = col; sortState.dir = 1; } renderTable(getFilteredAnime()); }
+
+/* ==================== COLLECTIONS/CALENDAR/STATS/WRAPPED (сокращённо — без изменений из v4) ==================== */
+function franchiseKey(title) { if (!title) return ''; let t = title.toLowerCase().replace(/\s*[:\-–—].*$/, '').replace(/\b(season|part|movie|ova|ona|special|final|chapter|arc|episode|specials|сезон|часть|фильм|финальный|спешл|арка)\b/gi, ' ').replace(/[^\wа-яё\s]/gi, ' ').replace(/\d+/g, ''); return t.replace(/\s+/g, ' ').trim(); }
+function groupFranchises(list) { const groups = {}; list.forEach(a => { const k = franchiseKey(a.title); if (!k) return; if (!groups[k]) groups[k] = []; groups[k].push(a); }); return Object.entries(groups).filter(([_, items]) => items.length > 1).map(([key, items]) => { const sorted = [...items].sort((a, b) => (a.year || 0) - (b.year || 0)); const shortest = [...sorted].sort((a, b) => (a.title || '').length - (b.title || '').length)[0]; const name = (shortest.title || '').replace(/[:\-–—].*/, '').trim() || shortest.title; return { key, name, items: sorted }; }).sort((a, b) => b.items.length - a.items.length); }
+function renderCollections() {
+  const c = document.getElementById('view-collections');
+  const fr = groupFranchises(animeList);
+  if (fr.length === 0) { c.innerHTML = `<div class="fade-up empty-state"><div class="empty-state-icon">🎬</div><h3 class="heading text-xl font-black text-white mb-2">Коллекций пока нет</h3><p class="text-sm mb-4" style="color:var(--text-muted);">Добавьте несколько сезонов одной серии — сгруппируются автоматически.</p></div>`; return; }
+  c.innerHTML = `<div class="fade-up"><div class="mb-4"><h2 class="heading text-xl font-black text-white">🎬 Коллекции и франшизы</h2><p class="text-xs mt-1" style="color:var(--text-muted);">${fr.length} коллекций</p></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4">${fr.map(renderFranchiseCard).join('')}</div></div>`;
+}
+function renderFranchiseCard(f) {
+  const watched = f.items.filter(a => a.status === 'completed').length;
+  const total = f.items.length;
+  const progress = total > 0 ? (watched / total) * 100 : 0;
+  const totalEp = f.items.reduce((s, a) => s + (a.episodesWatched || 0), 0);
+  const totalEpAll = f.items.reduce((s, a) => s + (a.episodesTotal || 0), 0);
+  const scored = f.items.filter(a => a.score > 0);
+  const avg = scored.length ? (scored.reduce((s, a) => s + a.score, 0) / scored.length).toFixed(1) : '—';
+  return `<div class="franchise-card"><div class="flex items-start justify-between gap-3 mb-3"><div class="flex-1 min-w-0"><h3 class="heading text-base font-black text-white line-clamp-1">${esc(f.name)}</h3><p class="text-xs mt-0.5" style="color:var(--text-muted);">${total} тайтлов • ${f.items[0]?.studio || ''}</p></div><div class="text-right"><div class="text-xs font-bold" style="color:var(--accent-pink);">★ ${avg}</div><div class="text-[10px]" style="color:var(--text-muted);">${watched}/${total}</div></div></div><div class="ep-progress mb-2"><div class="ep-progress-fill" style="width:${progress}%"></div></div><p class="text-[11px] mb-3" style="color:var(--text-muted);">${totalEp}/${totalEpAll} эп. • ${Math.round(progress)}%</p><div class="space-y-1.5">${f.items.map(a => `<div class="flex items-center gap-2 p-2 rounded-lg cursor-pointer" style="background:rgba(128,128,128,0.06);" onclick="openEditModal('${a.id}')"><img src="${esc(posterOf(a))}" style="width:32px;height:44px;object-fit:cover;border-radius:5px;"><div class="flex-1 min-w-0"><div class="text-xs font-bold text-white truncate">${esc(a.title)}</div><div class="text-[10px]" style="color:var(--text-muted);">${a.year || ''} • ${STATUS_LABELS[a.status]}</div></div></div>`).join('')}</div></div>`;
+}
+function calendarEvents() { const ev = {}; animeList.forEach(a => { if (a.startDate) { (ev[a.startDate] = ev[a.startDate] || []).push({ type: 'start', anime: a }); } if (a.finishDate) { (ev[a.finishDate] = ev[a.finishDate] || []).push({ type: 'finish', anime: a }); } }); return ev; }
+function renderCalendar() {
+  const c = document.getElementById('view-calendar');
+  const d = currentCalendarDate;
+  const y = d.getFullYear(), m = d.getMonth();
+  const monthName = d.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+  const mnc = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+  const ev = calendarEvents();
+  const firstDay = new Date(y, m, 1), lastDay = new Date(y, m + 1, 0);
+  const startWeekday = (firstDay.getDay() + 6) % 7;
+  const daysInMonth = lastDay.getDate(), prevMonthLast = new Date(y, m, 0).getDate();
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  let cells = [];
+  for (let i = startWeekday - 1; i >= 0; i--) cells.push({ day: prevMonthLast - i, other: true, dateStr: '' });
+  for (let dd = 1; dd <= daysInMonth; dd++) cells.push({ day: dd, other: false, dateStr: `${y}-${String(m + 1).padStart(2, '0')}-${String(dd).padStart(2, '0')}` });
+  const rem = (7 - (cells.length % 7)) % 7;
+  for (let i = 1; i <= rem; i++) cells.push({ day: i, other: true, dateStr: '' });
+  const monthEvents = Object.entries(ev).filter(([date]) => date.startsWith(`${y}-${String(m + 1).padStart(2, '0')}-`)).sort(([a], [b]) => a.localeCompare(b));
+  c.innerHTML = `<div class="fade-up"><div class="flex items-center justify-between mb-5 flex-wrap gap-3"><h2 class="heading text-xl font-black text-white">📅 Календарь</h2><div class="flex items-center gap-2"><button onclick="currentCalendarDate.setMonth(currentCalendarDate.getMonth()-1); renderCalendar();" class="btn-icon">←</button><span class="heading font-black text-base px-3" style="min-width:180px;text-align:center;">${mnc}</span><button onclick="currentCalendarDate.setMonth(currentCalendarDate.getMonth()+1); renderCalendar();" class="btn-icon">→</button><button onclick="currentCalendarDate=new Date(); renderCalendar();" class="btn-secondary" style="padding:6px 12px;font-size:12px;">Сегодня</button></div></div><div class="grid grid-cols-1 lg:grid-cols-3 gap-4"><div class="lg:col-span-2"><div class="grid grid-cols-7 gap-1.5 mb-2 text-center text-[11px] font-bold uppercase tracking-wider" style="color:var(--text-muted);"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div style="color:#f43f5e;">Сб</div><div style="color:#f43f5e;">Вс</div></div><div class="grid grid-cols-7 gap-1.5">${cells.map(cl => { if (!cl.dateStr) return '<div class="cal-day other-month"></div>'; const dayEv = ev[cl.dateStr] || []; const isToday = cl.dateStr === todayStr; return `<div class="cal-day ${isToday ? 'today' : ''} ${dayEv.length ? 'has-event' : ''}" title="${dayEv.map(e => e.anime.title).join(', ')}"><div class="font-bold text-xs" style="color:${isToday ? 'var(--accent-pink)' : 'var(--text-primary)'};">${cl.day}</div><div class="flex flex-wrap gap-0.5 mt-auto">${dayEv.slice(0, 5).map(e => `<span class="cal-dot cal-dot-${e.type}"></span>`).join('')}</div></div>`; }).join('')}</div></div><div class="anime-card p-4"><h3 class="heading text-sm font-black text-white mb-3">📋 События</h3>${monthEvents.length === 0 ? '<p class="text-xs text-center py-6" style="color:var(--text-muted);">Нет событий</p>' : monthEvents.map(([date, list]) => `<div class="mb-3 pb-3 border-b last:border-0" style="border-color:var(--border-subtle);"><div class="text-[11px] font-bold mb-1" style="color:var(--accent-pink);">${new Date(date + 'T00:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}</div>${list.map(e => `<div class="flex items-center gap-2 py-1 cursor-pointer" onclick="openEditModal('${e.anime.id}')"><span class="text-xs" style="color:${e.type === 'start' ? 'var(--accent-cyan)' : 'var(--accent-pink)'};">${e.type === 'start' ? '▶' : '✓'}</span><span class="text-xs font-semibold text-white truncate flex-1">${esc(e.anime.title)}</span></div>`).join('')}</div>`).join('')}</div></div></div>`;
+}
+function renderStats() {
+  const c = document.getElementById('view-stats');
+  const byStatus = {}; Object.keys(STATUS_LABELS).forEach(s => byStatus[s] = animeList.filter(a => a.status === s).length);
+  const byGenre = {}; animeList.forEach(a => (a.genres || []).forEach(g => byGenre[g] = (byGenre[g] || 0) + 1));
+  const topGenres = Object.entries(byGenre).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  const byStudio = {}; animeList.forEach(a => { if (a.studio) byStudio[a.studio] = (byStudio[a.studio] || 0) + 1; });
+  const topStudios = Object.entries(byStudio).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const byYear = {}; animeList.forEach(a => { if (a.year) byYear[a.year] = (byYear[a.year] || 0) + 1; });
+  const topYears = Object.entries(byYear).sort((a, b) => b[0] - a[0]).slice(0, 8);
+  const scoreDist = [10, 9, 8, 7, 6].map(thr => ({ label: thr === 10 ? '10.0' : `${thr}.0+`, count: animeList.filter(a => a.score >= thr && (thr === 10 ? a.score === 10 : a.score < thr + 1)).length }));
+  const criteria = computeCriteria();
+  c.innerHTML = `<div class="fade-up space-y-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Тайтлов</div><div class="heading text-4xl font-black" style="color:var(--accent-pink);">${animeList.length}</div></div>
+      <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Эпизодов</div><div class="heading text-4xl font-black" style="color:var(--accent-purple);">${animeList.reduce((s, a) => s + (a.episodesWatched || 0), 0)}</div></div>
+      <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Часов</div><div class="heading text-4xl font-black" style="color:var(--accent-cyan);">${totalTimeHours()}</div></div>
+      <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Избранных</div><div class="heading text-4xl font-black" style="color:var(--accent-yellow);">${animeList.filter(a => a.favorite).length}</div></div>
+    </div>
+    ${criteria.hasData ? `<div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-4">📊 Детальная аналитика</h3><div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center"><div class="flex justify-center"><canvas id="criteria-radar" width="400" height="400" style="max-width:100%;height:auto;"></canvas></div><div class="space-y-3">${criteria.keys.map(k => `<div class="crit-row"><span style="font-size:18px;">${CRITERIA_ICONS[k]}</span><div class="flex-1"><div class="flex justify-between text-xs mb-1.5"><span class="font-bold" style="color:var(--text-secondary);">${CRITERIA_LABELS[k]}</span><span class="font-black" style="color:${CRITERIA_COLORS[k]};">${criteria.averages[k].toFixed(2)}</span></div><div class="crit-bar"><div class="crit-bar-fill" style="width:${criteria.averages[k] * 10}%;background:${CRITERIA_COLORS[k]};"></div></div></div></div>`).join('')}</div></div></div>` : ''}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-4">📈 Статусы</h3><div class="space-y-2.5">${Object.entries(byStatus).filter(([_, n]) => n > 0).map(([s, n]) => { const pct = Math.round(n / (animeList.length || 1) * 100); return `<div><div class="flex justify-between text-xs mb-1"><span style="color:var(--text-secondary);">${STATUS_LABELS[s]}</span><span class="font-bold" style="color:${STATUS_COLORS[s]};">${n} (${pct}%)</span></div><div style="height:6px;background:rgba(128,128,128,0.1);border-radius:999px;"><div style="height:100%;width:${pct}%;background:${STATUS_COLORS[s]};border-radius:999px;"></div></div></div>`; }).join('')}</div></div>
+      <div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-4">⭐ Оценки</h3><div class="space-y-2.5">${scoreDist.map(s => { const pct = Math.round(s.count / (animeList.length || 1) * 100); return `<div><div class="flex justify-between text-xs mb-1"><span style="color:var(--text-secondary);">★ ${s.label}</span><span class="font-bold" style="color:var(--accent-yellow);">${s.count}</span></div><div style="height:6px;background:rgba(128,128,128,0.1);border-radius:999px;"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent-pink),var(--accent-purple));border-radius:999px;"></div></div></div>`; }).join('')}</div></div>
+      <div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-4">🎭 Жанры</h3><div class="flex flex-wrap gap-2">${topGenres.map(([g, n]) => `<span class="badge" style="background:rgba(167,139,250,0.12);color:var(--accent-purple);border-color:rgba(167,139,250,0.4);">${esc(g)} <b>${n}</b></span>`).join('') || '<p class="text-sm" style="color:var(--text-muted);">—</p>'}</div></div>
+      <div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-4">🏢 Студии</h3><div class="space-y-2">${topStudios.map(([s, n]) => `<div class="flex justify-between text-sm"><span style="color:var(--text-secondary);">${esc(s)}</span><span class="font-black" style="color:var(--accent-cyan);">${n}</span></div>`).join('') || '<p class="text-sm" style="color:var(--text-muted);">—</p>'}</div></div>
+    </div>
+  </div>`;
+  if (criteria.hasData) drawRadar(criteria);
+}
+function computeCriteria() {
+  const keys = ['story', 'animation', 'music', 'characters'];
+  const averages = {};
+  keys.forEach(k => { const vals = animeList.filter(a => a.criteria && a.criteria[k] > 0).map(a => a.criteria[k]); averages[k] = vals.length ? vals.reduce((s, v) => s + v, 0) / vals.length : 0; });
+  const count = animeList.filter(a => a.criteria && Object.keys(a.criteria).length > 0).length;
+  return { keys, averages, count, hasData: count > 0 };
+}
+function drawRadar(data) {
+  const canvas = document.getElementById('criteria-radar'); if (!canvas) return;
+  const ctx = canvas.getContext('2d'); const w = canvas.width, h = canvas.height;
+  const cx = w / 2, cy = h / 2, maxR = Math.min(w, h) * 0.32;
+  const keys = data.keys, n = keys.length;
+  ctx.clearRect(0, 0, w, h);
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  const grid = isLight ? 'rgba(219,39,119,0.15)' : 'rgba(255,110,199,0.12)';
+  const axis = isLight ? 'rgba(219,39,119,0.2)' : 'rgba(255,110,199,0.2)';
+  const fill = isLight ? 'rgba(219,39,119,0.2)' : 'rgba(255,110,199,0.22)';
+  const stroke = isLight ? '#db2777' : '#ff6ec7';
+  const txt = isLight ? '#2d1f2e' : '#f5f0ff';
+  for (let lvl = 1; lvl <= 4; lvl++) { const r = (maxR / 4) * lvl; ctx.beginPath(); keys.forEach((_, i) => { const a = (Math.PI * 2 * i) / n - Math.PI / 2; const x = cx + Math.cos(a) * r, yy = cy + Math.sin(a) * r; if (i === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy); }); ctx.closePath(); ctx.strokeStyle = grid; ctx.lineWidth = 1; ctx.stroke(); }
+  keys.forEach((_, i) => { const a = (Math.PI * 2 * i) / n - Math.PI / 2; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * maxR, cy + Math.sin(a) * maxR); ctx.strokeStyle = axis; ctx.stroke(); });
+  ctx.beginPath(); keys.forEach((k, i) => { const a = (Math.PI * 2 * i) / n - Math.PI / 2; const r = (data.averages[k] / 10) * maxR; const x = cx + Math.cos(a) * r, yy = cy + Math.sin(a) * r; if (i === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy); }); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = stroke; ctx.lineWidth = 2.5; ctx.stroke();
+  keys.forEach((k, i) => { const a = (Math.PI * 2 * i) / n - Math.PI / 2; const r = (data.averages[k] / 10) * maxR; const x = cx + Math.cos(a) * r, yy = cy + Math.sin(a) * r; ctx.beginPath(); ctx.arc(x, yy, 5, 0, Math.PI * 2); ctx.fillStyle = CRITERIA_COLORS[k]; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke(); const lx = cx + Math.cos(a) * (maxR + 32), ly = cy + Math.sin(a) * (maxR + 32); ctx.textAlign = 'center'; ctx.font = 'bold 12px "Plus Jakarta Sans", sans-serif'; ctx.fillStyle = CRITERIA_COLORS[k]; ctx.fillText(CRITERIA_LABELS[k], lx, ly); ctx.font = 'bold 13px Outfit, sans-serif'; ctx.fillStyle = txt; ctx.fillText(data.averages[k].toFixed(1), lx, ly + 16); });
+}
+function yearAnimeStats(year) { const inYear = animeList.filter(a => { if (a.finishDate) return new Date(a.finishDate).getFullYear() === year; if (a.status === 'completed') return new Date(a.addedAt || Date.now()).getFullYear() === year; return false; }); const eps = inYear.reduce((s, a) => s + (a.episodesWatched || 0), 0); const hours = Math.round(inYear.reduce((s, a) => s + (a.episodesWatched || 0) * (a.type === 'Movie' ? 100 : 24), 0) / 60); const scored = inYear.filter(a => a.score > 0); const avg = scored.length ? (scored.reduce((s, a) => s + a.score, 0) / scored.length).toFixed(2) : '—'; return { finished: inYear.length, episodes: eps, hours, avg, list: inYear }; }
+function renderWrapped() {
+  const c = document.getElementById('view-wrapped');
+  const years = new Set(); animeList.forEach(a => { if (a.finishDate) years.add(new Date(a.finishDate).getFullYear()); if (a.startDate) years.add(new Date(a.startDate).getFullYear()); if (a.year) years.add(a.year); }); years.add(new Date().getFullYear());
+  const sortedYears = [...years].sort((a, b) => b - a);
+  const stats = yearAnimeStats(currentWrappedYear);
+  const topAnime = [...stats.list].filter(a => a.score > 0).sort((a, b) => b.score - a.score).slice(0, 5);
+  c.innerHTML = `<div class="fade-up"><div class="flex items-center justify-between flex-wrap gap-3 mb-6"><div><h2 class="heading text-2xl font-black text-white">✨ Итоги года</h2><p class="text-xs mt-1" style="color:var(--text-muted);">Скачать как PNG</p></div><div class="flex gap-2 items-center"><select class="form-select" style="width:auto;padding:8px 12px;font-size:13px;" onchange="currentWrappedYear=+this.value; renderWrapped()">${sortedYears.map(y => `<option value="${y}" ${y === currentWrappedYear ? 'selected' : ''}>${y}</option>`).join('')}</select><button onclick="downloadWrapped()" class="btn-primary">Скачать PNG</button></div></div><div class="flex justify-center mb-6"><canvas id="wrapped-canvas" width="900" height="1200"></canvas></div><div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">${[['Завершено', stats.finished, 'var(--accent-pink)'], ['Эпизодов', stats.episodes, 'var(--accent-purple)'], ['Часов', stats.hours, 'var(--accent-cyan)'], ['Ср. балл', stats.avg, 'var(--accent-yellow)']].map(([l, v, col]) => `<div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">${l}</div><div class="heading text-3xl font-black" style="color:${col};">${v}</div></div>`).join('')}</div>${topAnime.length > 0 ? `<div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-3">🏆 Топ-${topAnime.length} ${currentWrappedYear}</h3><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">${topAnime.map((a, i) => `<div class="text-center"><div class="relative aspect-[3/4] rounded-xl overflow-hidden mb-2 bg-[#0c0a1a] cursor-pointer" onclick="openEditModal('${a.id}')"><img src="${esc(posterOf(a))}" style="width:100%;height:100%;object-fit:cover;"><div class="absolute top-2 left-2 text-xs font-black px-2 py-1 rounded-lg" style="background:var(--accent-pink);color:#fff;">#${i + 1}</div></div><div class="text-xs font-bold text-white line-clamp-1">${esc(a.title)}</div><div class="text-[11px] font-black" style="color:var(--accent-pink);">★ ${a.score}</div></div>`).join('')}</div></div>` : ''}</div>`;
+  drawWrapped(stats, topAnime);
+}
+function drawWrapped(stats, topAnime) {
+  const canvas = document.getElementById('wrapped-canvas'); if (!canvas) return;
+  const ctx = canvas.getContext('2d'); const w = canvas.width, h = canvas.height;
+  const grad = ctx.createLinearGradient(0, 0, w, h); grad.addColorStop(0, '#0c0a1a'); grad.addColorStop(0.5, '#1e1a38'); grad.addColorStop(1, '#2d0b2a');
+  ctx.fillStyle = grad; ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = 'rgba(255,110,199,0.4)'; ctx.lineWidth = 3; ctx.strokeRect(30, 30, w - 60, h - 60);
+  ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(255,110,199,0.7)'; ctx.font = 'bold 20px Outfit, sans-serif'; ctx.fillText('ANIME WRAPPED', w / 2, 100);
+  ctx.fillStyle = '#ffffff'; ctx.font = 'black 86px Outfit, sans-serif'; ctx.fillText(String(currentWrappedYear), w / 2, 200);
+  ctx.fillStyle = '#b8a8e0'; ctx.font = '500 18px "Plus Jakarta Sans", sans-serif'; ctx.fillText('Мой год в аниме', w / 2, 240);
+  const data = [['ТАЙТЛОВ', stats.finished], ['ЭПИЗОДОВ', stats.episodes], ['ЧАСОВ', stats.hours], ['СР. БАЛЛ', stats.avg]];
+  const bw = (w - 120) / 4 - 10;
+  data.forEach(([l, v], i) => { const x = 60 + i * (bw + 10); ctx.fillStyle = 'rgba(30,26,56,0.8)'; ctx.strokeStyle = 'rgba(255,110,199,0.3)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.roundRect(x, 280, bw, 110, 12); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#8574b0'; ctx.font = 'bold 12px "Plus Jakarta Sans"'; ctx.textAlign = 'center'; ctx.fillText(l, x + bw / 2, 310); ctx.fillStyle = '#ff6ec7'; ctx.font = 'black 42px Outfit'; ctx.fillText(String(v), x + bw / 2, 360); });
+  if (topAnime.length > 0) { ctx.fillStyle = '#ffffff'; ctx.font = 'black 22px Outfit'; ctx.textAlign = 'left'; ctx.fillText('ТОП АНИМЕ ГОДА', 60, 440);
+    topAnime.forEach((a, i) => { const y = 470 + i * 60; ctx.fillStyle = 'rgba(30,26,56,0.8)'; ctx.strokeStyle = 'rgba(255,110,199,0.2)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.roundRect(60, y, w - 120, 50, 10); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#ff6ec7'; ctx.font = 'black 20px Outfit'; ctx.textAlign = 'left'; ctx.fillText(`#${i + 1}`, 80, y + 32); ctx.fillStyle = '#ffffff'; ctx.font = 'bold 16px "Plus Jakarta Sans"'; ctx.fillText(a.title.length > 40 ? a.title.slice(0, 38) + '...' : a.title, 130, y + 30); ctx.fillStyle = '#fde047'; ctx.font = 'black 18px Outfit'; ctx.textAlign = 'right'; ctx.fillText(`★ ${a.score}`, w - 90, y + 32); });
+  }
+  ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(255,110,199,0.6)'; ctx.font = 'bold 16px "Plus Jakarta Sans"'; ctx.fillText('ANIME DIARY', w / 2, h - 60);
+}
+function downloadWrapped() { const c = document.getElementById('wrapped-canvas'); if (!c) return; const a = document.createElement('a'); a.download = `Anime-Wrapped-${currentWrappedYear}.png`; a.href = c.toDataURL('image/png'); a.click(); showToast('Сохранено!', '✨'); }
+
+/* ==================== TITLE SUGGESTIONS ==================== */
+function parseSeasonInfo(title) { if (!title) return null; const t = title.toLowerCase(); let m = t.match(/season\s*(\d+)/i) || t.match(/(\d+)\s*сезон/i) || t.match(/сезон\s*(\d+)/i); if (m) return { type: 'season', value: parseInt(m[1] || m[2] || m[3], 10) }; if (/final\s*season|финальный\s*сезон/i.test(t)) return { type: 'season', value: 'финальный' }; m = t.match(/part\s*(\d+)/i) || t.match(/часть\s*(\d+)/i); if (m) return { type: 'part', value: parseInt(m[1] || m[2], 10) }; if (/\bmovie\b|фильм/i.test(t)) return { type: 'format', value: 'Movie' }; if (/\bova\b/i.test(t)) return { type: 'format', value: 'OVA' }; if (/\bona\b/i.test(t)) return { type: 'format', value: 'ONA' }; return null; }
+function updateTitleSuggestions() {
+  const title = document.getElementById('f-title').value.trim();
+  const hintEl = document.getElementById('franchise-hint');
+  if (!hintEl) return;
+  if (title.length < 2) { hintEl.classList.add('hidden'); return; }
+  const hints = [];
+  const dup = animeList.find(a => a.title.toLowerCase() === title.toLowerCase() && a.id !== editingId);
+  if (dup) hints.push({ icon: '⚠', text: `«${dup.title}» уже есть в дневнике`, action: `openEditModal('${dup.id}');closeAddModal();`, label: 'Открыть' });
+  const si = parseSeasonInfo(title);
+  if (si) { let l = ''; if (si.type === 'season') l = si.value === 'финальный' ? 'финальный сезон' : `сезон ${si.value}`; else if (si.type === 'part') l = `часть ${si.value}`; else if (si.type === 'format') l = si.value; if (l) hints.push({ icon: '📺', text: `Распознано: ${l}` }); }
+  const key = franchiseKey(title);
+  if (key) { const sim = animeList.filter(a => franchiseKey(a.title) === key && a.id !== editingId); if (sim.length > 0) hints.push({ icon: '🎬', text: `Франшиза: ${sim.slice(0, 3).map(a => a.title).join(', ')}${sim.length > 3 ? ` +${sim.length - 3}` : ''}` }); }
+  if (hints.length === 0) { hintEl.classList.add('hidden'); hintEl.innerHTML = ''; return; }
+  hintEl.innerHTML = hints.map(h => `<div class="hint-banner">${h.icon}<span class="flex-1">${esc(h.text)}</span>${h.action ? `<button onclick="${h.action}" class="text-[11px] font-bold px-2 py-1 rounded-lg" style="background:var(--accent-pink);color:#fff;">${h.label}</button>` : ''}</div>`).join('');
+  hintEl.classList.remove('hidden');
+}
+
+/* ==================== ADD/EDIT ==================== */
+function openAddModal() { editingId = null; uploadedPoster = ''; document.getElementById('modal-title').textContent = 'Добавить аниме'; document.getElementById('search-anime-input').value = ''; document.getElementById('search-results').innerHTML = ''; document.getElementById('franchise-hint').classList.add('hidden'); resetForm(); document.getElementById('add-modal').classList.add('show'); }
+function openEditModal(id) {
+  const a = animeList.find(x => x.id === id); if (!a) return;
+  editingId = id; uploadedPoster = a.poster || '';
+  document.getElementById('modal-title').textContent = 'Редактировать: ' + a.title;
+  document.getElementById('search-anime-input').value = ''; document.getElementById('search-results').innerHTML = '';
+  document.getElementById('f-title').value = a.title || ''; document.getElementById('f-titleJP').value = a.titleJP || '';
+  document.getElementById('f-type').value = a.type || 'TV'; document.getElementById('f-year').value = a.year || '';
+  document.getElementById('f-studio').value = a.studio || ''; document.getElementById('f-genres').value = (a.genres || []).join(', ');
+  document.getElementById('f-episodesTotal').value = a.episodesTotal || ''; document.getElementById('f-episodesWatched').value = a.episodesWatched || 0;
+  document.getElementById('f-status').value = a.status || 'planned'; document.getElementById('f-score').value = a.score || 0;
+  document.getElementById('score-display').textContent = a.score > 0 ? a.score : '—';
+  document.getElementById('f-startDate').value = a.startDate || ''; document.getElementById('f-finishDate').value = a.finishDate || '';
+  document.getElementById('f-notes').value = a.notes || ''; document.getElementById('f-favorite').checked = !!a.favorite;
+  const cr = a.criteria || {};
+  ['story', 'animation', 'music', 'characters'].forEach(k => { const el = document.getElementById('f-crit-' + k); if (el) { el.value = cr[k] || 0; updateCriteriaDisplay(k, cr[k] || 0); } });
+  updatePosterPreview(); updateTitleSuggestions(); document.getElementById('add-modal').classList.add('show');
+}
+function closeAddModal() { document.getElementById('add-modal').classList.remove('show'); }
+function resetForm() {
+  ['f-title', 'f-titleJP', 'f-year', 'f-studio', 'f-genres', 'f-episodesTotal', 'f-episodesWatched', 'f-notes', 'f-startDate', 'f-finishDate'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.getElementById('f-type').value = 'TV'; document.getElementById('f-status').value = 'planned'; document.getElementById('f-score').value = 0; document.getElementById('score-display').textContent = '—'; document.getElementById('f-favorite').checked = false;
+  ['story', 'animation', 'music', 'characters'].forEach(k => { document.getElementById('f-crit-' + k).value = 0; updateCriteriaDisplay(k, 0); });
+  updatePosterPreview();
+}
+function updatePosterPreview() { const el = document.getElementById('poster-preview'); el.innerHTML = uploadedPoster ? `<img src="${esc(uploadedPoster)}" style="width:100%;height:100%;object-fit:cover;">` : '<span class="text-5xl" style="color:var(--border-glow);">🎴</span>'; }
+function handlePosterUpload(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { const img = new Image(); img.onload = () => { const c = document.createElement('canvas'); const mw = 500, mh = 750; let w = img.width, h = img.height; if (w > mw || h > mh) { const r = Math.min(mw / w, mh / h); w = Math.round(w * r); h = Math.round(h * r); } c.width = w; c.height = h; c.getContext('2d').drawImage(img, 0, 0, w, h); uploadedPoster = c.toDataURL('image/jpeg', 0.85); updatePosterPreview(); }; img.src = e.target.result; };
+  reader.readAsDataURL(file);
+}
+function updateScoreDisplay(v) { document.getElementById('score-display').textContent = parseFloat(v) === 0 ? '—' : v; }
+function updateCriteriaDisplay(k, v) { const el = document.getElementById('crit-' + k + '-val'); if (el) el.textContent = parseFloat(v) === 0 ? '—' : v; }
+function applyCriteriaAverage() { const vals = ['story', 'animation', 'music', 'characters'].map(k => parseFloat(document.getElementById('f-crit-' + k).value) || 0).filter(v => v > 0); if (!vals.length) { showToast('Выставьте критерии', '⚠'); return; } const avg = (vals.reduce((s, v) => s + v, 0) / vals.length).toFixed(1); document.getElementById('f-score').value = avg; document.getElementById('score-display').textContent = avg; showToast(`Балл: ${avg}`, '✓'); }
+function saveAnime() {
+  const title = document.getElementById('f-title').value.trim(); if (!title) { showToast('Введите название', '⚠'); return; }
+  const criteria = {}; ['story', 'animation', 'music', 'characters'].forEach(k => { const v = parseFloat(document.getElementById('f-crit-' + k).value) || 0; if (v > 0) criteria[k] = v; });
+  const data = { title, titleJP: document.getElementById('f-titleJP').value.trim(), type: document.getElementById('f-type').value, year: parseInt(document.getElementById('f-year').value) || null, studio: document.getElementById('f-studio').value.trim(), genres: document.getElementById('f-genres').value.split(',').map(g => g.trim()).filter(Boolean), episodesTotal: parseInt(document.getElementById('f-episodesTotal').value) || 0, episodesWatched: parseInt(document.getElementById('f-episodesWatched').value) || 0, status: document.getElementById('f-status').value, score: parseFloat(document.getElementById('f-score').value) || 0, startDate: document.getElementById('f-startDate').value || '', finishDate: document.getElementById('f-finishDate').value || '', notes: document.getElementById('f-notes').value.trim(), favorite: document.getElementById('f-favorite').checked, poster: uploadedPoster, criteria: Object.keys(criteria).length ? criteria : null };
+  if (editingId) { const idx = animeList.findIndex(a => a.id === editingId); if (idx !== -1) { animeList[idx] = { ...animeList[idx], ...data }; showToast('Обновлено!', '✓'); } else { animeList.push({ id: editingId, ...data, addedAt: Date.now() }); } }
+  else { animeList.push({ id: 'a_' + Date.now(), ...data, addedAt: Date.now() }); showToast('Добавлено!', '✨'); }
+  saveAnime(); closeAddModal(); populateGenreFilter(); updateHeaderStats(); renderCurrentView();
+}
+function deleteAnime(id) { const a = animeList.find(x => x.id === id); if (!a) return; if (!confirm(`Удалить «${a.title}»?`)) return; animeList = animeList.filter(x => x.id !== id); if (db) idbDelete(id).catch(() => {}); saveAnime(); populateGenreFilter(); updateHeaderStats(); renderCurrentView(); showToast('Удалено', '🗑'); }
+
+/* ==================== EPISODES ==================== */
+function openEpModal(id) { const a = animeList.find(x => x.id === id); if (!a) return; editingId = id; document.getElementById('ep-modal-title').textContent = a.title; renderEpModalContent(a); document.getElementById('ep-modal').classList.add('show'); }
+function renderEpModalContent(a) { const progress = a.episodesTotal > 0 ? (a.episodesWatched / a.episodesTotal) * 100 : 0; document.getElementById('ep-modal-content').innerHTML = `<div class="text-center mb-4"><div class="heading text-5xl font-black mb-1" style="color:var(--accent-pink);">${a.episodesWatched}<span class="text-2xl" style="color:var(--text-muted);">/${a.episodesTotal || '?'}</span></div><div class="text-xs font-bold uppercase tracking-wider" style="color:var(--text-muted);">эпизодов</div></div><div class="ep-progress mb-4" style="height:10px;"><div class="ep-progress-fill" style="width:${progress}%"></div></div><div class="flex items-center justify-center gap-3 mb-4"><button onclick="adjustEpisodes(-1)" class="ep-btn" style="width:44px;height:44px;font-size:18px;">−</button><button onclick="adjustEpisodes(1)" class="btn-primary" style="padding:12px 24px;">+1</button><button onclick="adjustEpisodes(5)" class="btn-secondary">+5</button></div><div class="space-y-2"><label class="block text-xs font-bold uppercase tracking-wider" style="color:var(--text-secondary);">Вручную:</label><div class="flex gap-2"><input id="ep-manual" type="number" class="form-input" value="${a.episodesWatched}" min="0"><button onclick="setEpisodesManual()" class="btn-secondary">ОК</button></div></div><div class="flex gap-2 mt-4 pt-3 border-t" style="border-color:var(--border-subtle);">${a.episodesTotal > 0 && a.episodesWatched >= a.episodesTotal ? `<button onclick="markCompleted('${a.id}')" class="btn-primary w-full">✓ Завершено!</button>` : `<button onclick="closeEpModal()" class="btn-secondary w-full">Готово</button>`}</div>`; }
+function adjustEpisodes(delta) { const a = animeList.find(x => x.id === editingId); if (!a) return; a.episodesWatched = Math.max(0, Math.min(a.episodesTotal || 9999, (a.episodesWatched || 0) + delta)); if (a.episodesTotal > 0 && a.episodesWatched >= a.episodesTotal && a.status === 'watching') { a.status = 'completed'; if (!a.finishDate) a.finishDate = new Date().toISOString().slice(0, 10); } if (a.episodesWatched > 0 && a.status === 'planned') { a.status = 'watching'; if (!a.startDate) a.startDate = new Date().toISOString().slice(0, 10); } if (db) idbPut(a).catch(() => {}); saveAnime(); updateHeaderStats(); renderEpModalContent(a); renderCurrentView(); }
+function setEpisodesManual() { const v = parseInt(document.getElementById('ep-manual').value) || 0; const a = animeList.find(x => x.id === editingId); if (!a) return; a.episodesWatched = Math.max(0, v); if (db) idbPut(a).catch(() => {}); saveAnime(); updateHeaderStats(); renderEpModalContent(a); renderCurrentView(); }
+function markCompleted(id) { const a = animeList.find(x => x.id === id); if (!a) return; a.status = 'completed'; a.episodesWatched = a.episodesTotal; if (!a.finishDate) a.finishDate = new Date().toISOString().slice(0, 10); if (db) idbPut(a).catch(() => {}); saveAnime(); closeEpModal(); updateHeaderStats(); renderCurrentView(); showToast('Поздравляю! 🎉', '🏆'); }
+function closeEpModal() { document.getElementById('ep-modal').classList.remove('show'); editingId = null; }
+
+/* ==================== SEARCH (Shikimori + Jikan) with cache ==================== */
+async function searchShikimori(q) {
+  const key = 'shiki:' + q.toLowerCase().trim();
+  const cached = await apiCacheGet(key);
+  if (cached && Date.now() - cached.ts < API_CACHE_TTL) return { data: cached.data, fromCache: true };
+  try {
+    const resp = await fetch(`https://shikimori.one/api/animes?search=${encodeURIComponent(q)}&limit=8&order=popularity`);
+    if (resp.status === 429) throw new Error('RATE_LIMIT');
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    await apiCachePut(key, data);
+    return { data, fromCache: false };
+  } catch (e) {
+    if (cached) { console.warn('Using stale cache:', e.message); return { data: cached.data, fromCache: true, stale: true }; }
+    throw e;
+  }
+}
+async function searchJikanApi(q) {
+  const key = 'jikan:' + q.toLowerCase().trim();
+  const cached = await apiCacheGet(key);
+  if (cached && Date.now() - cached.ts < API_CACHE_TTL) return { data: cached.data, fromCache: true };
+  try {
+    const resp = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(q)}&limit=8&sfw`);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    const result = data.data || [];
+    await apiCachePut(key, result);
+    return { data: result, fromCache: false };
+  } catch (e) {
+    if (cached) { console.warn('Using stale cache:', e.message); return { data: cached.data, fromCache: true, stale: true }; }
+    throw e;
+  }
+}
+async function searchAnime() {
+  if (isSearching) return;
+  const q = document.getElementById('search-anime-input').value.trim();
+  if (!q) return;
+  isSearching = true;
+  const btn = document.getElementById('search-btn');
+  const origText = btn.textContent;
+  btn.disabled = true; btn.textContent = '...';
+  const box = document.getElementById('search-results');
+  box.innerHTML = '<div class="text-center py-3 text-xs" style="color:var(--text-muted);"><svg class="inline w-4 h-4 spinner" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.2-8.55"/></svg> Ищу...</div>';
+  let shikiResult = { data: [], fromCache: false }, jikanResult = { data: [], fromCache: false }, shikiError = null;
+  try { shikiResult = await searchShikimori(q); } catch (e) { shikiError = e.message; }
+  if (shikiResult.data.length < 3) {
+    try { jikanResult = await searchJikanApi(q); } catch (e) { console.warn('Jikan:', e); }
+  }
+  if (shikiResult.data.length === 0 && jikanResult.data.length === 0) {
+    const msg = shikiError === 'RATE_LIMIT' ? 'Shikimori: слишком много запросов. Подождите 5 сек.' : 'Ничего не найдено';
+    box.innerHTML = `<div class="text-center py-3 text-xs" style="color:${shikiError === 'RATE_LIMIT' ? '#f43f5e' : 'var(--text-muted)'};">${msg}</div>`;
+    isSearching = false; btn.disabled = false; btn.textContent = origText;
+    return;
+  }
+  const combined = [...shikiResult.data.slice(0, 8).map(d => ({ src: 'shikimori', data: d, fromCache: shikiResult.fromCache })), ...jikanResult.data.slice(0, 6).map(d => ({ src: 'jikan', data: d, fromCache: jikanResult.fromCache }))];
+  box.innerHTML = combined.map(item => {
+    if (item.src === 'shikimori') {
+      const d = item.data;
+      const title = d.russian || d.name || '';
+      const img = d.image?.preview || d.image?.original || '';
+      const year = d.aired_on ? new Date(d.aired_on).getFullYear() : '';
+      const kindMap = { tv: 'TV', movie: 'Movie', ova: 'OVA', ona: 'ONA', special: 'Special', tv_special: 'Special', music: 'Special' };
+      const type = kindMap[d.kind] || 'TV';
+      const studio = d.studios?.[0]?.name || '';
+      const genres = (d.genres || []).map(g => g.russian || g.name).join(', ');
+      const payload = encodeURIComponent(JSON.stringify({ source: 'shikimori', title, titleJP: d.japanese || d.name || '', year, eps: d.episodes || 0, score: d.score || 0, studio, genres, type, poster: d.image?.original || img }));
+      const cacheBadge = item.fromCache ? '<span class="cache-badge">⚡ кэш</span>' : '';
+      return `<div class="suggest-item" onclick="applySearchResult('${payload}')"><img src="${esc(img)}" alt=""><div class="flex-1 min-w-0"><div class="font-bold text-[13px] text-white truncate">${esc(title)}</div><div class="text-[11px] truncate" style="color:var(--text-muted);">${year ? year + ' • ' : ''}${type}${d.episodes ? ' • ' + d.episodes + ' эп.' : ''}${studio ? ' • ' + esc(studio) : ''}</div><div class="flex items-center gap-1.5 mt-0.5">${d.score ? `<span class="text-[11px] font-bold" style="color:var(--accent-pink);">★ ${d.score}</span>` : ''}${cacheBadge}</div></div><div class="text-[10px] px-2 py-1 rounded-md font-black" style="background:var(--accent-pink);color:#fff;">RU</div></div>`;
+    } else {
+      const d = item.data;
+      const russianTitle = d.titles?.find(t => t.type === 'Russian')?.title;
+      const title = russianTitle || d.title_english || d.title || '';
+      const titleJP = d.titles?.find(t => t.type === 'Japanese')?.title || d.title_japanese || '';
+      const img = d.images?.jpg?.image_url || '';
+      const year = d.year || d.aired?.prop?.from?.year || '';
+      const kindMap = { TV: 'TV', Movie: 'Movie', OVA: 'OVA', ONA: 'ONA', Special: 'Special', 'TV Special': 'Special' };
+      const type = kindMap[d.type] || 'TV';
+      const studio = d.studios?.[0]?.name || '';
+      const genres = (d.genres || []).map(g => g.name).join(', ');
+      const payload = encodeURIComponent(JSON.stringify({ source: 'jikan', title, titleJP, year, eps: d.episodes || 0, score: d.score || 0, studio, genres, type, poster: d.images?.jpg?.large_image_url || img }));
+      const cacheBadge = item.fromCache ? '<span class="cache-badge">⚡ кэш</span>' : '';
+      return `<div class="suggest-item" onclick="applySearchResult('${payload}')"><img src="${esc(img)}" alt=""><div class="flex-1 min-w-0"><div class="font-bold text-[13px] text-white truncate">${esc(title)}${russianTitle ? '' : ' (RU нет)'}</div><div class="text-[11px] truncate" style="color:var(--text-muted);">${year ? year + ' • ' : ''}${type}${d.episodes ? ' • ' + d.episodes + ' эп.' : ''}${studio ? ' • ' + esc(studio) : ''}</div><div class="flex items-center gap-1.5 mt-0.5">${d.score ? `<span class="text-[11px] font-bold" style="color:var(--accent-purple);">★ ${d.score}</span>` : ''}${cacheBadge}</div></div><div class="text-[10px] px-2 py-1 rounded-md font-black" style="background:var(--accent-purple);color:#fff;">MAL</div></div>`;
+    }
+  }).join('');
+  isSearching = false; btn.disabled = false; btn.textContent = origText;
+}
+function applySearchResult(encoded) {
+  const d = JSON.parse(decodeURIComponent(encoded));
+  document.getElementById('f-title').value = d.title || '';
+  document.getElementById('f-titleJP').value = d.titleJP || '';
+  document.getElementById('f-type').value = d.type || 'TV';
+  document.getElementById('f-year').value = d.year || '';
+  document.getElementById('f-studio').value = d.studio || '';
+  document.getElementById('f-genres').value = d.genres || '';
+  document.getElementById('f-episodesTotal').value = d.eps || 0;
+  document.getElementById('f-episodesWatched').value = 0;
+  document.getElementById('f-status').value = 'planned';
+  document.getElementById('f-score').value = 0; document.getElementById('score-display').textContent = '—';
+  document.getElementById('f-notes').value = ''; document.getElementById('f-startDate').value = ''; document.getElementById('f-finishDate').value = '';
+  document.getElementById('f-favorite').checked = false;
+  ['story', 'animation', 'music', 'characters'].forEach(k => { document.getElementById('f-crit-' + k).value = 0; updateCriteriaDisplay(k, 0); });
+  uploadedPoster = d.poster || '';
+  updatePosterPreview(); updateTitleSuggestions();
+  document.getElementById('search-results').innerHTML = ''; document.getElementById('search-anime-input').value = '';
+  showToast(d.source === 'shikimori' ? 'Из Shikimori (RU)' : 'Из MAL', '✓');
+}
+
+/* ==================== IMPORT FROM SHIKIMORI ==================== */
+function openImportModal() {
+  closeDataMenu();
+  document.getElementById('shiki-nickname').value = '';
+  document.getElementById('import-status').textContent = '';
+  document.getElementById('import-progress').classList.add('hidden');
+  document.getElementById('import-btn').disabled = false;
+  document.getElementById('import-btn').textContent = 'Импортировать';
+  document.getElementById('import-modal').classList.add('show');
+}
+function closeImportModal() { document.getElementById('import-modal').classList.remove('show'); }
+function mapShikimoriStatus(s) {
+  const map = { planned: 'planned', watching: 'watching', rewatching: 'rewatching', completed: 'completed', on_hold: 'on_hold', dropped: 'dropped' };
+  return map[s] || 'completed';
+}
+function mapShikimoriRate(rate) {
+  const a = rate.anime || {};
+  const kindMap = { tv: 'TV', movie: 'Movie', ova: 'OVA', ona: 'ONA', special: 'Special', tv_special: 'Special', music: 'Special' };
+  const year = a.aired_on ? new Date(a.aired_on).getFullYear() : null;
+  return {
+    id: 'a_shiki_' + (a.id || Date.now()) + '_' + Math.random().toString(36).slice(2, 7),
+    title: a.russian || a.name || 'Без названия',
+    titleJP: a.japanese || a.name || '',
+    type: kindMap[a.kind] || 'TV',
+    year: isNaN(year) ? null : year,
+    studio: '', genres: [],
+    episodesTotal: a.episodes || 0,
+    episodesWatched: rate.episodes || 0,
+    status: mapShikimoriStatus(rate.status),
+    score: Number(rate.score) || 0,
+    startDate: '',
+    finishDate: rate.status === 'completed' && rate.updated_at ? rate.updated_at.slice(0, 10) : '',
+    notes: rate.text || '',
+    favorite: false,
+    poster: a.image?.original || a.image?.preview || '',
+    criteria: null,
+    addedAt: rate.created_at ? new Date(rate.created_at).getTime() : Date.now(),
+    rewatches: rate.rewatches || 0
+  };
+}
+async function startImport() {
+  const nick = document.getElementById('shiki-nickname').value.trim();
+  if (!nick) { showToast('Введите ник', '⚠'); return; }
+  const statusEl = document.getElementById('import-status');
+  const progressWrap = document.getElementById('import-progress');
+  const progressFill = progressWrap.querySelector('.progress-bar-fill');
+  const btn = document.getElementById('import-btn');
+  btn.disabled = true; btn.textContent = 'Загрузка...';
+  statusEl.textContent = 'Запрашиваю список с Shikimori...';
+  statusEl.style.color = 'var(--text-secondary)';
+  try {
+    const resp = await fetch(`https://shikimori.one/api/users/${encodeURIComponent(nick)}/anime_rates?limit=1000`);
+    if (resp.status === 404) throw new Error('Пользователь не найден');
+    if (resp.status === 429) throw new Error('Слишком много запросов. Подождите');
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const rates = await resp.json();
+    if (!Array.isArray(rates) || rates.length === 0) { statusEl.textContent = 'Список пуст'; btn.disabled = false; btn.textContent = 'Импортировать'; return; }
+    statusEl.textContent = `Найдено ${rates.length} тайтлов. Обработка...`;
+    progressWrap.classList.remove('hidden');
+    const existing = new Set(animeList.map(a => (a.title || '').toLowerCase()));
+    let added = 0, skipped = 0;
+    const batch = [];
+    for (let i = 0; i < rates.length; i++) {
+      const mapped = mapShikimoriRate(rates[i]);
+      const key = mapped.title.toLowerCase();
+      if (existing.has(key)) { skipped++; } else { existing.add(key); batch.push(mapped); added++; }
+      if (i % 25 === 0 || i === rates.length - 1) {
+        progressFill.style.width = `${Math.round(((i + 1) / rates.length) * 100)}%`;
+        statusEl.textContent = `Обработано ${i + 1} из ${rates.length}...`;
+        await new Promise(r => setTimeout(r, 0));
+      }
+    }
+    animeList.push(...batch);
+    saveAnime(); populateGenreFilter(); updateHeaderStats(); renderCurrentView();
+    statusEl.textContent = `✓ Добавлено ${added}, пропущено (дубликаты) ${skipped}`;
+    statusEl.style.color = 'var(--accent-green)';
+    btn.textContent = 'Готово';
+    showToast(`Импорт завершён: ${added} новых`, '✓');
+    setTimeout(() => { closeImportModal(); switchView('grid'); }, 2200);
+  } catch (e) {
+    statusEl.textContent = 'Ошибка: ' + e.message;
+    statusEl.style.color = '#f43f5e';
+    btn.disabled = false; btn.textContent = 'Повторить';
+  }
+}
+
+/* ==================== DATA MENU ==================== */
+async function openDataMenu() {
+  document.getElementById('info-count').textContent = animeList.length;
+  document.getElementById('info-posters').textContent = animeList.filter(a => hasPoster(a)).length;
+  try { const size = new Blob([JSON.stringify(animeList)]).size; document.getElementById('info-size').textContent = size > 1048576 ? (size / 1048576).toFixed(1) + ' МБ' : (size / 1024).toFixed(1) + ' КБ'; } catch { document.getElementById('info-size').textContent = '—'; }
+  const swStatus = document.getElementById('info-sw');
+  if ('serviceWorker' in navigator) {
+    try {
+      const reg = await navigator.serviceWorker.getRegistration();
+      swStatus.textContent = reg ? (reg.active ? '✓ Активен' : '⏳ Установка') : '✗ Не зарег.';
+      swStatus.style.color = reg && reg.active ? 'var(--accent-green)' : 'var(--accent-yellow)';
+    } catch { swStatus.textContent = '—'; }
+  } else { swStatus.textContent = '✗ Не поддерживается'; }
+  document.getElementById('data-modal').classList.add('show');
+}
+function closeDataMenu() { document.getElementById('data-modal').classList.remove('show'); }
+function exportData() {
+  const data = { version: 5, exportedAt: new Date().toISOString(), anime: animeList };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `anime-diary-backup-${new Date().toISOString().slice(0, 10)}.json`; a.click(); URL.revokeObjectURL(url);
+  showToast('Бэкап скачан', '💾');
+}
+function importData(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      const incoming = Array.isArray(data) ? data : (data.anime || []);
+      if (!Array.isArray(incoming) || incoming.length === 0) { showToast('Файл пуст', '⚠'); return; }
+      const mode = confirm(`Найдено ${incoming.length}.\n\nOK — добавить\nОтмена — заменить всё`);
+      if (mode) {
+        const ids = new Set(animeList.map(a => a.id)); let added = 0;
+        incoming.forEach(a => { if (a.id && !ids.has(a.id)) { animeList.push(a); added++; } else if (a.id) { const i = animeList.findIndex(x => x.id === a.id); if (i >= 0) animeList[i] = { ...animeList[i], ...a }; } else { animeList.push({ ...a, id: 'a_' + Date.now() + Math.random().toString(36).slice(2, 7) }); added++; } });
+        showToast(`Добавлено ${added}`, '✓');
+      } else { animeList = incoming; if (db) await idbClear(); showToast(`Загружено ${incoming.length}`, '✓'); }
+      saveAnime(); populateGenreFilter(); updateHeaderStats(); renderCurrentView(); closeDataMenu();
+    } catch { showToast('Ошибка чтения', '⚠'); }
+  };
+  reader.readAsText(file);
+}
+async function clearAllData() {
+  if (!confirm('Удалить ВСЕ данные? Убедитесь, что сделали бэкап!')) return;
+  if (!confirm('Точно?')) return;
+  animeList = [];
+  if (db) await idbClear();
+  localStorage.removeItem('anime_diary_backup_v4');
+  saveAnime(); populateGenreFilter(); updateHeaderStats(); renderCurrentView(); closeDataMenu();
+  showToast('Всё удалено', '🗑');
+}
+
+/* ==================== BACKGROUND ==================== */
+function spawnSakura() {
+  const bg = document.getElementById('sakura-bg');
+  const isMobile = window.innerWidth < 640;
+  for (let i = 0; i < (isMobile ? 10 : 18); i++) { const p = document.createElement('div'); p.className = 'petal'; p.style.left = Math.random() * 100 + '%'; p.style.animationDuration = (10 + Math.random() * 12) + 's'; p.style.animationDelay = (Math.random() * -20) + 's'; const sz = 8 + Math.random() * 10; p.style.width = sz + 'px'; p.style.height = sz + 'px'; bg.appendChild(p); }
+  for (let i = 0; i < (isMobile ? 25 : 50); i++) { const s = document.createElement('div'); s.className = 'star'; s.style.left = Math.random() * 100 + '%'; s.style.top = Math.random() * 100 + '%'; s.style.animationDuration = (3 + Math.random() * 5) + 's'; s.style.animationDelay = (Math.random() * 8) + 's'; bg.appendChild(s); }
+}
+
+/* ==================== PWA ==================== */
+function injectManifest() {
+  const m = { name: 'Anime Diary', short_name: 'Anime Diary', description: 'Личный аниме-дневник', start_url: './', scope: './', display: 'standalone', background_color: '#0c0a1a', theme_color: '#0c0a1a', icons: [{ src: 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect fill="#0c0a1a" width="512" height="512" rx="96"/><circle cx="256" cy="256" r="180" fill="none" stroke="#ff6ec7" stroke-width="16"/><circle cx="256" cy="256" r="100" fill="#ff6ec7" opacity="0.3"/></svg>'), sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }] };
+  const link = document.createElement('link'); link.rel = 'manifest'; link.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(m)); document.head.appendChild(link);
+}
+
+/* ==================== EVENTS ==================== */
+const debouncedSearch = debounce(() => { currentFilters.search = document.getElementById('search-input').value.trim().toLowerCase(); saveFiltersState(); renderCurrentView(); }, 250);
+document.getElementById('search-input').addEventListener('input', debouncedSearch);
+document.getElementById('add-modal').addEventListener('click', e => { if (e.target.id === 'add-modal') closeAddModal(); });
+document.getElementById('ep-modal').addEventListener('click', e => { if (e.target.id === 'ep-modal') closeEpModal(); });
+document.getElementById('data-modal').addEventListener('click', e => { if (e.target.id === 'data-modal') closeDataMenu(); });
+document.getElementById('import-modal').addEventListener('click', e => { if (e.target.id === 'import-modal') closeImportModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAddModal(); closeEpModal(); closeDataMenu(); closeImportModal(); } });
+
+/* ==================== INIT ==================== */
+async function init() {
+  initTheme();
+  injectManifest();
+  registerServiceWorker();
+  await loadAnime();
+  apiCacheCleanup();
+  bgAnimationEnabled = localStorage.getItem('anime_diary_bg_enabled') !== '0';
+  const bg = document.getElementById('sakura-bg');
+  const onIcon = document.getElementById('anim-icon-on'), offIcon = document.getElementById('anim-icon-off');
+  bg.style.display = bgAnimationEnabled ? '' : 'none';
+  if (bgAnimationEnabled) { onIcon.classList.remove('hidden'); offIcon.classList.add('hidden'); }
+  else { onIcon.classList.add('hidden'); offIcon.classList.remove('hidden'); }
+  spawnSakura();
+  populateGenreFilter();
+  loadFiltersState();
+  readFiltersFromUI();
+  updateHeaderStats();
+  switchView('overview');
+  applyFilters();
+}
+init();
+</script>
+</body>
+</html>

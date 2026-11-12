@@ -6,7 +6,6 @@
 <meta name="theme-color" content="#0c0a1a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Anime Diary">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Anime Diary — Личный аниме-дневник</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230c0a1a'/%3E%3Ccircle cx='50' cy='50' r='34' fill='none' stroke='%23ff6ec7' stroke-width='3.5'/%3E%3Ccircle cx='50' cy='50' r='16' fill='%23ff6ec7' opacity='0.5'/%3E%3C/svg%3E">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -37,17 +36,17 @@ html, body { margin: 0; padding: 0; }
 body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(--bg-deep); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; position: relative; transition: background 0.3s, color 0.3s; }
 .heading { font-family: 'Outfit', sans-serif; letter-spacing: -0.025em; }
 #sakura-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-.petal { position: absolute; width: 14px; height: 14px; background: radial-gradient(circle at 30% 30%, #ffb3e0, var(--accent-pink) 60%, #d94f9e); border-radius: 100% 0 100% 0; opacity: 0.35; animation: fall linear infinite; will-change: transform; }
+.petal { position: absolute; width: 14px; height: 14px; background: radial-gradient(circle at 30% 30%, #ffb3e0, var(--accent-pink) 60%, #d94f9e); border-radius: 100% 0 100% 0; opacity: 0.35; animation: fall linear infinite; }
 html[data-theme="light"] .petal { opacity: 0.22; }
 @keyframes fall { 0% { transform: translateY(-10vh) translateX(0) rotate(0deg); } 100% { transform: translateY(110vh) translateX(80px) rotate(720deg); } }
 .star { position: absolute; width: 2px; height: 2px; background: #fff; border-radius: 50%; opacity: 0.25; animation: twinkle ease-in-out infinite; box-shadow: 0 0 4px #fff; }
-html[data-theme="light"] .star { background: var(--accent-pink); box-shadow: 0 0 4px var(--accent-pink); opacity: 0.35; }
 @keyframes twinkle { 0%, 100% { opacity: 0.15; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.6); } }
 .ambient-glow { position: absolute; border-radius: 50%; filter: blur(110px); pointer-events: none; animation: drift 25s ease-in-out infinite alternate; }
 .ambient-glow-1 { top: -15%; left: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(255,110,199,0.2), transparent 70%); }
 .ambient-glow-2 { bottom: -15%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(167,139,250,0.18), transparent 70%); animation-delay: -12s; }
 .ambient-glow-3 { top: 40%; left: 40%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(92,225,230,0.1), transparent 70%); animation-delay: -6s; }
 @keyframes drift { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(60px, 40px) scale(1.15); } }
+
 .anime-card { background: linear-gradient(160deg, var(--card-bg-from) 0%, var(--card-bg-to) 100%); border: 1px solid var(--border-subtle); border-radius: 20px; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
 .anime-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255,110,199,0.06), transparent 40%); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
 .anime-card:hover { border-color: var(--accent-pink); transform: translateY(-5px); box-shadow: 0 20px 40px -12px var(--shadow-accent), 0 0 30px rgba(255, 110, 199, 0.15); }
@@ -55,12 +54,23 @@ html[data-theme="light"] .star { background: var(--accent-pink); box-shadow: 0 0
 .poster-wrap { overflow: hidden; }
 .poster-wrap img { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
 .anime-card:hover .poster-wrap img { transform: scale(1.08); }
+
+/* Swipe on card */
+.swipe-wrap { position: relative; overflow: hidden; border-radius: 20px; }
+.swipe-bg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-radius: 20px; }
+.swipe-bg-left { background: linear-gradient(90deg, rgba(244,63,94,0.8), transparent); }
+.swipe-bg-right { background: linear-gradient(270deg, rgba(255,110,199,0.8), transparent); }
+.swipe-content { position: relative; transition: transform 0.25s ease-out; touch-action: pan-y; }
+.swipe-content.swiping { transition: none; }
+
 .tab-btn { padding: 9px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary); background: transparent; border: 1px solid transparent; cursor: pointer; transition: all 0.25s; display: flex; align-items: center; gap: 7px; white-space: nowrap; }
 .tab-btn svg { width: 15px; height: 15px; }
 .tab-btn:hover { color: var(--text-primary); background: var(--bg-hover); border-color: var(--border-subtle); }
 .tab-btn.active { background: linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-purple) 100%); color: #fff; box-shadow: 0 6px 18px var(--shadow-accent), inset 0 1px 0 rgba(255,255,255,0.25); border-color: transparent; }
+
 .ep-progress { height: 6px; background: rgba(128,128,128,0.15); border-radius: 999px; overflow: hidden; position: relative; }
-.ep-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-pink) 0%, var(--accent-purple) 50%, var(--accent-cyan) 100%); border-radius: 999px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px var(--shadow-accent); position: relative; overflow: hidden; }
+.ep-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-pink) 0%, var(--accent-purple) 50%, var(--accent-cyan) 100%); border-radius: 999px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px var(--shadow-accent); }
+
 .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; border: 1px solid; }
 .badge-watching { background: rgba(92,225,230,0.12); color: var(--accent-cyan); border-color: rgba(92,225,230,0.4); }
 .badge-completed { background: rgba(52,211,153,0.12); color: var(--accent-green); border-color: rgba(52,211,153,0.4); }
@@ -69,7 +79,9 @@ html[data-theme="light"] .star { background: var(--accent-pink); box-shadow: 0 0
 .badge-planned { background: rgba(167,139,250,0.12); color: var(--accent-purple); border-color: rgba(167,139,250,0.4); }
 .badge-rewatching { background: rgba(255,110,199,0.12); color: var(--accent-pink); border-color: rgba(255,110,199,0.4); }
 .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; }
-.score-circle { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 15px; background: linear-gradient(135deg, rgba(255,110,199,0.25), rgba(167,139,250,0.25)); border: 1.5px solid var(--accent-pink); color: var(--accent-pink); box-shadow: 0 0 16px var(--shadow-accent), inset 0 0 8px rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px); }
+
+.score-circle { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 15px; background: linear-gradient(135deg, rgba(255,110,199,0.25), rgba(167,139,250,0.25)); border: 1.5px solid var(--accent-pink); color: var(--accent-pink); box-shadow: 0 0 16px var(--shadow-accent); backdrop-filter: blur(8px); }
+
 .form-input, .form-select, .form-textarea { width: 100%; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 10px 14px; color: var(--text-primary); font-size: 13px; outline: none; transition: all 0.2s; font-family: inherit; }
 .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent-pink); box-shadow: 0 0 0 3px var(--shadow-accent); background: var(--bg-elevated); }
 .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
@@ -78,39 +90,51 @@ html[data-theme="light"] .star { background: var(--accent-pink); box-shadow: 0 0
 input[type="range"].score-slider, input[type="range"].criteria-slider { width: 100%; height: 6px; -webkit-appearance: none; appearance: none; background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple), var(--accent-cyan)); border-radius: 999px; outline: none; }
 input[type="range"].score-slider::-webkit-slider-thumb, input[type="range"].criteria-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid var(--accent-pink); cursor: pointer; box-shadow: 0 0 12px var(--shadow-accent); }
 input[type="range"].score-slider::-moz-range-thumb, input[type="range"].criteria-slider::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid var(--accent-pink); cursor: pointer; }
+
 .modal-backdrop { position: fixed; inset: 0; background: rgba(6, 4, 16, 0.88); backdrop-filter: blur(12px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.28s; }
 html[data-theme="light"] .modal-backdrop { background: rgba(250, 245, 238, 0.88); }
 .modal-backdrop.show { opacity: 1; pointer-events: auto; }
 .modal-content { transform: scale(0.94) translateY(12px); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
 .modal-backdrop.show .modal-content { transform: scale(1) translateY(0); }
+
 @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 .fade-up { animation: fadeUp 0.55s cubic-bezier(0.4, 0, 0.2, 1) both; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner { animation: spin 1s linear infinite; }
+
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--bg-deep); }
 ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--accent-pink), var(--accent-purple)); border-radius: 10px; }
+
 .btn-primary { background: linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-purple) 100%); color: #fff; font-weight: 700; padding: 10px 20px; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px var(--shadow-accent), inset 0 1px 0 rgba(255,255,255,0.2); }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 24px var(--shadow-accent), inset 0 1px 0 rgba(255,255,255,0.2); }
 .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 .btn-secondary { background: var(--bg-elevated); color: var(--text-primary); padding: 10px 20px; border-radius: 12px; border: 1px solid var(--border-subtle); cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
 .btn-secondary:hover { border-color: var(--accent-pink); color: var(--accent-pink); transform: translateY(-1px); }
+.btn-success { background: linear-gradient(135deg, #34d399 0%, #059669 100%); color: #fff; font-weight: 700; padding: 10px 20px; border-radius: 12px; border: none; cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(52,211,153,0.4); }
+.btn-success:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(52,211,153,0.5); }
 .btn-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); color: var(--text-secondary); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 14px; }
 .btn-icon:hover { color: var(--accent-pink); border-color: var(--accent-pink); transform: translateY(-1px); background: var(--bg-hover); }
 .view { display: none; } .view.active { display: block; }
+
 .anime-table th { text-align: left; padding: 14px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); border-bottom: 1px solid var(--border-subtle); cursor: pointer; user-select: none; transition: color 0.2s; background: var(--bg-surface); position: sticky; top: 0; }
 .anime-table th:hover { color: var(--accent-pink); }
 .anime-table td { padding: 14px 16px; border-bottom: 1px solid var(--border-subtle); font-size: 13px; }
 .anime-table tr { transition: background 0.15s; }
 .anime-table tr:hover td { background: var(--bg-hover); }
-.stat-card { background: linear-gradient(160deg, var(--card-bg-from), var(--card-bg-to)); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 20px; position: relative; overflow: hidden; transition: all 0.25s; }
-.stat-card:hover { border-color: var(--border-glow); transform: translateY(-2px); }
-.stat-card::before { content: ''; position: absolute; top: -40%; right: -20%; width: 140px; height: 140px; background: radial-gradient(circle, var(--shadow-accent), transparent 70%); pointer-events: none; }
+
+.bento-card { background: linear-gradient(160deg, var(--card-bg-from), var(--card-bg-to)); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 20px; transition: all 0.28s; position: relative; overflow: hidden; }
+.bento-card:hover { border-color: var(--border-glow); transform: translateY(-3px); box-shadow: 0 12px 28px -8px var(--shadow-accent); }
+
+.hero-card { position: relative; border-radius: 24px; overflow: hidden; border: 1px solid var(--border-glow); background: linear-gradient(135deg, rgba(255,110,199,0.08), rgba(167,139,250,0.08)); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.4); }
+
 .ep-btn { width: 28px; height: 28px; border-radius: 8px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); color: var(--text-secondary); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; font-weight: 700; transition: all 0.15s; }
 .ep-btn:hover { background: var(--accent-pink); color: #fff; border-color: var(--accent-pink); transform: scale(1.05); }
+
 .suggest-item { padding: 10px 12px; cursor: pointer; display: flex; gap: 12px; align-items: center; border-radius: 12px; transition: all 0.18s; border: 1px solid transparent; }
 .suggest-item:hover { background: var(--bg-hover); border-color: var(--border-glow); transform: translateX(3px); }
 .suggest-item img { width: 42px; height: 58px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid var(--border-subtle); }
+
 .cal-day { aspect-ratio: 1; min-height: 60px; border-radius: 12px; background: var(--bg-surface); border: 1px solid var(--border-subtle); cursor: pointer; transition: all 0.18s; padding: 6px; display: flex; flex-direction: column; gap: 3px; font-size: 12px; }
 .cal-day:hover { border-color: var(--accent-pink); background: var(--bg-hover); transform: scale(1.03); }
 .cal-day.today { border-color: var(--accent-pink); box-shadow: 0 0 0 2px var(--shadow-accent); }
@@ -119,13 +143,11 @@ html[data-theme="light"] .modal-backdrop { background: rgba(250, 245, 238, 0.88)
 .cal-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
 .cal-dot-start { background: var(--accent-cyan); box-shadow: 0 0 4px var(--accent-cyan); }
 .cal-dot-finish { background: var(--accent-pink); box-shadow: 0 0 4px var(--accent-pink); }
-#wrapped-canvas { max-width: 100%; height: auto; border-radius: 20px; box-shadow: 0 20px 50px -10px var(--shadow-accent); border: 2px solid var(--accent-pink); cursor: pointer; transition: transform 0.2s; }
-#wrapped-canvas:hover { transform: scale(1.01); }
+
+#wrapped-canvas { max-width: 100%; height: auto; border-radius: 20px; box-shadow: 0 20px 50px -10px var(--shadow-accent); border: 2px solid var(--accent-pink); cursor: pointer; }
 .franchise-card { background: linear-gradient(160deg, var(--card-bg-from), var(--card-bg-to)); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; transition: all 0.28s; }
 .franchise-card:hover { border-color: var(--accent-purple); transform: translateY(-2px); box-shadow: 0 10px 30px -8px var(--shadow-accent); }
-.hero-card { position: relative; border-radius: 24px; overflow: hidden; border: 1px solid var(--border-glow); background: linear-gradient(135deg, rgba(255,110,199,0.08), rgba(167,139,250,0.08)); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.4); }
-.bento-card { background: linear-gradient(160deg, var(--card-bg-from), var(--card-bg-to)); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 20px; transition: all 0.28s; position: relative; overflow: hidden; }
-.bento-card:hover { border-color: var(--border-glow); transform: translateY(-3px); box-shadow: 0 12px 28px -8px var(--shadow-accent); }
+
 html[data-theme="light"] [class*="bg-[#15122a]"] { background: var(--bg-surface) !important; }
 html[data-theme="light"] [class*="bg-[#0c0a1a]"] { background: var(--bg-deep) !important; }
 html[data-theme="light"] [class*="bg-[#1e1a38]"] { background: var(--bg-elevated) !important; }
@@ -139,6 +161,7 @@ html[data-theme="light"] [class*="text-[#8574b0]"] { color: var(--text-muted) !i
 html[data-theme="light"] [class*="border-[#2e2852]"] { border-color: var(--border-subtle) !important; }
 html[data-theme="light"] [class*="border-[#453a78]"] { border-color: var(--border-glow) !important; }
 html[data-theme="light"] header { background: rgba(250, 245, 238, 0.92) !important; }
+
 .hint-banner { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 9px 12px; border-radius: 10px; background: rgba(255, 110, 199, 0.08); border: 1px solid rgba(255, 110, 199, 0.25); color: var(--text-secondary); }
 .crit-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: rgba(128, 128, 128, 0.06); }
 .crit-bar { height: 8px; background: rgba(128, 128, 128, 0.1); border-radius: 999px; overflow: hidden; flex: 1; }
@@ -148,6 +171,48 @@ html[data-theme="light"] header { background: rgba(250, 245, 238, 0.92) !importa
 .cache-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; padding: 2px 6px; border-radius: 6px; background: rgba(92,225,230,0.15); color: var(--accent-cyan); font-weight: 700; }
 .progress-bar-wrap { height: 8px; background: rgba(128,128,128,0.15); border-radius: 999px; overflow: hidden; }
 .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple)); border-radius: 999px; transition: width 0.3s; }
+
+/* ====== PHASE 2 STYLES ====== */
+/* Next episode widget */
+.next-ep-widget { position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 10px; background: linear-gradient(135deg, rgba(253,224,71,0.15), rgba(255,110,199,0.15)); border: 1px solid var(--accent-yellow); cursor: pointer; transition: all 0.2s; font-size: 12px; font-weight: 700; color: var(--accent-yellow); }
+.next-ep-widget:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(253,224,71,0.3); }
+.next-ep-widget .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-yellow); animation: pulseGlow 1.5s infinite; }
+@keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(253,224,71,0.7); } 50% { box-shadow: 0 0 0 6px rgba(253,224,71,0); } }
+
+/* Episode log timeline */
+.ep-log-timeline { position: relative; padding-left: 20px; }
+.ep-log-timeline::before { content: ''; position: absolute; left: 6px; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(180deg, var(--accent-pink), var(--accent-purple)); opacity: 0.4; border-radius: 1px; }
+.ep-log-item { position: relative; padding: 10px 12px; margin-bottom: 8px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; transition: all 0.2s; }
+.ep-log-item::before { content: ''; position: absolute; left: -18px; top: 18px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent-pink); border: 2px solid var(--bg-deep); box-shadow: 0 0 8px var(--accent-pink); }
+.ep-log-item:hover { border-color: var(--accent-pink); }
+.ep-log-item .ep-log-mood { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: var(--bg-elevated); font-size: 14px; }
+
+/* Emoji picker */
+.emoji-picker { display: flex; flex-wrap: wrap; gap: 6px; }
+.emoji-btn { width: 38px; height: 38px; border-radius: 10px; background: var(--bg-surface); border: 1.5px solid var(--border-subtle); cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; }
+.emoji-btn:hover { border-color: var(--accent-pink); transform: scale(1.08); }
+.emoji-btn.selected { background: var(--accent-pink); border-color: var(--accent-pink); box-shadow: 0 0 12px var(--shadow-accent); transform: scale(1.1); }
+
+/* Episode avg badge */
+.ep-avg-badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 999px; background: rgba(92,225,230,0.15); border: 1px solid rgba(92,225,230,0.4); color: var(--accent-cyan); font-size: 10px; font-weight: 700; }
+
+/* Random picker */
+.random-pick-stage { min-height: 340px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+.random-poster { width: 180px; aspect-ratio: 3/4; border-radius: 16px; overflow: hidden; border: 2px solid var(--accent-pink); box-shadow: 0 20px 40px -12px var(--shadow-accent); margin: 0 auto 16px; }
+@keyframes randomReveal { 0% { opacity: 0; transform: scale(0.7) rotate(-8deg); } 60% { opacity: 1; transform: scale(1.05) rotate(2deg); } 100% { opacity: 1; transform: scale(1) rotate(0deg); } }
+.random-reveal { animation: randomReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+/* Hotkeys help */
+.hotkey-key { display: inline-flex; align-items: center; justify-content: center; min-width: 34px; padding: 4px 8px; border-radius: 6px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-bottom-width: 3px; font-family: monospace; font-size: 12px; font-weight: 700; color: var(--text-primary); }
+.hotkey-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-subtle); font-size: 13px; }
+.hotkey-row:last-child { border-bottom: none; }
+
+/* Swipe actions indicator */
+.swipe-hint { position: absolute; top: 8px; right: 8px; font-size: 10px; padding: 2px 6px; border-radius: 6px; background: rgba(0,0,0,0.4); color: rgba(255,255,255,0.7); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.anime-card:hover .swipe-hint { opacity: 1; }
+
+/* Retry indicator */
+.retry-info { font-size: 11px; color: var(--accent-yellow); margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -170,11 +235,13 @@ html[data-theme="light"] header { background: rgba(250, 245, 238, 0.92) !importa
       </div>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
+      <div id="next-ep-badge-container"></div>
       <div class="relative">
         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8574b0]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input id="search-input" type="text" placeholder="Поиск..." class="form-input pl-9 w-full sm:w-52" style="padding-top:8px;padding-bottom:8px;">
+        <input id="search-input" type="text" placeholder="Поиск..." class="form-input pl-9 w-full sm:w-44" style="padding-top:8px;padding-bottom:8px;">
       </div>
-      <button onclick="toggleBackgroundAnimation()" id="anim-toggle" class="btn-icon" title="Пауза/старт анимации фона">
+      <button onclick="openHotkeysHelp()" class="btn-icon hidden md:inline-flex" title="Горячие клавиши (?)">?</button>
+      <button onclick="toggleBackgroundAnimation()" id="anim-toggle" class="btn-icon" title="Пауза/старт анимации">
         <svg id="anim-icon-on" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m-4-8H3m18 0h-5m-2.5-6.5L17 5m-9 9l-2.5 2.5m14 0L17 14M8 5l1.5 2.5"/></svg>
         <svg id="anim-icon-off" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
       </button>
@@ -182,7 +249,7 @@ html[data-theme="light"] header { background: rgba(250, 245, 238, 0.92) !importa
         <svg id="theme-icon-dark" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
         <svg id="theme-icon-light" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
-      <button onclick="openDataMenu()" class="btn-icon" title="Данные (бэкап)">
+      <button onclick="openDataMenu()" class="btn-icon" title="Данные">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
       </button>
       <button onclick="openAddModal()" class="btn-primary">
@@ -213,12 +280,7 @@ html[data-theme="light"] header { background: rgba(250, 245, 238, 0.92) !importa
     <input id="filter-year-to" type="number" placeholder="Год до" onchange="applyFilters()" class="form-input" style="width:auto;padding:8px 12px;font-size:12px;min-width:90px;" min="1960" max="2035">
     <input id="filter-studio" list="studio-datalist" placeholder="Студия" onchange="applyFilters()" class="form-input" style="width:auto;padding:8px 12px;font-size:12px;min-width:120px;">
     <datalist id="studio-datalist"></datalist>
-    <select id="filter-length" onchange="applyFilters()" class="form-select" style="width:auto;padding:8px 12px;font-size:12px;">
-      <option value="">Любая длина</option>
-      <option value="short">Короткое (1–13)</option>
-      <option value="medium">Среднее (14–50)</option>
-      <option value="long">Длинное (50+)</option>
-    </select>
+    <select id="filter-length" onchange="applyFilters()" class="form-select" style="width:auto;padding:8px 12px;font-size:12px;"><option value="">Любая длина</option><option value="short">Короткое (1–13)</option><option value="medium">Среднее (14–50)</option><option value="long">Длинное (50+)</option></select>
     <label class="flex items-center gap-2 text-xs text-[#b8a8e0] cursor-pointer"><input type="checkbox" id="filter-fav" onchange="applyFilters()" class="w-4 h-4" style="accent-color: var(--accent-pink);"> ♥ Избранные</label>
     <label class="flex items-center gap-2 text-xs text-[#b8a8e0] cursor-pointer"><input type="checkbox" id="filter-has-score" onchange="applyFilters()" class="w-4 h-4" style="accent-color: var(--accent-pink);"> С оценкой</label>
     <button onclick="resetFilters()" class="btn-secondary" style="padding:8px 12px;font-size:12px;">Сбросить</button>
@@ -256,13 +318,13 @@ html[data-theme="light"] header { background: rgba(250, 245, 238, 0.92) !importa
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <div id="poster-preview" class="w-full aspect-[3/4] bg-[#0c0a1a] border border-[#2e2852] rounded-xl overflow-hidden flex items-center justify-center"><span class="text-5xl" style="color:var(--border-glow);">🎴</span></div>
-          <label class="mt-2 block text-xs font-bold text-[#b8a8e0] cursor-pointer"><span class="btn-secondary w-full justify-center">📷 Загрузить постер</span><input type="file" accept="image/*" class="hidden" onchange="handlePosterUpload(event)"></label>
+          <label class="mt-2 block text-xs font-bold text-[#b8a8e0] cursor-pointer"><span class="btn-secondary w-full justify-center">📷 Постер</span><input type="file" accept="image/*" class="hidden" onchange="handlePosterUpload(event)"></label>
         </div>
         <div class="md:col-span-2 space-y-3">
           <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Название *</label><input id="f-title" type="text" class="form-input" placeholder="Провожающая в последний путь Фрирен" oninput="updateTitleSuggestions()"><div id="franchise-hint" class="hidden mt-2 space-y-1.5"></div></div>
-          <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Оригинальное название</label><input id="f-titleJP" type="text" class="form-input" placeholder="Frieren / 葬送のフリーレン"></div>
+          <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Оригинальное</label><input id="f-titleJP" type="text" class="form-input" placeholder="Frieren / 葬送のフリーレン"></div>
           <div class="grid grid-cols-2 gap-3">
-            <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Тип</label><select id="f-type" class="form-select"><option value="TV">TV сериал</option><option value="Movie">Фильм</option><option value="OVA">OVA</option><option value="ONA">ONA</option><option value="Special">Спешл</option></select></div>
+            <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Тип</label><select id="f-type" class="form-select"><option value="TV">TV</option><option value="Movie">Фильм</option><option value="OVA">OVA</option><option value="ONA">ONA</option><option value="Special">Спешл</option></select></div>
             <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Год</label><input id="f-year" type="number" class="form-input" placeholder="2023" min="1960" max="2035"></div>
           </div>
         </div>
@@ -284,7 +346,7 @@ html[data-theme="light"] header { background: rgba(250, 245, 238, 0.92) !importa
         <div class="flex items-center justify-between mb-3"><h3 class="text-xs font-bold text-[#b8a8e0] uppercase tracking-wider">⭐ Общий балл</h3><span id="score-display" class="heading text-2xl font-black" style="color:var(--accent-pink);">—</span></div>
         <input id="f-score" type="range" min="0" max="10" step="0.5" value="0" class="score-slider" oninput="updateScoreDisplay(this.value)">
         <div class="mt-4 pt-4 border-t border-[#2e2852]">
-          <div class="flex items-center justify-between mb-3"><h3 class="text-xs font-bold text-[#b8a8e0] uppercase tracking-wider">📊 Детальная оценка</h3><button type="button" onclick="applyCriteriaAverage()" class="text-xs font-bold px-2 py-1 rounded-md border border-[#2e2852] hover:border-[#ff6ec7]" style="color:var(--accent-pink);">Применить среднее</button></div>
+          <div class="flex items-center justify-between mb-3"><h3 class="text-xs font-bold text-[#b8a8e0] uppercase tracking-wider">📊 Детальная оценка</h3><button type="button" onclick="applyCriteriaAverage()" class="text-xs font-bold px-2 py-1 rounded-md border border-[#2e2852] hover:border-[#ff6ec7]" style="color:var(--accent-pink);">Среднее</button></div>
           <div class="space-y-3">
             <div><div class="flex justify-between text-xs mb-1"><span class="font-bold text-[#b8a8e0]">📖 Сюжет</span><span id="crit-story-val" class="font-bold" style="color:var(--accent-cyan);">—</span></div><input id="f-crit-story" type="range" min="0" max="10" step="0.5" value="0" class="criteria-slider" oninput="updateCriteriaDisplay('story', this.value)"></div>
             <div><div class="flex justify-between text-xs mb-1"><span class="font-bold text-[#b8a8e0]">🎨 Анимация</span><span id="crit-animation-val" class="font-bold" style="color:var(--accent-purple);">—</span></div><input id="f-crit-animation" type="range" min="0" max="10" step="0.5" value="0" class="criteria-slider" oninput="updateCriteriaDisplay('animation', this.value)"></div>
@@ -297,7 +359,7 @@ html[data-theme="light"] header { background: rgba(250, 245, 238, 0.92) !importa
       <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" id="f-favorite" class="w-4 h-4" style="accent-color: var(--accent-pink);"><span class="font-bold" style="color:var(--accent-pink);">♥ В избранное</span></label>
       <div class="flex gap-2 justify-end pt-3 border-t border-[#2e2852]">
         <button onclick="closeAddModal()" class="btn-secondary">Отмена</button>
-        <button onclick="saveAnime()" class="btn-primary"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Сохранить</button>
+        <button onclick="saveAnime()" class="btn-primary">✓ Сохранить</button>
       </div>
     </div>
   </div>
@@ -305,9 +367,12 @@ html[data-theme="light"] header { background: rgba(250, 245, 238, 0.92) !importa
 
 <!-- EPISODE MODAL -->
 <div id="ep-modal" class="modal-backdrop">
-  <div class="modal-content bg-[#15122a] border border-[#2e2852] rounded-2xl max-w-md w-full p-6">
-    <div class="flex items-center justify-between mb-4"><h2 id="ep-modal-title" class="heading text-lg font-black text-white">Эпизоды</h2><button onclick="closeEpModal()" class="btn-icon">✕</button></div>
-    <div id="ep-modal-content"></div>
+  <div class="modal-content bg-[#15122a] border border-[#2e2852] rounded-2xl max-w-lg w-full max-h-[92vh] overflow-y-auto">
+    <div class="sticky top-0 bg-[#15122a] border-b border-[#2e2852] px-6 py-4 flex items-center justify-between z-10">
+      <h2 id="ep-modal-title" class="heading text-lg font-black text-white truncate">Эпизоды</h2>
+      <button onclick="closeEpModal()" class="btn-icon">✕</button>
+    </div>
+    <div id="ep-modal-content" class="p-6"></div>
   </div>
 </div>
 
@@ -318,27 +383,15 @@ html[data-theme="light"] header { background: rgba(250, 245, 238, 0.92) !importa
     <div id="storage-info" class="bg-[#0c0a1a]/50 border border-[#2e2852] rounded-xl p-3 text-xs mb-4">
       <div class="flex justify-between mb-1"><span class="text-[#8574b0]">Тайтлов:</span><b id="info-count" class="text-white">0</b></div>
       <div class="flex justify-between mb-1"><span class="text-[#8574b0]">Постеров:</span><b id="info-posters" class="text-white">0</b></div>
+      <div class="flex justify-between mb-1"><span class="text-[#8574b0]">Логов эпизодов:</span><b id="info-logs" class="text-white">0</b></div>
       <div class="flex justify-between mb-1"><span class="text-[#8574b0]">Размер:</span><b id="info-size" class="text-white">—</b></div>
-      <div class="flex justify-between"><span class="text-[#8574b0]">Service Worker:</span><b id="info-sw" class="text-white">—</b></div>
+      <div class="flex justify-between"><span class="text-[#8574b0]">SW:</span><b id="info-sw" class="text-white">—</b></div>
     </div>
     <div class="space-y-2">
-      <button onclick="openImportModal()" class="btn-primary w-full justify-center">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-        Импорт из Shikimori
-      </button>
-      <button onclick="exportData()" class="btn-primary w-full justify-center">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-        Скачать бэкап (JSON)
-      </button>
-      <label class="btn-secondary w-full justify-center cursor-pointer">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-        Импорт JSON
-        <input type="file" accept=".json" class="hidden" onchange="importData(event)">
-      </label>
-      <button onclick="clearAllData()" class="btn-secondary w-full justify-center" style="color:#f43f5e;border-color:rgba(244,63,94,0.4);">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z"/></svg>
-        Очистить всё
-      </button>
+      <button onclick="openImportModal()" class="btn-primary w-full justify-center">⬇ Импорт из Shikimori</button>
+      <button onclick="exportData()" class="btn-primary w-full justify-center">💾 Скачать бэкап (JSON)</button>
+      <label class="btn-secondary w-full justify-center cursor-pointer">📂 Импорт JSON<input type="file" accept=".json" class="hidden" onchange="importData(event)"></label>
+      <button onclick="clearAllData()" class="btn-secondary w-full justify-center" style="color:#f43f5e;border-color:rgba(244,63,94,0.4);">🗑 Очистить всё</button>
     </div>
   </div>
 </div>
@@ -347,15 +400,51 @@ html[data-theme="light"] header { background: rgba(250, 245, 238, 0.92) !importa
 <div id="import-modal" class="modal-backdrop">
   <div class="modal-content bg-[#15122a] border border-[#2e2852] rounded-2xl max-w-md w-full p-6">
     <div class="flex items-center justify-between mb-4"><h2 class="heading text-lg font-black text-white">Импорт из Shikimori</h2><button onclick="closeImportModal()" class="btn-icon">✕</button></div>
-    <p class="text-xs text-[#8574b0] mb-4">Введите ваш ник на shikimori.one. Импортируем все аниме из вашего списка: название, статус, оценку, прогресс, дату добавления и постер. Жанры и студии не импортируются — их можно дополнить позже.</p>
+    <p class="text-xs text-[#8574b0] mb-4">Введите ник на shikimori.one. Импортируем все аниме: название, статус, оценку, прогресс, дату добавления, постер и Shikimori ID (для отслеживания новых серий).</p>
     <div class="space-y-3">
-      <div>
-        <label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Ник на Shikimori</label>
-        <input id="shiki-nickname" type="text" class="form-input" placeholder="например: username" onkeydown="if(event.key==='Enter') startImport()">
-      </div>
+      <div><label class="block text-xs font-bold text-[#b8a8e0] uppercase tracking-wider mb-1.5">Ник</label><input id="shiki-nickname" type="text" class="form-input" placeholder="username" onkeydown="if(event.key==='Enter') startImport()"></div>
       <div id="import-status" class="text-xs text-[#b8a8e0]"></div>
       <div id="import-progress" class="progress-bar-wrap hidden"><div class="progress-bar-fill" style="width:0%"></div></div>
       <button onclick="startImport()" id="import-btn" class="btn-primary w-full justify-center">Импортировать</button>
+    </div>
+  </div>
+</div>
+
+<!-- RANDOM PICKER MODAL -->
+<div id="random-modal" class="modal-backdrop">
+  <div class="modal-content bg-[#15122a] border border-[#2e2852] rounded-2xl max-w-lg w-full p-6 max-h-[92vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-4"><h2 class="heading text-lg font-black text-white">🎲 Что посмотреть?</h2><button onclick="closeRandomModal()" class="btn-icon">✕</button></div>
+    <div id="random-filters" class="grid grid-cols-2 gap-2 mb-4">
+      <select id="random-genre" class="form-select" style="font-size:12px;padding:8px 12px;"><option value="">Любой жанр</option></select>
+      <select id="random-length" class="form-select" style="font-size:12px;padding:8px 12px;"><option value="">Любая длина</option><option value="short">Короткое</option><option value="medium">Среднее</option><option value="long">Длинное</option></select>
+      <label class="flex items-center gap-2 text-xs col-span-2 cursor-pointer" style="color:var(--text-secondary);"><input type="checkbox" id="random-high-only" class="w-4 h-4" style="accent-color: var(--accent-pink);"> Только высокий рейтинг (MAL/Shikimori ≥ 8)</label>
+    </div>
+    <div id="random-stage" class="random-pick-stage">
+      <div class="text-center">
+        <div class="text-6xl mb-3">🎲</div>
+        <div class="heading text-xl font-black text-white mb-2">Готовы к выбору?</div>
+        <p class="text-xs" style="color:var(--text-muted);">Нажмите «Крутить» — покажем случайное аниме из ваших планов</p>
+      </div>
+    </div>
+    <div id="random-actions" class="flex gap-2 justify-center mt-4">
+      <button onclick="spinRandom()" id="random-spin-btn" class="btn-primary">🎲 Крутить</button>
+    </div>
+  </div>
+</div>
+
+<!-- HOTKEYS HELP MODAL -->
+<div id="hotkeys-modal" class="modal-backdrop">
+  <div class="modal-content bg-[#15122a] border border-[#2e2852] rounded-2xl max-w-md w-full p-6">
+    <div class="flex items-center justify-between mb-4"><h2 class="heading text-lg font-black text-white">⌨️ Горячие клавиши</h2><button onclick="closeHotkeysHelp()" class="btn-icon">✕</button></div>
+    <div class="space-y-1">
+      <div class="hotkey-row"><span style="color:var(--text-secondary);">Новая запись</span><span class="hotkey-key">N</span></div>
+      <div class="hotkey-row"><span style="color:var(--text-secondary);">Фокус на поиск</span><span class="hotkey-key">/</span></div>
+      <div class="hotkey-row"><span style="color:var(--text-secondary);">Рандом из планов</span><span class="hotkey-key">R</span></div>
+      <div class="hotkey-row"><span style="color:var(--text-secondary);">Переключение вкладок</span><span class="hotkey-key">1–9</span></div>
+      <div class="hotkey-row"><span style="color:var(--text-secondary);">Календарь ← / →</span><span class="hotkey-key">← →</span></div>
+      <div class="hotkey-row"><span style="color:var(--text-secondary);">Закрыть модалку</span><span class="hotkey-key">Esc</span></div>
+      <div class="hotkey-row"><span style="color:var(--text-secondary);">Показать эту справку</span><span class="hotkey-key">?</span></div>
+      <div class="hotkey-row"><span style="color:var(--text-secondary);">Тема</span><span class="hotkey-key">T</span></div>
     </div>
   </div>
 </div>
@@ -364,7 +453,7 @@ html[data-theme="light"] header { background: rgba(250, 245, 238, 0.92) !importa
   <span id="toast-icon">✓</span><span id="toast-text">Сохранено</span>
 </div>
 
-<footer class="text-center text-xs text-[#8574b0] py-8 relative z-10">Anime Diary · Личный аниме-дневник</footer>
+<footer class="text-center text-xs text-[#8574b0] py-8 relative z-10">Anime Diary · Личный аниме-дневник · <span id="footer-hint">Нажмите <b>?</b> для горячих клавиш</span></footer>
 
 <script>
 /* ==================== CONSTANTS ==================== */
@@ -373,25 +462,27 @@ const STATUS_COLORS = { watching: '#5ce1e6', completed: '#34d399', on_hold: '#fd
 const CRITERIA_LABELS = { story: 'Сюжет', animation: 'Анимация', music: 'Музыка', characters: 'Персонажи' };
 const CRITERIA_COLORS = { story: '#5ce1e6', animation: '#a78bfa', music: '#fde047', characters: '#ff6ec7' };
 const CRITERIA_ICONS = { story: '📖', animation: '🎨', music: '🎵', characters: '👥' };
+const MOOD_EMOJIS = ['😍', '😂', '😭', '🤯', '😴', '😐', '🔥', '💔'];
 const API_CACHE_TTL = 30 * 60 * 1000;
-const FILTERS_STORAGE_KEY = 'anime_diary_filters_v1';
+const FILTERS_STORAGE_KEY = 'anime_diary_filters_v2';
+const TAB_ORDER = ['overview', 'grid', 'table', 'watching', 'planned', 'collections', 'calendar', 'stats', 'wrapped'];
 
 const SAMPLE_ANIME = [
-  { id: 'a1', title: 'Провожающая в последний путь Фрирен', titleJP: '葬送のフリーレン / Frieren', type: 'TV', year: 2023, studio: 'Madhouse', genres: ['Приключения', 'Драма', 'Фэнтези'], episodesTotal: 28, episodesWatched: 28, status: 'completed', score: 10, favorite: true, notes: 'Абсолютный шедевр. История об эльфийке-маге.', poster: 'https://cdn.myanimelist.net/images/anime/1015/138006l.jpg', addedAt: Date.now() - 86400000 * 20, startDate: '2026-10-01', finishDate: '2026-10-25', criteria: { story: 10, animation: 10, music: 10, characters: 10 } },
-  { id: 'a2', title: 'Стальной алхимик: Братство', titleJP: '鋼の錬金術師 / Fullmetal Alchemist: Brotherhood', type: 'TV', year: 2009, studio: 'Bones', genres: ['Экшен', 'Приключения', 'Драма', 'Фэнтези'], episodesTotal: 64, episodesWatched: 64, status: 'completed', score: 10, favorite: true, notes: 'Эталон приключенческого аниме.', poster: 'https://cdn.myanimelist.net/images/anime/1223/96541l.jpg', addedAt: Date.now() - 86400000 * 60, startDate: '2026-08-10', finishDate: '2026-09-15', criteria: { story: 10, animation: 9, music: 10, characters: 10 } },
-  { id: 'a3', title: 'Врата Штейна', titleJP: 'Steins;Gate', type: 'TV', year: 2011, studio: 'White Fox', genres: ['Драма', 'Фантастика', 'Триллер'], episodesTotal: 24, episodesWatched: 24, status: 'completed', score: 9.5, favorite: true, notes: 'Путешествия во времени сделаны идеально.', poster: 'https://cdn.myanimelist.net/images/anime/1935/127974l.jpg', addedAt: Date.now() - 86400000 * 90, startDate: '2026-07-01', finishDate: '2026-07-20', criteria: { story: 10, animation: 8, music: 9, characters: 10 } },
-  { id: 'a4', title: 'Атака титанов', titleJP: '進撃の巨人 / Shingeki no Kyojin', type: 'TV', year: 2013, studio: 'Wit Studio', genres: ['Экшен', 'Драма', 'Фэнтези'], episodesTotal: 89, episodesWatched: 89, status: 'completed', score: 9, favorite: false, notes: 'Масштаб, мрачность и твисты.', poster: 'https://cdn.myanimelist.net/images/anime/10/47347l.jpg', addedAt: Date.now() - 86400000 * 200, startDate: '2026-04-01', finishDate: '2026-06-30', criteria: { story: 9, animation: 9, music: 10, characters: 8 } },
+  { id: 'a1', title: 'Провожающая в последний путь Фрирен', titleJP: '葬送のフリーレン / Frieren', type: 'TV', year: 2023, studio: 'Madhouse', genres: ['Приключения', 'Драма', 'Фэнтези'], episodesTotal: 28, episodesWatched: 28, status: 'completed', score: 10, favorite: true, notes: 'Абсолютный шедевр. История об эльфийке-маге.', poster: 'https://cdn.myanimelist.net/images/anime/1015/138006l.jpg', addedAt: Date.now() - 86400000 * 20, startDate: '2026-10-01', finishDate: '2026-10-25', criteria: { story: 10, animation: 10, music: 10, characters: 10 }, episodeLogs: [{ ep: 1, rating: 9, note: 'Атмосфера сразу затягивает', mood: '😍', date: '2026-10-01' }, { ep: 12, rating: 10, note: 'Финал арки с Химмелем — шедевр', mood: '😭', date: '2026-10-15' }] },
+  { id: 'a2', title: 'Стальной алхимик: Братство', titleJP: '鋼の錬金術師 / Fullmetal Alchemist: Brotherhood', type: 'TV', year: 2009, studio: 'Bones', genres: ['Экшен', 'Приключения', 'Драма', 'Фэнтези'], episodesTotal: 64, episodesWatched: 64, status: 'completed', score: 10, favorite: true, notes: 'Эталон приключенческого аниме.', poster: 'https://cdn.myanimelist.net/images/anime/1223/96541l.jpg', addedAt: Date.now() - 86400000 * 60, startDate: '2026-08-10', finishDate: '2026-09-15', criteria: { story: 10, animation: 9, music: 10, characters: 10 }, episodeLogs: [{ ep: 19, rating: 10, note: 'Эпизод, где умерла Нина... до сих пор вспоминаю', mood: '💔', date: '2026-08-20' }] },
+  { id: 'a3', title: 'Врата Штейна', titleJP: 'Steins;Gate', type: 'TV', year: 2011, studio: 'White Fox', genres: ['Драма', 'Фантастика', 'Триллер'], episodesTotal: 24, episodesWatched: 24, status: 'completed', score: 9.5, favorite: true, notes: 'Путешествия во времени идеальны.', poster: 'https://cdn.myanimelist.net/images/anime/1935/127974l.jpg', addedAt: Date.now() - 86400000 * 90, startDate: '2026-07-01', finishDate: '2026-07-20', criteria: { story: 10, animation: 8, music: 9, characters: 10 }, episodeLogs: [{ ep: 12, rating: 10, note: 'Поворот меняющий всё. До сих пор мурашки', mood: '🤯', date: '2026-07-10' }, { ep: 22, rating: 10, note: 'Признание Окабе и Курису — плакал', mood: '😭', date: '2026-07-18' }] },
+  { id: 'a4', title: 'Атака титанов', titleJP: '進撃の巨人 / Shingeki no Kyojin', type: 'TV', year: 2013, studio: 'Wit Studio', genres: ['Экшен', 'Драма', 'Фэнтези'], episodesTotal: 89, episodesWatched: 89, status: 'completed', score: 9, favorite: false, notes: 'Масштаб и твисты.', poster: 'https://cdn.myanimelist.net/images/anime/10/47347l.jpg', addedAt: Date.now() - 86400000 * 200, startDate: '2026-04-01', finishDate: '2026-06-30', criteria: { story: 9, animation: 9, music: 10, characters: 8 } },
   { id: 'a5', title: 'Твоё имя', titleJP: '君の名は。 / Your Name', type: 'Movie', year: 2016, studio: 'CoMix Wave Films', genres: ['Драма', 'Романтика'], episodesTotal: 1, episodesWatched: 1, status: 'completed', score: 9.5, favorite: true, notes: 'Синкай на пике.', poster: 'https://cdn.myanimelist.net/images/anime/5/87048l.jpg', addedAt: Date.now() - 86400000 * 40, startDate: '2026-10-05', finishDate: '2026-10-05', criteria: { story: 9, animation: 10, music: 10, characters: 9 } },
   { id: 'a6', title: 'Унесённые призраками', titleJP: '千と千尋の神隠し / Spirited Away', type: 'Movie', year: 2001, studio: 'Studio Ghibli', genres: ['Приключения', 'Фэнтези'], episodesTotal: 1, episodesWatched: 1, status: 'completed', score: 10, favorite: true, notes: 'Миядзаки в лучшем виде.', poster: 'https://cdn.myanimelist.net/images/anime/6/79597l.jpg', addedAt: Date.now() - 86400000 * 300, criteria: { story: 10, animation: 10, music: 10, characters: 10 } },
-  { id: 'a7', title: 'Семья шпиона', titleJP: 'SPY×FAMILY', type: 'TV', year: 2022, studio: 'Wit Studio', genres: ['Экшен', 'Комедия', 'Повседневность'], episodesTotal: 37, episodesWatched: 25, status: 'watching', score: 8.5, favorite: false, notes: 'Милая, смешная, добрая.', poster: 'https://cdn.myanimelist.net/images/anime/1441/122795l.jpg', addedAt: Date.now() - 86400000 * 10, startDate: '2026-10-15', criteria: { story: 8, animation: 9, music: 8, characters: 9 } },
-  { id: 'a8', title: 'Магическая битва', titleJP: '呪術廻戦 / Jujutsu Kaisen', type: 'TV', year: 2020, studio: 'MAPPA', genres: ['Экшен', 'Сверхъестественное'], episodesTotal: 47, episodesWatched: 20, status: 'on_hold', score: 8, favorite: false, notes: 'Красивая анимация, но не зацепило.', poster: 'https://cdn.myanimelist.net/images/anime/1171/109222l.jpg', addedAt: Date.now() - 86400000 * 30, startDate: '2026-09-10' },
+  { id: 'a7', title: 'Семья шпиона', titleJP: 'SPY×FAMILY', type: 'TV', year: 2022, studio: 'Wit Studio', genres: ['Экшен', 'Комедия', 'Повседневность'], episodesTotal: 37, episodesWatched: 25, status: 'watching', score: 8.5, favorite: false, notes: 'Милая, смешная.', poster: 'https://cdn.myanimelist.net/images/anime/1441/122795l.jpg', addedAt: Date.now() - 86400000 * 10, startDate: '2026-10-15', criteria: { story: 8, animation: 9, music: 8, characters: 9 }, episodeLogs: [{ ep: 24, rating: 9, note: 'Аня снова спасла весь сюжет', mood: '😂', date: '2026-11-10' }], shikimoriId: 50265 },
+  { id: 'a8', title: 'Магическая битва', titleJP: '呪術廻戦 / Jujutsu Kaisen', type: 'TV', year: 2020, studio: 'MAPPA', genres: ['Экшен', 'Сверхъестественное'], episodesTotal: 47, episodesWatched: 20, status: 'on_hold', score: 8, favorite: false, notes: 'Красиво, но не зацепило.', poster: 'https://cdn.myanimelist.net/images/anime/1171/109222l.jpg', addedAt: Date.now() - 86400000 * 30, startDate: '2026-09-10' },
   { id: 'a9', title: 'Человек-бензопила', titleJP: 'チェンソーマン / Chainsaw Man', type: 'TV', year: 2022, studio: 'MAPPA', genres: ['Экшен', 'Комедия', 'Ужасы'], episodesTotal: 12, episodesWatched: 0, status: 'planned', score: 0, favorite: false, notes: 'Все хвалят.', poster: 'https://cdn.myanimelist.net/images/anime/1806/126216l.jpg', addedAt: Date.now() - 86400000 * 5 },
-  { id: 'a10', title: 'Мушиши', titleJP: '蟲師 / Mushishi', type: 'TV', year: 2005, studio: 'Artland', genres: ['Приключения', 'Мистика'], episodesTotal: 26, episodesWatched: 26, status: 'completed', score: 9, favorite: true, notes: 'Медитативное аниме.', poster: 'https://cdn.myanimelist.net/images/anime/2/73862l.jpg', addedAt: Date.now() - 86400000 * 150, criteria: { story: 9, animation: 9, music: 10, characters: 9 } },
-  { id: 'a11', title: 'Тетрадь смерти', titleJP: 'デスノート / Death Note', type: 'TV', year: 2006, studio: 'Madhouse', genres: ['Триллер', 'Детектив'], episodesTotal: 37, episodesWatched: 37, status: 'completed', score: 9, favorite: false, notes: 'Легендарное противостояние Лайта и L.', poster: 'https://cdn.myanimelist.net/images/anime/9/9453l.jpg', addedAt: Date.now() - 86400000 * 120, startDate: '2026-06-01', finishDate: '2026-06-18', criteria: { story: 10, animation: 8, music: 9, characters: 9 } },
-  { id: 'a12', title: 'Ванпанчмен', titleJP: 'ワンパンマン / One Punch Man', type: 'TV', year: 2015, studio: 'Madhouse', genres: ['Экшен', 'Комедия', 'Пародия'], episodesTotal: 12, episodesWatched: 12, status: 'completed', score: 8.5, favorite: false, notes: 'Озвучка и юмор на высоте.', poster: 'https://cdn.myanimelist.net/images/anime/12/76049l.jpg', addedAt: Date.now() - 86400000 * 80, startDate: '2026-05-10', finishDate: '2026-05-20', criteria: { story: 8, animation: 9, music: 8, characters: 9 } },
-  { id: 'a13', title: 'Вайолет Эвергарден', titleJP: 'ヴァイオレット・エヴァーガーデン / Violet Evergarden', type: 'TV', year: 2018, studio: 'Kyoto Animation', genres: ['Драма', 'Романтика'], episodesTotal: 13, episodesWatched: 13, status: 'completed', score: 9.5, favorite: true, notes: 'Визуально безупречное, каждая серия — эмоциональный удар.', poster: 'https://cdn.myanimelist.net/images/anime/1795/95088l.jpg', addedAt: Date.now() - 86400000 * 55, startDate: '2026-09-01', finishDate: '2026-09-14', criteria: { story: 9, animation: 10, music: 10, characters: 10 } },
-  { id: 'a14', title: 'Ковбой Бибоп', titleJP: 'カウボーイビバップ / Cowboy Bebop', type: 'TV', year: 1998, studio: 'Sunrise', genres: ['Экшен', 'Драма', 'Фантастика', 'Джаз'], episodesTotal: 26, episodesWatched: 26, status: 'completed', score: 9.5, favorite: true, notes: 'Вечная классика. Джаз, нео-нуар, космос.', poster: 'https://cdn.myanimelist.net/images/anime/4/19644l.jpg', addedAt: Date.now() - 86400000 * 250, criteria: { story: 9, animation: 9, music: 10, characters: 10 } },
-  { id: 'a15', title: 'Форма голоса', titleJP: '聲の形 / A Silent Voice', type: 'Movie', year: 2016, studio: 'Kyoto Animation', genres: ['Драма', 'Романтика', 'Школа'], episodesTotal: 1, episodesWatched: 1, status: 'completed', score: 9.5, favorite: true, notes: 'Трогательная история о буллинге и прощении.', poster: 'https://cdn.myanimelist.net/images/anime/1122/96435l.jpg', addedAt: Date.now() - 86400000 * 25, startDate: '2026-10-20', finishDate: '2026-10-20', criteria: { story: 9, animation: 10, music: 9, characters: 10 } }
+  { id: 'a10', title: 'Мушиши', titleJP: '蟲師 / Mushishi', type: 'TV', year: 2005, studio: 'Artland', genres: ['Приключения', 'Мистика'], episodesTotal: 26, episodesWatched: 26, status: 'completed', score: 9, favorite: true, notes: 'Медитативное.', poster: 'https://cdn.myanimelist.net/images/anime/2/73862l.jpg', addedAt: Date.now() - 86400000 * 150, criteria: { story: 9, animation: 9, music: 10, characters: 9 } },
+  { id: 'a11', title: 'Тетрадь смерти', titleJP: 'デスノート / Death Note', type: 'TV', year: 2006, studio: 'Madhouse', genres: ['Триллер', 'Детектив'], episodesTotal: 37, episodesWatched: 37, status: 'completed', score: 9, favorite: false, notes: 'Легендарная дуэль.', poster: 'https://cdn.myanimelist.net/images/anime/9/9453l.jpg', addedAt: Date.now() - 86400000 * 120, startDate: '2026-06-01', finishDate: '2026-06-18', criteria: { story: 10, animation: 8, music: 9, characters: 9 } },
+  { id: 'a12', title: 'Ванпанчмен', titleJP: 'ワンパンマン / One Punch Man', type: 'TV', year: 2015, studio: 'Madhouse', genres: ['Экшен', 'Комедия', 'Пародия'], episodesTotal: 12, episodesWatched: 12, status: 'completed', score: 8.5, favorite: false, notes: 'Юмор на высоте.', poster: 'https://cdn.myanimelist.net/images/anime/12/76049l.jpg', addedAt: Date.now() - 86400000 * 80, startDate: '2026-05-10', finishDate: '2026-05-20', criteria: { story: 8, animation: 9, music: 8, characters: 9 } },
+  { id: 'a13', title: 'Вайолет Эвергарден', titleJP: 'ヴァイオレット・エヴァーガーデン / Violet Evergarden', type: 'TV', year: 2018, studio: 'Kyoto Animation', genres: ['Драма', 'Романтика'], episodesTotal: 13, episodesWatched: 13, status: 'completed', score: 9.5, favorite: true, notes: 'Каждая серия — эмоциональный удар.', poster: 'https://cdn.myanimelist.net/images/anime/1795/95088l.jpg', addedAt: Date.now() - 86400000 * 55, startDate: '2026-09-01', finishDate: '2026-09-14', criteria: { story: 9, animation: 10, music: 10, characters: 10 }, episodeLogs: [{ ep: 10, rating: 10, note: 'Письма для Анны. Я рыдал.', mood: '😭', date: '2026-09-10' }] },
+  { id: 'a14', title: 'Ковбой Бибоп', titleJP: 'カウボーイビバップ / Cowboy Bebop', type: 'TV', year: 1998, studio: 'Sunrise', genres: ['Экшен', 'Драма', 'Фантастика', 'Джаз'], episodesTotal: 26, episodesWatched: 26, status: 'completed', score: 9.5, favorite: true, notes: 'Вечная классика.', poster: 'https://cdn.myanimelist.net/images/anime/4/19644l.jpg', addedAt: Date.now() - 86400000 * 250, criteria: { story: 9, animation: 9, music: 10, characters: 10 } },
+  { id: 'a15', title: 'Форма голоса', titleJP: '聲の形 / A Silent Voice', type: 'Movie', year: 2016, studio: 'Kyoto Animation', genres: ['Драма', 'Романтика', 'Школа'], episodesTotal: 1, episodesWatched: 1, status: 'completed', score: 9.5, favorite: true, notes: 'Трогательная история.', poster: 'https://cdn.myanimelist.net/images/anime/1122/96435l.jpg', addedAt: Date.now() - 86400000 * 25, startDate: '2026-10-20', finishDate: '2026-10-20', criteria: { story: 9, animation: 10, music: 9, characters: 10 } }
 ];
 
 /* ==================== STATE ==================== */
@@ -406,45 +497,39 @@ let currentWrappedYear = new Date().getFullYear();
 let db = null;
 let bgAnimationEnabled = true;
 let isSearching = false;
+let editingEpisodeLogIndex = -1; // -1 = new
+let currentEpisodeModalId = null;
+let tempEpisodeLog = { ep: 1, rating: 0, note: '', mood: '' };
+let isImpressionFormOpen = false;
+let randomPickFilters = { genre: '', length: '', highOnly: false };
+let swipeState = { active: null, startX: 0, currentX: 0 };
 
 /* ==================== DEBOUNCE ==================== */
-function debounce(fn, wait) {
-  let timer;
-  return function(...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), wait);
-  };
-}
+function debounce(fn, wait) { let timer; return function(...args) { clearTimeout(timer); timer = setTimeout(() => fn.apply(this, args), wait); }; }
 
 /* ==================== SERVICE WORKER ==================== */
 async function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
-  const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-  if (location.protocol !== 'https:' && !isLocalhost) {
-    console.info('[SW] requires HTTPS or localhost — skipped');
-    return;
-  }
+  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  if (location.protocol !== 'https:' && !isLocal) return;
   try {
     const reg = await navigator.serviceWorker.register('./sw.js');
-    console.log('[SW] Registered:', reg.scope);
     reg.addEventListener('updatefound', () => {
       const nw = reg.installing;
       if (!nw) return;
       nw.addEventListener('statechange', () => {
         if (nw.state === 'installed' && navigator.serviceWorker.controller) {
-          showToast('Доступно обновление — перезагрузите страницу 🔄', '🔄');
+          showToast('Доступно обновление — перезагрузите', '🔄');
         }
       });
     });
-  } catch (e) {
-    console.warn('[SW] Registration failed:', e);
-  }
+  } catch (e) { console.warn('[SW]', e); }
 }
 
 /* ==================== INDEXEDDB ==================== */
 function initDB() {
   return new Promise((res, rej) => {
-    if (!window.indexedDB) return rej(new Error('No IndexedDB'));
+    if (!window.indexedDB) return rej(new Error('No IDB'));
     const req = indexedDB.open('AnimeDiaryDB', 2);
     req.onupgradeneeded = e => {
       const d = e.target.result;
@@ -460,124 +545,59 @@ function idbPutAll(list) { return new Promise((res, rej) => { const tx = db.tran
 function idbPut(a) { return new Promise((res, rej) => { const tx = db.transaction('anime', 'readwrite'); const r = tx.objectStore('anime').put(a); r.onsuccess = () => res(); r.onerror = () => rej(r.error); }); }
 function idbDelete(id) { return new Promise((res, rej) => { const tx = db.transaction('anime', 'readwrite'); const r = tx.objectStore('anime').delete(id); r.onsuccess = () => res(); r.onerror = () => rej(r.error); }); }
 function idbClear() { return new Promise((res, rej) => { const tx = db.transaction('anime', 'readwrite'); const r = tx.objectStore('anime').clear(); r.onsuccess = () => res(); r.onerror = () => rej(r.error); }); }
-
-/* API cache in IndexedDB */
-function apiCacheGet(key) {
-  return new Promise((res) => {
-    if (!db) return res(null);
-    try {
-      const tx = db.transaction('apiCache', 'readonly');
-      const r = tx.objectStore('apiCache').get(key);
-      r.onsuccess = () => res(r.result || null);
-      r.onerror = () => res(null);
-    } catch (e) { res(null); }
-  });
-}
-function apiCachePut(key, data) {
-  return new Promise((res) => {
-    if (!db) return res();
-    try {
-      const tx = db.transaction('apiCache', 'readwrite');
-      tx.objectStore('apiCache').put({ key, data, ts: Date.now() });
-      tx.oncomplete = () => res();
-      tx.onerror = () => res();
-    } catch (e) { res(); }
-  });
-}
-function apiCacheCleanup() {
-  if (!db) return;
-  try {
-    const tx = db.transaction('apiCache', 'readwrite');
-    const store = tx.objectStore('apiCache');
-    const all = store.getAll();
-    all.onsuccess = () => {
-      const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
-      all.result.forEach(item => { if (item.ts < cutoff) store.delete(item.key); });
-    };
-  } catch (e) {}
-}
+function apiCacheGet(key) { return new Promise((res) => { if (!db) return res(null); try { const tx = db.transaction('apiCache', 'readonly'); const r = tx.objectStore('apiCache').get(key); r.onsuccess = () => res(r.result || null); r.onerror = () => res(null); } catch { res(null); } }); }
+function apiCachePut(key, data) { return new Promise((res) => { if (!db) return res(); try { const tx = db.transaction('apiCache', 'readwrite'); tx.objectStore('apiCache').put({ key, data, ts: Date.now() }); tx.oncomplete = () => res(); tx.onerror = () => res(); } catch { res(); } }); }
+function apiCacheCleanup() { if (!db) return; try { const tx = db.transaction('apiCache', 'readwrite'); const store = tx.objectStore('apiCache'); const all = store.getAll(); all.onsuccess = () => { const cutoff = Date.now() - 7 * 86400000; all.result.forEach(item => { if (item.ts < cutoff) store.delete(item.key); }); }; } catch {} }
 
 /* ==================== STORAGE ==================== */
 async function loadAnime() {
-  try { await initDB(); } catch (e) { console.warn('IDB init failed:', e); }
-  const initialized = localStorage.getItem('anime_diary_initialized_v4') === '1';
-  if (db) {
-    try {
-      const fromDB = await idbGetAll();
-      if (fromDB.length > 0 || initialized) { animeList = fromDB; return; }
-    } catch (e) {}
-  }
-  const tryLoad = key => {
-    try { const p = JSON.parse(localStorage.getItem(key) || '[]'); return Array.isArray(p) ? p : []; } catch { return []; }
-  };
+  try { await initDB(); } catch (e) {}
+  const initialized = localStorage.getItem('anime_diary_initialized_v5') === '1';
+  if (db) { try { const fromDB = await idbGetAll(); if (fromDB.length > 0 || initialized) { animeList = fromDB; migrateData(); return; } } catch {} }
+  const tryLoad = key => { try { const p = JSON.parse(localStorage.getItem(key) || '[]'); return Array.isArray(p) ? p : []; } catch { return []; } };
+  const b5 = tryLoad('anime_diary_backup_v5');
   const b4 = tryLoad('anime_diary_backup_v4');
-  if (b4.length > 0) { animeList = b4; return; }
+  if (b5.length > 0) { animeList = b5; migrateData(); return; }
+  if (b4.length > 0) { animeList = b4; migrateData(); return; }
   if (!initialized) {
     animeList = JSON.parse(JSON.stringify(SAMPLE_ANIME));
-    localStorage.setItem('anime_diary_initialized_v4', '1');
+    localStorage.setItem('anime_diary_initialized_v5', '1');
     saveAnime();
   } else { animeList = []; }
 }
+function migrateData() {
+  let changed = false;
+  animeList.forEach(a => {
+    if (!a.episodeLogs) { a.episodeLogs = []; changed = true; }
+    if (a.shikimoriId === undefined) a.shikimoriId = null;
+  });
+  if (changed) saveAnime();
+}
 function saveAnime() {
-  if (db) idbPutAll(animeList).catch(e => console.warn(e));
+  if (db) idbPutAll(animeList).catch(() => {});
   try {
     const backup = animeList.map(a => { const c = { ...a }; if (c.poster && c.poster.length > 25000) c.poster = undefined; return c; });
-    localStorage.setItem('anime_diary_backup_v4', JSON.stringify(backup));
-    localStorage.setItem('anime_diary_initialized_v4', '1');
-  } catch (e) {}
+    localStorage.setItem('anime_diary_backup_v5', JSON.stringify(backup));
+    localStorage.setItem('anime_diary_initialized_v5', '1');
+  } catch {}
 }
 
 /* ==================== THEME ==================== */
-function initTheme() {
-  const saved = localStorage.getItem('anime_diary_theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', saved);
-  updateThemeIcon(saved);
-}
-function toggleTheme() {
-  const cur = document.documentElement.getAttribute('data-theme');
-  const next = cur === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('anime_diary_theme', next);
-  updateThemeIcon(next);
-  if (currentView === 'stats') renderStats();
-  if (currentView === 'wrapped') renderWrapped();
-}
-function updateThemeIcon(theme) {
-  const d = document.getElementById('theme-icon-dark'), l = document.getElementById('theme-icon-light');
-  if (!d || !l) return;
-  if (theme === 'light') { d.classList.add('hidden'); l.classList.remove('hidden'); }
-  else { d.classList.remove('hidden'); l.classList.add('hidden'); }
-}
-function toggleBackgroundAnimation() {
-  bgAnimationEnabled = !bgAnimationEnabled;
-  const bg = document.getElementById('sakura-bg');
-  const onIcon = document.getElementById('anim-icon-on'), offIcon = document.getElementById('anim-icon-off');
-  bg.style.display = bgAnimationEnabled ? '' : 'none';
-  if (bgAnimationEnabled) { onIcon.classList.remove('hidden'); offIcon.classList.add('hidden'); }
-  else { onIcon.classList.add('hidden'); offIcon.classList.remove('hidden'); }
-  localStorage.setItem('anime_diary_bg_enabled', bgAnimationEnabled ? '1' : '0');
-}
+function initTheme() { const s = localStorage.getItem('anime_diary_theme') || 'dark'; document.documentElement.setAttribute('data-theme', s); updateThemeIcon(s); }
+function toggleTheme() { const c = document.documentElement.getAttribute('data-theme'); const n = c === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', n); localStorage.setItem('anime_diary_theme', n); updateThemeIcon(n); if (currentView === 'stats') renderStats(); if (currentView === 'wrapped') renderWrapped(); }
+function updateThemeIcon(t) { const d = document.getElementById('theme-icon-dark'), l = document.getElementById('theme-icon-light'); if (!d) return; if (t === 'light') { d.classList.add('hidden'); l.classList.remove('hidden'); } else { d.classList.remove('hidden'); l.classList.add('hidden'); } }
+function toggleBackgroundAnimation() { bgAnimationEnabled = !bgAnimationEnabled; const bg = document.getElementById('sakura-bg'); const on = document.getElementById('anim-icon-on'), off = document.getElementById('anim-icon-off'); bg.style.display = bgAnimationEnabled ? '' : 'none'; if (bgAnimationEnabled) { on.classList.remove('hidden'); off.classList.add('hidden'); } else { on.classList.add('hidden'); off.classList.remove('hidden'); } localStorage.setItem('anime_diary_bg_enabled', bgAnimationEnabled ? '1' : '0'); }
 
 /* ==================== HELPERS ==================== */
 function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
 function showToast(msg, icon = '✓') {
-  const t = document.getElementById('toast');
-  document.getElementById('toast-text').textContent = msg;
-  document.getElementById('toast-icon').textContent = icon;
+  const t = document.getElementById('toast'); document.getElementById('toast-text').textContent = msg; document.getElementById('toast-icon').textContent = icon;
   t.style.opacity = '1'; t.style.transform = 'translate(-50%, 0)';
   clearTimeout(window._toastTimer);
   window._toastTimer = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translate(-50%, 20px)'; }, 2400);
 }
-function totalTimeHours() {
-  const mins = animeList.filter(a => a.type !== 'Movie').reduce((s, a) => s + ((a.episodesWatched || 0) * 24), 0)
-    + animeList.filter(a => a.type === 'Movie').reduce((s, a) => s + ((a.episodesWatched || 0) * 100), 0);
-  return Math.round(mins / 60);
-}
-function averageScore() {
-  const s = animeList.filter(a => a.score > 0);
-  if (!s.length) return 0;
-  return (s.reduce((sum, a) => sum + a.score, 0) / s.length).toFixed(2);
-}
+function totalTimeHours() { const mins = animeList.filter(a => a.type !== 'Movie').reduce((s, a) => s + ((a.episodesWatched || 0) * 24), 0) + animeList.filter(a => a.type === 'Movie').reduce((s, a) => s + ((a.episodesWatched || 0) * 100), 0); return Math.round(mins / 60); }
+function averageScore() { const s = animeList.filter(a => a.score > 0); if (!s.length) return 0; return (s.reduce((sum, a) => sum + a.score, 0) / s.length).toFixed(2); }
 function hasPoster(a) { return a.poster && a.poster.length > 50; }
 function posterOf(a) { return hasPoster(a) ? a.poster : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400"><rect fill="%230c0a1a" width="300" height="400"/><text x="150" y="210" text-anchor="middle" fill="%23453a78" font-size="80">🎴</text></svg>'; }
 function updateHeaderStats() {
@@ -585,36 +605,45 @@ function updateHeaderStats() {
   const eps = animeList.reduce((s, a) => s + (a.episodesWatched || 0), 0);
   document.getElementById('header-stats').textContent = `${total} тайтлов • ${eps} эпизодов • ~${totalTimeHours()} ч`;
 }
+function episodeAvg(a) {
+  if (!a.episodeLogs || a.episodeLogs.length === 0) return null;
+  const rated = a.episodeLogs.filter(l => l.rating > 0);
+  if (rated.length === 0) return null;
+  return (rated.reduce((s, l) => s + l.rating, 0) / rated.length);
+}
 
 /* ==================== FILTERS ==================== */
 function populateGenreFilter() {
-  const g = new Set();
-  const studios = new Set();
-  animeList.forEach(a => {
-    (a.genres || []).forEach(x => g.add(x));
-    if (a.studio) studios.add(a.studio);
-  });
+  const g = new Set(), studios = new Set();
+  animeList.forEach(a => { (a.genres || []).forEach(x => g.add(x)); if (a.studio) studios.add(a.studio); });
   const sel = document.getElementById('filter-genre');
   const cur = sel.value;
   sel.innerHTML = '<option value="">Все жанры</option>' + [...g].sort().map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
   if ([...g].includes(cur)) sel.value = cur;
-  const dl = document.getElementById('studio-datalist');
-  dl.innerHTML = [...studios].sort().map(x => `<option value="${esc(x)}"></option>`).join('');
+  document.getElementById('studio-datalist').innerHTML = [...studios].sort().map(x => `<option value="${esc(x)}"></option>`).join('');
+  const rg = document.getElementById('random-genre');
+  if (rg) {
+    const curR = rg.value;
+    rg.innerHTML = '<option value="">Любой жанр</option>' + [...g].sort().map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+    if ([...g].includes(curR)) rg.value = curR;
+  }
 }
 function saveFiltersState() {
-  const state = {
-    status: document.getElementById('filter-status').value,
-    type: document.getElementById('filter-type').value,
-    genre: document.getElementById('filter-genre').value,
-    favorite: document.getElementById('filter-fav').checked,
-    hasScore: document.getElementById('filter-has-score').checked,
-    yearFrom: document.getElementById('filter-year-from').value,
-    yearTo: document.getElementById('filter-year-to').value,
-    studio: document.getElementById('filter-studio').value,
-    length: document.getElementById('filter-length').value,
-    search: document.getElementById('search-input').value
-  };
-  try { localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  try {
+    const s = {
+      status: document.getElementById('filter-status').value,
+      type: document.getElementById('filter-type').value,
+      genre: document.getElementById('filter-genre').value,
+      favorite: document.getElementById('filter-fav').checked,
+      hasScore: document.getElementById('filter-has-score').checked,
+      yearFrom: document.getElementById('filter-year-from').value,
+      yearTo: document.getElementById('filter-year-to').value,
+      studio: document.getElementById('filter-studio').value,
+      length: document.getElementById('filter-length').value,
+      search: document.getElementById('search-input').value
+    };
+    localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(s));
+  } catch {}
 }
 function loadFiltersState() {
   try {
@@ -631,7 +660,7 @@ function loadFiltersState() {
     if (s.studio) document.getElementById('filter-studio').value = s.studio;
     if (s.length) document.getElementById('filter-length').value = s.length;
     if (s.search) document.getElementById('search-input').value = s.search;
-  } catch (e) {}
+  } catch {}
 }
 function readFiltersFromUI() {
   currentFilters = {
@@ -647,22 +676,11 @@ function readFiltersFromUI() {
     search: document.getElementById('search-input').value.trim().toLowerCase()
   };
 }
-function applyFilters() {
-  readFiltersFromUI();
-  saveFiltersState();
-  renderCurrentView();
-}
+function applyFilters() { readFiltersFromUI(); saveFiltersState(); renderCurrentView(); }
 function resetFilters() {
-  document.getElementById('filter-status').value = '';
-  document.getElementById('filter-type').value = '';
-  document.getElementById('filter-genre').value = '';
+  ['filter-status', 'filter-type', 'filter-genre', 'filter-year-from', 'filter-year-to', 'filter-studio', 'filter-length', 'search-input'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('filter-fav').checked = false;
   document.getElementById('filter-has-score').checked = false;
-  document.getElementById('filter-year-from').value = '';
-  document.getElementById('filter-year-to').value = '';
-  document.getElementById('filter-studio').value = '';
-  document.getElementById('filter-length').value = '';
-  document.getElementById('search-input').value = '';
   applyFilters();
 }
 function getFilteredAnime(base = null) {
@@ -675,8 +693,7 @@ function getFilteredAnime(base = null) {
   if (f.favorite) list = list.filter(a => a.favorite);
   if (f.hasScore) list = list.filter(a => a.score > 0);
   if (f.studio) list = list.filter(a => (a.studio || '').toLowerCase().includes(f.studio));
-  const from = parseInt(f.yearFrom, 10);
-  const to = parseInt(f.yearTo, 10);
+  const from = parseInt(f.yearFrom, 10), to = parseInt(f.yearTo, 10);
   if (!isNaN(from)) list = list.filter(a => (a.year || 0) >= from);
   if (!isNaN(to)) list = list.filter(a => (a.year || 0) <= to);
   if (f.length) {
@@ -696,7 +713,8 @@ function getFilteredAnime(base = null) {
       (a.titleJP || '').toLowerCase().includes(q) ||
       (a.studio || '').toLowerCase().includes(q) ||
       (a.genres || []).join(' ').toLowerCase().includes(q) ||
-      (a.notes || '').toLowerCase().includes(q)
+      (a.notes || '').toLowerCase().includes(q) ||
+      (a.episodeLogs || []).some(l => (l.note || '').toLowerCase().includes(q))
     );
   }
   return list;
@@ -725,6 +743,7 @@ function renderCurrentView() {
   else if (currentView === 'calendar') renderCalendar();
   else if (currentView === 'stats') renderStats();
   else if (currentView === 'wrapped') renderWrapped();
+  renderNextEpisodesWidget();
 }
 
 /* ==================== CARD ==================== */
@@ -732,26 +751,251 @@ function renderAnimeCard(a) {
   const progress = a.episodesTotal > 0 ? Math.min(100, (a.episodesWatched / a.episodesTotal) * 100) : 0;
   const scoreBadge = a.score > 0 ? `<div class="absolute top-2 right-2 score-circle" style="width:36px;height:36px;font-size:12px;">${a.score}</div>` : '';
   const favBadge = a.favorite ? `<div class="absolute top-2 left-2 w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-sm" style="background:rgba(255,110,199,0.9);color:#fff;font-size:14px;box-shadow:0 0 12px var(--shadow-accent);">♥</div>` : '';
-  return `
-    <div class="anime-card p-2.5 cursor-pointer group" onclick="openEditModal('${a.id}')">
+  const avg = episodeAvg(a);
+  const epAvgBadge = avg !== null && Math.abs(avg - (a.score || 0)) > 0.3 ? `<div class="absolute bottom-2 right-2 ep-avg-badge">📊 ${avg.toFixed(1)}</div>` : '';
+  const logsCount = (a.episodeLogs || []).length;
+  const logsBadge = logsCount > 0 ? `<div class="absolute bottom-2 left-2 text-[10px] px-1.5 py-0.5 rounded bg-black/70 text-white font-bold" title="${logsCount} заметок">📝 ${logsCount}</div>` : '';
+  const nextEp = a.nextEpisodeDate && new Date(a.nextEpisodeDate) > new Date() ? new Date(a.nextEpisodeDate) : null;
+  const nextEpBadge = nextEp ? `<div class="absolute top-2 left-2 ${a.favorite ? 'top-11' : ''} text-[10px] px-1.5 py-0.5 rounded bg-amber-500/90 text-black font-black" title="Следующая серия">🔥</div>` : '';
+
+  const cardHTML = `
+    <div class="anime-card p-2.5 cursor-pointer group" onclick="handleCardClick(event, '${a.id}')">
       <div class="poster-wrap relative aspect-[3/4] rounded-xl overflow-hidden bg-[#0c0a1a] mb-2.5">
-        <img src="${esc(posterOf(a))}" alt="${esc(a.title)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
-        ${favBadge}${scoreBadge}
+        <img src="${esc(posterOf(a))}" alt="${esc(a.title)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;pointer-events:none;">
+        ${favBadge}${scoreBadge}${epAvgBadge}${logsBadge}${nextEpBadge}
       </div>
       <h3 class="font-bold text-[13px] text-white line-clamp-2 leading-tight min-h-[34px] mb-1.5">${esc(a.title)}</h3>
       <div class="mb-1.5"><span class="badge badge-${a.status}" style="font-size:10px;padding:3px 9px;"><span class="status-dot"></span>${STATUS_LABELS[a.status]}</span></div>
       ${a.episodesTotal > 0 ? `<div class="ep-progress mb-1"><div class="ep-progress-fill" style="width:${progress}%"></div></div><div class="text-[10px] font-semibold flex justify-between" style="color:var(--text-muted);"><span>${a.episodesWatched}/${a.episodesTotal} эп.</span><span>${a.year || ''}</span></div>` : `<div class="text-[10px] font-semibold" style="color:var(--text-muted);">${a.year || ''} • ${a.type || ''}</div>`}
     </div>`;
+
+  // Wrap in swipe container
+  return `
+    <div class="swipe-wrap" data-swipe-id="${a.id}">
+      <div class="swipe-bg swipe-bg-left"><span style="color:#fff;font-size:20px;">🗑</span></div>
+      <div class="swipe-bg swipe-bg-right"><span style="color:#fff;font-size:20px;">✏️</span></div>
+      <div class="swipe-content" data-card-id="${a.id}">${cardHTML}</div>
+    </div>`;
+}
+
+function handleCardClick(event, id) {
+  // Don't trigger if we just swiped
+  if (window._justSwiped) { window._justSwiped = false; return; }
+  openEditModal(id);
+}
+
+/* ==================== SWIPE GESTURES ==================== */
+let swipeHandlersAttached = false;
+function attachSwipeHandlers() {
+  if (swipeHandlersAttached) return;
+  swipeHandlersAttached = true;
+
+  document.addEventListener('touchstart', e => {
+    const content = e.target.closest('.swipe-content');
+    if (!content) return;
+    const touch = e.touches[0];
+    swipeState.active = content;
+    swipeState.startX = touch.clientX;
+    swipeState.currentX = 0;
+    content.classList.add('swiping');
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    if (!swipeState.active) return;
+    const touch = e.touches[0];
+    const dx = touch.clientX - swipeState.startX;
+    if (Math.abs(dx) < 10) return;
+    swipeState.currentX = dx;
+    swipeState.active.style.transform = `translateX(${dx}px)`;
+  }, { passive: true });
+
+  document.addEventListener('touchend', () => {
+    if (!swipeState.active) return;
+    const dx = swipeState.currentX;
+    const el = swipeState.active;
+    const cardId = el.dataset.cardId;
+    el.classList.remove('swiping');
+
+    if (Math.abs(dx) > 100) {
+      window._justSwiped = true;
+      if (dx < 0) {
+        // Swipe left - delete
+        el.style.transform = 'translateX(-100%)';
+        setTimeout(() => {
+          el.style.transform = '';
+          if (confirm('Удалить этот тайтл?')) deleteAnime(cardId);
+        }, 250);
+      } else {
+        // Swipe right - edit
+        el.style.transform = 'translateX(100%)';
+        setTimeout(() => { el.style.transform = ''; openEditModal(cardId); }, 250);
+      }
+    } else {
+      el.style.transform = '';
+    }
+    swipeState.active = null;
+    swipeState.startX = 0;
+    swipeState.currentX = 0;
+  }, { passive: true });
+}
+
+/* ==================== NEXT EPISODE WIDGET ==================== */
+function renderNextEpisodesWidget() {
+  const container = document.getElementById('next-ep-badge-container');
+  if (!container) return;
+  const upcoming = animeList
+    .filter(a => a.nextEpisodeDate && new Date(a.nextEpisodeDate) > new Date())
+    .sort((a, b) => new Date(a.nextEpisodeDate) - new Date(b.nextEpisodeDate));
+  if (upcoming.length === 0) { container.innerHTML = ''; return; }
+  const next = upcoming[0];
+  const diff = Math.floor((new Date(next.nextEpisodeDate) - new Date()) / (1000 * 60 * 60));
+  const label = diff < 24 ? `через ${diff} ч` : `через ${Math.floor(diff / 24)} дн.`;
+  container.innerHTML = `<div class="next-ep-widget" onclick="openNextEpisodesModal()" title="Новые серии"><span class="pulse"></span><span>🔥 ${upcoming.length} ${upcoming.length === 1 ? 'нов. серия' : 'нов. серий'}</span><span style="opacity:0.7;font-weight:400;">${label}</span></div>`;
+}
+
+function openNextEpisodesModal() {
+  const upcoming = animeList
+    .filter(a => a.nextEpisodeDate && new Date(a.nextEpisodeDate) > new Date())
+    .sort((a, b) => new Date(a.nextEpisodeDate) - new Date(b.nextEpisodeDate));
+  const modal = document.getElementById('data-modal');
+  const content = modal.querySelector('.modal-content');
+  const oldHTML = content.innerHTML;
+  content.innerHTML = `
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="heading text-lg font-black text-white">🔥 Скоро выходит</h2>
+      <button class="btn-icon" onclick="closeDataMenu()">✕</button>
+    </div>
+    <div class="space-y-2">
+      ${upcoming.length === 0 ? '<p class="text-xs text-center py-6" style="color:var(--text-muted);">Нет запланированных серий. Добавьте Shikimori ID к тайтлам, которые смотрите.</p>' : upcoming.map(a => {
+        const date = new Date(a.nextEpisodeDate);
+        const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+        return `<div class="p-3 rounded-xl cursor-pointer flex items-center gap-3" style="background:rgba(128,128,128,0.06);" onclick="closeDataMenu(); openEditModal('${a.id}')">
+          <img src="${esc(posterOf(a))}" style="width:40px;height:56px;object-fit:cover;border-radius:6px;flex-shrink:0;">
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-bold text-white truncate">${esc(a.title)}</div>
+            <div class="text-xs" style="color:var(--accent-yellow);">📅 ${dateStr}</div>
+            <div class="text-[11px]" style="color:var(--text-muted);">Эпизод ${a.episodesWatched + 1}${a.episodesTotal ? ' из ' + a.episodesTotal : ''}</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <button onclick="refreshAllNextEpisodes()" class="btn-secondary w-full justify-center mt-4">🔄 Обновить данные</button>
+  `;
+  modal.classList.add('show');
+  window._restoreDataModal = () => { content.innerHTML = oldHTML; window._restoreDataModal = null; };
+}
+
+async function fetchNextEpisode(a) {
+  if (!a.shikimoriId) return;
+  try {
+    const cacheKey = 'shiki-details:' + a.shikimoriId;
+    const cached = await apiCacheGet(cacheKey);
+    let data;
+    if (cached && Date.now() - cached.ts < 60 * 60 * 1000) {
+      data = cached.data;
+    } else {
+      const resp = await fetch(`https://shikimori.one/api/animes/${a.shikimoriId}`);
+      if (!resp.ok) return;
+      data = await resp.json();
+      await apiCachePut(cacheKey, data);
+    }
+    if (data.next_episode_at) a.nextEpisodeDate = data.next_episode_at;
+    else a.nextEpisodeDate = null;
+    if (data.episodes_aired) a.episodesAired = data.episodes_aired;
+    if (data.episodes) a.episodesTotal = data.episodes;
+  } catch (e) { console.warn('Next episode fetch failed:', e); }
+}
+
+async function refreshAllNextEpisodes() {
+  const watching = animeList.filter(a => (a.status === 'watching' || a.status === 'rewatching') && a.shikimoriId);
+  if (watching.length === 0) { showToast('Нет тайтлов с Shikimori ID', '⚠'); return; }
+  showToast(`Обновляю ${watching.length}...`, '🔄');
+  for (const a of watching) {
+    await fetchNextEpisode(a);
+    await new Promise(r => setTimeout(r, 350)); // rate limit
+  }
+  saveAnime();
+  renderNextEpisodesWidget();
+  renderCurrentView();
+  showToast('Данные обновлены', '✓');
+}
+
+/* ==================== RANDOM PICK ==================== */
+function openRandomModal() {
+  document.getElementById('random-genre').value = '';
+  document.getElementById('random-length').value = '';
+  document.getElementById('random-high-only').checked = false;
+  document.getElementById('random-stage').innerHTML = `<div class="text-center"><div class="text-6xl mb-3">🎲</div><div class="heading text-xl font-black text-white mb-2">Готовы к выбору?</div><p class="text-xs" style="color:var(--text-muted);">Нажмите «Крутить» — покажем случайное аниме из планов</p></div>`;
+  document.getElementById('random-actions').innerHTML = `<button onclick="spinRandom()" id="random-spin-btn" class="btn-primary">🎲 Крутить</button>`;
+  document.getElementById('random-modal').classList.add('show');
+  populateGenreFilter();
+}
+function closeRandomModal() { document.getElementById('random-modal').classList.remove('show'); }
+
+function spinRandom() {
+  const genre = document.getElementById('random-genre').value;
+  const length = document.getElementById('random-length').value;
+  const highOnly = document.getElementById('random-high-only').checked;
+
+  let pool = animeList.filter(a => a.status === 'planned' || a.status === 'on_hold');
+  if (genre) pool = pool.filter(a => (a.genres || []).includes(genre));
+  if (length === 'short') pool = pool.filter(a => a.episodesTotal > 0 && a.episodesTotal <= 13);
+  else if (length === 'medium') pool = pool.filter(a => a.episodesTotal >= 14 && a.episodesTotal <= 50);
+  else if (length === 'long') pool = pool.filter(a => a.episodesTotal > 50);
+  if (highOnly) pool = pool.filter(a => (a.malScore || a.shikimoriScore || 0) >= 8);
+
+  if (pool.length === 0) {
+    document.getElementById('random-stage').innerHTML = `<div class="text-center"><div class="text-6xl mb-3">😢</div><div class="heading text-lg font-black text-white mb-2">Ничего не найдено</div><p class="text-xs" style="color:var(--text-muted);">Попробуйте изменить фильтры или добавьте больше аниме в планы</p></div>`;
+    return;
+  }
+
+  const btn = document.getElementById('random-spin-btn');
+  btn.disabled = true;
+  btn.textContent = '🎲 Крутим...';
+
+  let counter = 0;
+  const interval = setInterval(() => {
+    const temp = pool[Math.floor(Math.random() * pool.length)];
+    document.getElementById('random-stage').innerHTML = `<div class="opacity-60"><div class="random-poster"><img src="${esc(posterOf(temp))}" style="width:100%;height:100%;object-fit:cover;"></div><div class="text-sm" style="color:var(--text-muted);">${esc(temp.title)}</div></div>`;
+    counter++;
+    if (counter >= 10) {
+      clearInterval(interval);
+      const winner = pool[Math.floor(Math.random() * pool.length)];
+      document.getElementById('random-stage').innerHTML = `
+        <div class="random-reveal w-full">
+          <div class="random-poster"><img src="${esc(posterOf(winner))}" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="heading text-xl font-black text-white mb-1">${esc(winner.title)}</div>
+          <div class="text-xs mb-1" style="color:var(--text-muted);">${esc(winner.studio || '')}${winner.year ? ' • ' + winner.year : ''} • ${winner.type}</div>
+          ${winner.episodesTotal ? `<div class="text-xs mb-2" style="color:var(--accent-pink);">${winner.episodesTotal} ${winner.episodesTotal === 1 ? 'эпизод' : 'эпизодов'}</div>` : ''}
+          ${winner.notes ? `<p class="text-xs mb-3 px-4" style="color:var(--text-secondary);">${esc(winner.notes.slice(0, 120))}${winner.notes.length > 120 ? '...' : ''}</p>` : ''}
+        </div>`;
+      document.getElementById('random-actions').innerHTML = `
+        <button onclick="startFromRandom('${winner.id}')" class="btn-success">▶ Начать смотреть</button>
+        <button onclick="spinRandom()" class="btn-secondary">🎲 Ещё раз</button>
+        <button onclick="closeRandomModal()" class="btn-secondary">Отмена</button>`;
+      btn.disabled = false;
+    }
+  }, 80);
+}
+function startFromRandom(id) {
+  const a = animeList.find(x => x.id === id);
+  if (!a) return;
+  a.status = 'watching';
+  if (!a.startDate) a.startDate = new Date().toISOString().slice(0, 10);
+  if (db) idbPut(a).catch(() => {});
+  saveAnime(); closeRandomModal(); updateHeaderStats(); renderCurrentView();
+  showToast(`Начинаем «${a.title}»! 🎬`, '✓');
 }
 
 /* ==================== OVERVIEW ==================== */
 function renderOverview() {
   const c = document.getElementById('view-overview');
   if (animeList.length === 0) {
-    c.innerHTML = `<div class="fade-up empty-state"><div class="empty-state-icon">🎴</div><h3 class="heading text-2xl font-black text-white mb-2">Добро пожаловать!</h3><p class="text-sm mb-5" style="color:var(--text-muted);">Дневник пуст. Начните с первого тайтла или импортируйте список из Shikimori.</p><div class="flex gap-2 justify-center flex-wrap"><button onclick="openAddModal()" class="btn-primary">+ Добавить</button><button onclick="openImportModal()" class="btn-secondary">⬇ Импорт из Shikimori</button></div></div>`;
+    c.innerHTML = `<div class="fade-up empty-state"><div class="empty-state-icon">🎴</div><h3 class="heading text-2xl font-black text-white mb-2">Добро пожаловать!</h3><p class="text-sm mb-5" style="color:var(--text-muted);">Дневник пуст. Добавьте первый тайтл или импортируйте из Shikimori.</p><div class="flex gap-2 justify-center flex-wrap"><button onclick="openAddModal()" class="btn-primary">+ Добавить</button><button onclick="openImportModal()" class="btn-secondary">⬇ Импорт</button></div></div>`;
     return;
   }
   const watching = animeList.filter(a => a.status === 'watching' || a.status === 'rewatching');
+  const upcoming = animeList.filter(a => a.nextEpisodeDate && new Date(a.nextEpisodeDate) > new Date()).sort((a, b) => new Date(a.nextEpisodeDate) - new Date(b.nextEpisodeDate)).slice(0, 3);
   const heroAnime = watching[0] || [...animeList].sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0))[0];
   const heroProgress = heroAnime.episodesTotal > 0 ? (heroAnime.episodesWatched / heroAnime.episodesTotal) * 100 : 0;
   const recent = [...animeList].sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0)).slice(0, 6);
@@ -761,22 +1005,21 @@ function renderOverview() {
 
   c.innerHTML = `
     <div class="fade-up space-y-6">
+      ${upcoming.length > 0 ? `<div class="anime-card p-4 border-l-4" style="border-left-color:var(--accent-yellow);"><div class="flex items-center justify-between mb-2"><h3 class="heading text-sm font-black text-white">🔥 Скоро выходит</h3><button onclick="openNextEpisodesModal()" class="text-xs" style="color:var(--accent-pink);">Все →</button></div><div class="space-y-1.5">${upcoming.map(a => { const date = new Date(a.nextEpisodeDate); const diff = Math.floor((date - new Date()) / (1000 * 60 * 60)); return `<div class="flex items-center gap-2 text-xs cursor-pointer" onclick="openEditModal('${a.id}')"><span style="color:var(--accent-yellow);">📺</span><b class="text-white truncate flex-1">${esc(a.title)}</b><span style="color:var(--text-muted);">${diff < 24 ? `через ${diff} ч` : `через ${Math.floor(diff / 24)} дн.`}</span></div>`; }).join('')}</div></div>` : ''}
       <div class="hero-card p-5 md:p-7">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-center relative z-10">
           <div class="md:col-span-3 flex justify-center md:justify-start">
-            <div class="w-32 md:w-40 aspect-[3/4] rounded-2xl overflow-hidden border border-[#453a78] shadow-2xl cursor-pointer" onclick="openEditModal('${heroAnime.id}')">
-              <img src="${esc(posterOf(heroAnime))}" style="width:100%;height:100%;object-fit:cover;">
-            </div>
+            <div class="w-32 md:w-40 aspect-[3/4] rounded-2xl overflow-hidden border border-[#453a78] shadow-2xl cursor-pointer" onclick="openEditModal('${heroAnime.id}')"><img src="${esc(posterOf(heroAnime))}" style="width:100%;height:100%;object-fit:cover;"></div>
           </div>
           <div class="md:col-span-9 text-center md:text-left">
             <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-2">
               <span class="badge badge-${heroAnime.status}"><span class="status-dot"></span>${STATUS_LABELS[heroAnime.status]}</span>
-              ${heroAnime.favorite ? '<span class="badge" style="background:rgba(255,110,199,0.15);color:var(--accent-pink);border-color:var(--accent-pink);">♥ Избранное</span>' : ''}
+              ${heroAnime.favorite ? '<span class="badge" style="background:rgba(255,110,199,0.15);color:var(--accent-pink);border-color:var(--accent-pink);">♥</span>' : ''}
               ${heroAnime.score > 0 ? `<span class="badge badge-planned">★ ${heroAnime.score}</span>` : ''}
             </div>
             <h2 class="heading text-2xl md:text-3xl font-black text-white mb-1.5">${esc(heroAnime.title)}</h2>
             <p class="text-xs md:text-sm mb-4" style="color:var(--text-secondary);">${esc(heroAnime.studio || '')}${heroAnime.year ? ' • ' + heroAnime.year : ''} • ${heroAnime.type}</p>
-            ${heroAnime.episodesTotal > 0 ? `<div class="max-w-md mx-auto md:mx-0 mb-4"><div class="flex justify-between text-xs mb-1.5" style="color:var(--text-secondary);"><span>Прогресс</span><b style="color:var(--accent-pink);">${heroAnime.episodesWatched} / ${heroAnime.episodesTotal} эп.</b></div><div class="ep-progress"><div class="ep-progress-fill" style="width:${heroProgress}%"></div></div></div>` : ''}
+            ${heroAnime.episodesTotal > 0 ? `<div class="max-w-md mx-auto md:mx-0 mb-4"><div class="flex justify-between text-xs mb-1.5" style="color:var(--text-secondary);"><span>Прогресс</span><b style="color:var(--accent-pink);">${heroAnime.episodesWatched} / ${heroAnime.episodesTotal}</b></div><div class="ep-progress"><div class="ep-progress-fill" style="width:${heroProgress}%"></div></div></div>` : ''}
             <div class="flex flex-wrap gap-2 justify-center md:justify-start">
               <button onclick="openEpModal('${heroAnime.id}')" class="btn-primary">▶ Продолжить</button>
               <button onclick="openEditModal('${heroAnime.id}')" class="btn-secondary">Редактировать</button>
@@ -786,178 +1029,282 @@ function renderOverview() {
       </div>
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div class="bento-card"><div class="flex items-center justify-between mb-1"><span class="text-[11px] font-bold uppercase tracking-wider" style="color:var(--text-muted);">Тайтлов</span></div><div class="heading text-3xl font-black" style="color:var(--accent-pink);">${animeList.length}</div></div>
-        <div class="bento-card"><div class="flex items-center justify-between mb-1"><span class="text-[11px] font-bold uppercase tracking-wider" style="color:var(--text-muted);">Эпизодов</span></div><div class="heading text-3xl font-black" style="color:var(--accent-purple);">${animeList.reduce((s, a) => s + (a.episodesWatched || 0), 0)}</div></div>
-        <div class="bento-card"><div class="flex items-center justify-between mb-1"><span class="text-[11px] font-bold uppercase tracking-wider" style="color:var(--text-muted);">Часов</span></div><div class="heading text-3xl font-black" style="color:var(--accent-cyan);">${totalTimeHours()}</div></div>
-        <div class="bento-card"><div class="flex items-center justify-between mb-1"><span class="text-[11px] font-bold uppercase tracking-wider" style="color:var(--text-muted);">Ср. балл</span></div><div class="heading text-3xl font-black" style="color:var(--accent-yellow);">${averageScore()}</div></div>
+        <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Тайтлов</div><div class="heading text-3xl font-black" style="color:var(--accent-pink);">${animeList.length}</div></div>
+        <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Эпизодов</div><div class="heading text-3xl font-black" style="color:var(--accent-purple);">${animeList.reduce((s, a) => s + (a.episodesWatched || 0), 0)}</div></div>
+        <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Часов</div><div class="heading text-3xl font-black" style="color:var(--accent-cyan);">${totalTimeHours()}</div></div>
+        <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Ср. балл</div><div class="heading text-3xl font-black" style="color:var(--accent-yellow);">${averageScore()}</div></div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div class="bento-card cursor-pointer" onclick="currentWrappedYear=${yearNow}; switchView('wrapped')">
-          <div class="flex items-center gap-3 mb-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(255,110,199,0.15);color:var(--accent-pink);">✨</div><div><div class="text-xs font-bold uppercase tracking-wider" style="color:var(--text-muted);">Итоги</div><div class="heading text-base font-black text-white">${yearNow} год</div></div></div>
-          <div class="grid grid-cols-3 gap-2 text-center">
-            <div><div class="heading text-xl font-black" style="color:var(--accent-pink);">${ys.finished}</div><div class="text-[10px]" style="color:var(--text-muted);">тайтлов</div></div>
-            <div><div class="heading text-xl font-black" style="color:var(--accent-purple);">${ys.episodes}</div><div class="text-[10px]" style="color:var(--text-muted);">эпизодов</div></div>
-            <div><div class="heading text-xl font-black" style="color:var(--accent-cyan);">${ys.hours}</div><div class="text-[10px]" style="color:var(--text-muted);">часов</div></div>
-          </div>
-        </div>
-        <div class="bento-card cursor-pointer" onclick="document.getElementById('filter-fav').checked=true; applyFilters(); switchView('grid')">
-          <div class="flex items-center gap-3 mb-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(255,110,199,0.15);color:var(--accent-pink);">♥</div><div><div class="text-xs font-bold uppercase tracking-wider" style="color:var(--text-muted);">Избранное</div><div class="heading text-base font-black text-white">${favorites} тайтлов</div></div></div>
-          <p class="text-xs" style="color:var(--text-secondary);">Любимые истории. Отфильтровать по ♥ →</p>
-        </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div class="bento-card cursor-pointer" onclick="currentWrappedYear=${yearNow}; switchView('wrapped')"><div class="flex items-center gap-3 mb-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(255,110,199,0.15);color:var(--accent-pink);">✨</div><div><div class="text-xs font-bold uppercase" style="color:var(--text-muted);">Итоги</div><div class="heading text-base font-black text-white">${yearNow}</div></div></div><div class="grid grid-cols-3 gap-1 text-center"><div><div class="heading text-lg font-black" style="color:var(--accent-pink);">${ys.finished}</div><div class="text-[10px]" style="color:var(--text-muted);">тайтлов</div></div><div><div class="heading text-lg font-black" style="color:var(--accent-purple);">${ys.episodes}</div><div class="text-[10px]" style="color:var(--text-muted);">эп.</div></div><div><div class="heading text-lg font-black" style="color:var(--accent-cyan);">${ys.hours}</div><div class="text-[10px]" style="color:var(--text-muted);">ч.</div></div></div></div>
+        <div class="bento-card cursor-pointer" onclick="openRandomModal()"><div class="flex items-center gap-3 mb-2"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(253,224,71,0.15);color:var(--accent-yellow);">🎲</div><div><div class="text-xs font-bold uppercase" style="color:var(--text-muted);">Что посмотреть?</div><div class="heading text-base font-black text-white">Рандом</div></div></div><p class="text-xs" style="color:var(--text-secondary);">Не можете выбрать? Пусть судьба решит за вас →</p></div>
+        <div class="bento-card cursor-pointer" onclick="document.getElementById('filter-fav').checked=true; applyFilters(); switchView('grid')"><div class="flex items-center gap-3 mb-2"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(255,110,199,0.15);color:var(--accent-pink);">♥</div><div><div class="text-xs font-bold uppercase" style="color:var(--text-muted);">Избранное</div><div class="heading text-base font-black text-white">${favorites}</div></div></div><p class="text-xs" style="color:var(--text-secondary);">Отфильтровать по ♥ →</p></div>
       </div>
 
       ${watching.length > 0 ? `<div><div class="flex items-center justify-between mb-3"><h2 class="heading text-lg font-black text-white">▶ Смотрю сейчас</h2><button onclick="switchView('watching')" class="text-xs font-bold" style="color:var(--accent-pink);">Все →</button></div><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">${watching.slice(0, 6).map(renderAnimeCard).join('')}</div></div>` : ''}
 
       <div><div class="flex items-center justify-between mb-3"><h2 class="heading text-lg font-black text-white">🆕 Недавно добавленные</h2><button onclick="switchView('grid')" class="text-xs font-bold" style="color:var(--accent-pink);">Все →</button></div><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">${recent.map(renderAnimeCard).join('')}</div></div>
     </div>`;
+  attachSwipeHandlers();
 }
 
 /* ==================== GRID/TABLE ==================== */
 function renderGrid(list) {
   let c = currentView === 'watching' ? document.getElementById('view-watching') : currentView === 'planned' ? document.getElementById('view-planned') : document.getElementById('view-grid');
   if (list.length === 0) { c.innerHTML = `<div class="fade-up empty-state"><div class="empty-state-icon">🎴</div><h3 class="heading text-xl font-black text-white mb-2">Здесь пусто</h3><p class="text-sm mb-4" style="color:var(--text-muted);">${currentFilters.search || currentFilters.status || currentFilters.genre ? 'Нет результатов с этими фильтрами' : 'Добавьте первое аниме'}</p><button onclick="${currentFilters.search || currentFilters.status || currentFilters.genre ? 'resetFilters()' : 'openAddModal()'}" class="btn-primary">${currentFilters.search || currentFilters.status || currentFilters.genre ? 'Сбросить фильтры' : '+ Добавить'}</button></div>`; return; }
-  c.innerHTML = `<div class="fade-up grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">${list.map(renderAnimeCard).join('')}</div>`;
+  const extraBtn = currentView === 'planned' ? `<div class="mb-4"><button onclick="openRandomModal()" class="btn-primary">🎲 Что посмотреть? (${list.length} в планах)</button></div>` : '';
+  c.innerHTML = `${extraBtn}<div class="fade-up grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">${list.map(renderAnimeCard).join('')}</div>`;
+  attachSwipeHandlers();
 }
 function renderTable(list) {
   const c = document.getElementById('view-table');
   if (list.length === 0) { c.innerHTML = '<div class="empty-state" style="color:var(--text-muted);">Ничего не найдено</div>'; return; }
-  const sorted = [...list].sort((a, b) => {
-    let va = a[sortState.col], vb = b[sortState.col];
-    if (typeof va === 'string') va = va.toLowerCase();
-    if (typeof vb === 'string') vb = vb.toLowerCase();
-    if (va < vb) return -1 * sortState.dir;
-    if (va > vb) return 1 * sortState.dir;
-    return 0;
-  });
+  const sorted = [...list].sort((a, b) => { let va = a[sortState.col], vb = b[sortState.col]; if (typeof va === 'string') va = va.toLowerCase(); if (typeof vb === 'string') vb = vb.toLowerCase(); if (va < vb) return -1 * sortState.dir; if (va > vb) return 1 * sortState.dir; return 0; });
   const th = (k, l) => `<th onclick="sortTable('${k}')">${l}${sortState.col === k ? (sortState.dir === 1 ? ' ▲' : ' ▼') : ''}</th>`;
-  c.innerHTML = `<div class="fade-up anime-card overflow-hidden"><div class="overflow-x-auto"><table class="anime-table w-full"><thead><tr><th style="width:60px;"></th>${th('title', 'Название')}${th('type', 'Тип')}${th('year', 'Год')}${th('episodesWatched', 'Эп.')}${th('status', 'Статус')}${th('score', 'Оценка')}<th>Действия</th></tr></thead><tbody>${sorted.map(a => `<tr><td><img src="${esc(posterOf(a))}" style="width:40px;height:56px;object-fit:cover;border-radius:6px;"></td><td><div class="font-bold text-white text-[13px]">${esc(a.title)}</div>${a.studio ? `<div class="text-[11px]" style="color:var(--accent-purple);">${esc(a.studio)}</div>` : ''}</td><td style="color:var(--text-secondary);">${a.type || '—'}</td><td style="color:var(--text-secondary);">${a.year || '—'}</td><td style="color:var(--text-secondary);"><b style="color:var(--text-primary);">${a.episodesWatched}</b>/${a.episodesTotal || '?'}</td><td><span class="badge badge-${a.status}"><span class="status-dot"></span>${STATUS_LABELS[a.status]}</span></td><td>${a.score > 0 ? `<span class="heading font-black" style="color:var(--accent-pink);font-size:16px;">${a.score}</span>` : '<span style="color:var(--text-muted);">—</span>'}</td><td><div class="flex gap-1"><button class="btn-icon" onclick="openEpModal('${a.id}')" title="+1">+1</button><button class="btn-icon" onclick="openEditModal('${a.id}')">✎</button><button class="btn-icon" onclick="deleteAnime('${a.id}')" style="color:#f43f5e;">🗑</button></div></td></tr>`).join('')}</tbody></table></div></div>`;
+  c.innerHTML = `<div class="fade-up anime-card overflow-hidden"><div class="overflow-x-auto"><table class="anime-table w-full"><thead><tr><th style="width:60px;"></th>${th('title', 'Название')}${th('type', 'Тип')}${th('year', 'Год')}${th('episodesWatched', 'Эп.')}${th('status', 'Статус')}${th('score', 'Оценка')}<th>Действия</th></tr></thead><tbody>${sorted.map(a => `<tr><td><img src="${esc(posterOf(a))}" style="width:40px;height:56px;object-fit:cover;border-radius:6px;"></td><td><div class="font-bold text-white text-[13px]">${esc(a.title)}</div>${a.studio ? `<div class="text-[11px]" style="color:var(--accent-purple);">${esc(a.studio)}</div>` : ''}${(a.episodeLogs || []).length > 0 ? `<div class="text-[10px]" style="color:var(--accent-cyan);">📝 ${a.episodeLogs.length} заметок</div>` : ''}</td><td style="color:var(--text-secondary);">${a.type || '—'}</td><td style="color:var(--text-secondary);">${a.year || '—'}</td><td style="color:var(--text-secondary);"><b style="color:var(--text-primary);">${a.episodesWatched}</b>/${a.episodesTotal || '?'}</td><td><span class="badge badge-${a.status}"><span class="status-dot"></span>${STATUS_LABELS[a.status]}</span></td><td>${a.score > 0 ? `<span class="heading font-black" style="color:var(--accent-pink);font-size:16px;">${a.score}</span>` : '<span style="color:var(--text-muted);">—</span>'}</td><td><div class="flex gap-1"><button class="btn-icon" onclick="openEpModal('${a.id}')" title="+1">+1</button><button class="btn-icon" onclick="openEditModal('${a.id}')">✎</button><button class="btn-icon" onclick="deleteAnime('${a.id}')" style="color:#f43f5e;">🗑</button></div></td></tr>`).join('')}</tbody></table></div></div>`;
 }
 function sortTable(col) { if (sortState.col === col) sortState.dir *= -1; else { sortState.col = col; sortState.dir = 1; } renderTable(getFilteredAnime()); }
 
-/* ==================== COLLECTIONS/CALENDAR/STATS/WRAPPED (сокращённо — без изменений из v4) ==================== */
-function franchiseKey(title) { if (!title) return ''; let t = title.toLowerCase().replace(/\s*[:\-–—].*$/, '').replace(/\b(season|part|movie|ova|ona|special|final|chapter|arc|episode|specials|сезон|часть|фильм|финальный|спешл|арка)\b/gi, ' ').replace(/[^\wа-яё\s]/gi, ' ').replace(/\d+/g, ''); return t.replace(/\s+/g, ' ').trim(); }
-function groupFranchises(list) { const groups = {}; list.forEach(a => { const k = franchiseKey(a.title); if (!k) return; if (!groups[k]) groups[k] = []; groups[k].push(a); }); return Object.entries(groups).filter(([_, items]) => items.length > 1).map(([key, items]) => { const sorted = [...items].sort((a, b) => (a.year || 0) - (b.year || 0)); const shortest = [...sorted].sort((a, b) => (a.title || '').length - (b.title || '').length)[0]; const name = (shortest.title || '').replace(/[:\-–—].*/, '').trim() || shortest.title; return { key, name, items: sorted }; }).sort((a, b) => b.items.length - a.items.length); }
-function renderCollections() {
-  const c = document.getElementById('view-collections');
-  const fr = groupFranchises(animeList);
-  if (fr.length === 0) { c.innerHTML = `<div class="fade-up empty-state"><div class="empty-state-icon">🎬</div><h3 class="heading text-xl font-black text-white mb-2">Коллекций пока нет</h3><p class="text-sm mb-4" style="color:var(--text-muted);">Добавьте несколько сезонов одной серии — сгруппируются автоматически.</p></div>`; return; }
-  c.innerHTML = `<div class="fade-up"><div class="mb-4"><h2 class="heading text-xl font-black text-white">🎬 Коллекции и франшизы</h2><p class="text-xs mt-1" style="color:var(--text-muted);">${fr.length} коллекций</p></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4">${fr.map(renderFranchiseCard).join('')}</div></div>`;
+/* ==================== EPISODE MODAL (REDESIGNED) ==================== */
+function openEpModal(id) {
+  const a = animeList.find(x => x.id === id);
+  if (!a) return;
+  currentEpisodeModalId = id;
+  isImpressionFormOpen = false;
+  document.getElementById('ep-modal-title').textContent = a.title;
+  renderEpModalContent(a);
+  document.getElementById('ep-modal').classList.add('show');
 }
-function renderFranchiseCard(f) {
-  const watched = f.items.filter(a => a.status === 'completed').length;
-  const total = f.items.length;
-  const progress = total > 0 ? (watched / total) * 100 : 0;
-  const totalEp = f.items.reduce((s, a) => s + (a.episodesWatched || 0), 0);
-  const totalEpAll = f.items.reduce((s, a) => s + (a.episodesTotal || 0), 0);
-  const scored = f.items.filter(a => a.score > 0);
-  const avg = scored.length ? (scored.reduce((s, a) => s + a.score, 0) / scored.length).toFixed(1) : '—';
-  return `<div class="franchise-card"><div class="flex items-start justify-between gap-3 mb-3"><div class="flex-1 min-w-0"><h3 class="heading text-base font-black text-white line-clamp-1">${esc(f.name)}</h3><p class="text-xs mt-0.5" style="color:var(--text-muted);">${total} тайтлов • ${f.items[0]?.studio || ''}</p></div><div class="text-right"><div class="text-xs font-bold" style="color:var(--accent-pink);">★ ${avg}</div><div class="text-[10px]" style="color:var(--text-muted);">${watched}/${total}</div></div></div><div class="ep-progress mb-2"><div class="ep-progress-fill" style="width:${progress}%"></div></div><p class="text-[11px] mb-3" style="color:var(--text-muted);">${totalEp}/${totalEpAll} эп. • ${Math.round(progress)}%</p><div class="space-y-1.5">${f.items.map(a => `<div class="flex items-center gap-2 p-2 rounded-lg cursor-pointer" style="background:rgba(128,128,128,0.06);" onclick="openEditModal('${a.id}')"><img src="${esc(posterOf(a))}" style="width:32px;height:44px;object-fit:cover;border-radius:5px;"><div class="flex-1 min-w-0"><div class="text-xs font-bold text-white truncate">${esc(a.title)}</div><div class="text-[10px]" style="color:var(--text-muted);">${a.year || ''} • ${STATUS_LABELS[a.status]}</div></div></div>`).join('')}</div></div>`;
-}
-function calendarEvents() { const ev = {}; animeList.forEach(a => { if (a.startDate) { (ev[a.startDate] = ev[a.startDate] || []).push({ type: 'start', anime: a }); } if (a.finishDate) { (ev[a.finishDate] = ev[a.finishDate] || []).push({ type: 'finish', anime: a }); } }); return ev; }
-function renderCalendar() {
-  const c = document.getElementById('view-calendar');
-  const d = currentCalendarDate;
-  const y = d.getFullYear(), m = d.getMonth();
-  const monthName = d.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
-  const mnc = monthName.charAt(0).toUpperCase() + monthName.slice(1);
-  const ev = calendarEvents();
-  const firstDay = new Date(y, m, 1), lastDay = new Date(y, m + 1, 0);
-  const startWeekday = (firstDay.getDay() + 6) % 7;
-  const daysInMonth = lastDay.getDate(), prevMonthLast = new Date(y, m, 0).getDate();
-  const today = new Date();
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-  let cells = [];
-  for (let i = startWeekday - 1; i >= 0; i--) cells.push({ day: prevMonthLast - i, other: true, dateStr: '' });
-  for (let dd = 1; dd <= daysInMonth; dd++) cells.push({ day: dd, other: false, dateStr: `${y}-${String(m + 1).padStart(2, '0')}-${String(dd).padStart(2, '0')}` });
-  const rem = (7 - (cells.length % 7)) % 7;
-  for (let i = 1; i <= rem; i++) cells.push({ day: i, other: true, dateStr: '' });
-  const monthEvents = Object.entries(ev).filter(([date]) => date.startsWith(`${y}-${String(m + 1).padStart(2, '0')}-`)).sort(([a], [b]) => a.localeCompare(b));
-  c.innerHTML = `<div class="fade-up"><div class="flex items-center justify-between mb-5 flex-wrap gap-3"><h2 class="heading text-xl font-black text-white">📅 Календарь</h2><div class="flex items-center gap-2"><button onclick="currentCalendarDate.setMonth(currentCalendarDate.getMonth()-1); renderCalendar();" class="btn-icon">←</button><span class="heading font-black text-base px-3" style="min-width:180px;text-align:center;">${mnc}</span><button onclick="currentCalendarDate.setMonth(currentCalendarDate.getMonth()+1); renderCalendar();" class="btn-icon">→</button><button onclick="currentCalendarDate=new Date(); renderCalendar();" class="btn-secondary" style="padding:6px 12px;font-size:12px;">Сегодня</button></div></div><div class="grid grid-cols-1 lg:grid-cols-3 gap-4"><div class="lg:col-span-2"><div class="grid grid-cols-7 gap-1.5 mb-2 text-center text-[11px] font-bold uppercase tracking-wider" style="color:var(--text-muted);"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div style="color:#f43f5e;">Сб</div><div style="color:#f43f5e;">Вс</div></div><div class="grid grid-cols-7 gap-1.5">${cells.map(cl => { if (!cl.dateStr) return '<div class="cal-day other-month"></div>'; const dayEv = ev[cl.dateStr] || []; const isToday = cl.dateStr === todayStr; return `<div class="cal-day ${isToday ? 'today' : ''} ${dayEv.length ? 'has-event' : ''}" title="${dayEv.map(e => e.anime.title).join(', ')}"><div class="font-bold text-xs" style="color:${isToday ? 'var(--accent-pink)' : 'var(--text-primary)'};">${cl.day}</div><div class="flex flex-wrap gap-0.5 mt-auto">${dayEv.slice(0, 5).map(e => `<span class="cal-dot cal-dot-${e.type}"></span>`).join('')}</div></div>`; }).join('')}</div></div><div class="anime-card p-4"><h3 class="heading text-sm font-black text-white mb-3">📋 События</h3>${monthEvents.length === 0 ? '<p class="text-xs text-center py-6" style="color:var(--text-muted);">Нет событий</p>' : monthEvents.map(([date, list]) => `<div class="mb-3 pb-3 border-b last:border-0" style="border-color:var(--border-subtle);"><div class="text-[11px] font-bold mb-1" style="color:var(--accent-pink);">${new Date(date + 'T00:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}</div>${list.map(e => `<div class="flex items-center gap-2 py-1 cursor-pointer" onclick="openEditModal('${e.anime.id}')"><span class="text-xs" style="color:${e.type === 'start' ? 'var(--accent-cyan)' : 'var(--accent-pink)'};">${e.type === 'start' ? '▶' : '✓'}</span><span class="text-xs font-semibold text-white truncate flex-1">${esc(e.anime.title)}</span></div>`).join('')}</div>`).join('')}</div></div></div>`;
-}
-function renderStats() {
-  const c = document.getElementById('view-stats');
-  const byStatus = {}; Object.keys(STATUS_LABELS).forEach(s => byStatus[s] = animeList.filter(a => a.status === s).length);
-  const byGenre = {}; animeList.forEach(a => (a.genres || []).forEach(g => byGenre[g] = (byGenre[g] || 0) + 1));
-  const topGenres = Object.entries(byGenre).sort((a, b) => b[1] - a[1]).slice(0, 10);
-  const byStudio = {}; animeList.forEach(a => { if (a.studio) byStudio[a.studio] = (byStudio[a.studio] || 0) + 1; });
-  const topStudios = Object.entries(byStudio).sort((a, b) => b[1] - a[1]).slice(0, 8);
-  const byYear = {}; animeList.forEach(a => { if (a.year) byYear[a.year] = (byYear[a.year] || 0) + 1; });
-  const topYears = Object.entries(byYear).sort((a, b) => b[0] - a[0]).slice(0, 8);
-  const scoreDist = [10, 9, 8, 7, 6].map(thr => ({ label: thr === 10 ? '10.0' : `${thr}.0+`, count: animeList.filter(a => a.score >= thr && (thr === 10 ? a.score === 10 : a.score < thr + 1)).length }));
-  const criteria = computeCriteria();
-  c.innerHTML = `<div class="fade-up space-y-6">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-      <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Тайтлов</div><div class="heading text-4xl font-black" style="color:var(--accent-pink);">${animeList.length}</div></div>
-      <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Эпизодов</div><div class="heading text-4xl font-black" style="color:var(--accent-purple);">${animeList.reduce((s, a) => s + (a.episodesWatched || 0), 0)}</div></div>
-      <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Часов</div><div class="heading text-4xl font-black" style="color:var(--accent-cyan);">${totalTimeHours()}</div></div>
-      <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Избранных</div><div class="heading text-4xl font-black" style="color:var(--accent-yellow);">${animeList.filter(a => a.favorite).length}</div></div>
-    </div>
-    ${criteria.hasData ? `<div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-4">📊 Детальная аналитика</h3><div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center"><div class="flex justify-center"><canvas id="criteria-radar" width="400" height="400" style="max-width:100%;height:auto;"></canvas></div><div class="space-y-3">${criteria.keys.map(k => `<div class="crit-row"><span style="font-size:18px;">${CRITERIA_ICONS[k]}</span><div class="flex-1"><div class="flex justify-between text-xs mb-1.5"><span class="font-bold" style="color:var(--text-secondary);">${CRITERIA_LABELS[k]}</span><span class="font-black" style="color:${CRITERIA_COLORS[k]};">${criteria.averages[k].toFixed(2)}</span></div><div class="crit-bar"><div class="crit-bar-fill" style="width:${criteria.averages[k] * 10}%;background:${CRITERIA_COLORS[k]};"></div></div></div></div>`).join('')}</div></div></div>` : ''}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-4">📈 Статусы</h3><div class="space-y-2.5">${Object.entries(byStatus).filter(([_, n]) => n > 0).map(([s, n]) => { const pct = Math.round(n / (animeList.length || 1) * 100); return `<div><div class="flex justify-between text-xs mb-1"><span style="color:var(--text-secondary);">${STATUS_LABELS[s]}</span><span class="font-bold" style="color:${STATUS_COLORS[s]};">${n} (${pct}%)</span></div><div style="height:6px;background:rgba(128,128,128,0.1);border-radius:999px;"><div style="height:100%;width:${pct}%;background:${STATUS_COLORS[s]};border-radius:999px;"></div></div></div>`; }).join('')}</div></div>
-      <div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-4">⭐ Оценки</h3><div class="space-y-2.5">${scoreDist.map(s => { const pct = Math.round(s.count / (animeList.length || 1) * 100); return `<div><div class="flex justify-between text-xs mb-1"><span style="color:var(--text-secondary);">★ ${s.label}</span><span class="font-bold" style="color:var(--accent-yellow);">${s.count}</span></div><div style="height:6px;background:rgba(128,128,128,0.1);border-radius:999px;"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent-pink),var(--accent-purple));border-radius:999px;"></div></div></div>`; }).join('')}</div></div>
-      <div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-4">🎭 Жанры</h3><div class="flex flex-wrap gap-2">${topGenres.map(([g, n]) => `<span class="badge" style="background:rgba(167,139,250,0.12);color:var(--accent-purple);border-color:rgba(167,139,250,0.4);">${esc(g)} <b>${n}</b></span>`).join('') || '<p class="text-sm" style="color:var(--text-muted);">—</p>'}</div></div>
-      <div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-4">🏢 Студии</h3><div class="space-y-2">${topStudios.map(([s, n]) => `<div class="flex justify-between text-sm"><span style="color:var(--text-secondary);">${esc(s)}</span><span class="font-black" style="color:var(--accent-cyan);">${n}</span></div>`).join('') || '<p class="text-sm" style="color:var(--text-muted);">—</p>'}</div></div>
-    </div>
-  </div>`;
-  if (criteria.hasData) drawRadar(criteria);
-}
-function computeCriteria() {
-  const keys = ['story', 'animation', 'music', 'characters'];
-  const averages = {};
-  keys.forEach(k => { const vals = animeList.filter(a => a.criteria && a.criteria[k] > 0).map(a => a.criteria[k]); averages[k] = vals.length ? vals.reduce((s, v) => s + v, 0) / vals.length : 0; });
-  const count = animeList.filter(a => a.criteria && Object.keys(a.criteria).length > 0).length;
-  return { keys, averages, count, hasData: count > 0 };
-}
-function drawRadar(data) {
-  const canvas = document.getElementById('criteria-radar'); if (!canvas) return;
-  const ctx = canvas.getContext('2d'); const w = canvas.width, h = canvas.height;
-  const cx = w / 2, cy = h / 2, maxR = Math.min(w, h) * 0.32;
-  const keys = data.keys, n = keys.length;
-  ctx.clearRect(0, 0, w, h);
-  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-  const grid = isLight ? 'rgba(219,39,119,0.15)' : 'rgba(255,110,199,0.12)';
-  const axis = isLight ? 'rgba(219,39,119,0.2)' : 'rgba(255,110,199,0.2)';
-  const fill = isLight ? 'rgba(219,39,119,0.2)' : 'rgba(255,110,199,0.22)';
-  const stroke = isLight ? '#db2777' : '#ff6ec7';
-  const txt = isLight ? '#2d1f2e' : '#f5f0ff';
-  for (let lvl = 1; lvl <= 4; lvl++) { const r = (maxR / 4) * lvl; ctx.beginPath(); keys.forEach((_, i) => { const a = (Math.PI * 2 * i) / n - Math.PI / 2; const x = cx + Math.cos(a) * r, yy = cy + Math.sin(a) * r; if (i === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy); }); ctx.closePath(); ctx.strokeStyle = grid; ctx.lineWidth = 1; ctx.stroke(); }
-  keys.forEach((_, i) => { const a = (Math.PI * 2 * i) / n - Math.PI / 2; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * maxR, cy + Math.sin(a) * maxR); ctx.strokeStyle = axis; ctx.stroke(); });
-  ctx.beginPath(); keys.forEach((k, i) => { const a = (Math.PI * 2 * i) / n - Math.PI / 2; const r = (data.averages[k] / 10) * maxR; const x = cx + Math.cos(a) * r, yy = cy + Math.sin(a) * r; if (i === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy); }); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = stroke; ctx.lineWidth = 2.5; ctx.stroke();
-  keys.forEach((k, i) => { const a = (Math.PI * 2 * i) / n - Math.PI / 2; const r = (data.averages[k] / 10) * maxR; const x = cx + Math.cos(a) * r, yy = cy + Math.sin(a) * r; ctx.beginPath(); ctx.arc(x, yy, 5, 0, Math.PI * 2); ctx.fillStyle = CRITERIA_COLORS[k]; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke(); const lx = cx + Math.cos(a) * (maxR + 32), ly = cy + Math.sin(a) * (maxR + 32); ctx.textAlign = 'center'; ctx.font = 'bold 12px "Plus Jakarta Sans", sans-serif'; ctx.fillStyle = CRITERIA_COLORS[k]; ctx.fillText(CRITERIA_LABELS[k], lx, ly); ctx.font = 'bold 13px Outfit, sans-serif'; ctx.fillStyle = txt; ctx.fillText(data.averages[k].toFixed(1), lx, ly + 16); });
-}
-function yearAnimeStats(year) { const inYear = animeList.filter(a => { if (a.finishDate) return new Date(a.finishDate).getFullYear() === year; if (a.status === 'completed') return new Date(a.addedAt || Date.now()).getFullYear() === year; return false; }); const eps = inYear.reduce((s, a) => s + (a.episodesWatched || 0), 0); const hours = Math.round(inYear.reduce((s, a) => s + (a.episodesWatched || 0) * (a.type === 'Movie' ? 100 : 24), 0) / 60); const scored = inYear.filter(a => a.score > 0); const avg = scored.length ? (scored.reduce((s, a) => s + a.score, 0) / scored.length).toFixed(2) : '—'; return { finished: inYear.length, episodes: eps, hours, avg, list: inYear }; }
-function renderWrapped() {
-  const c = document.getElementById('view-wrapped');
-  const years = new Set(); animeList.forEach(a => { if (a.finishDate) years.add(new Date(a.finishDate).getFullYear()); if (a.startDate) years.add(new Date(a.startDate).getFullYear()); if (a.year) years.add(a.year); }); years.add(new Date().getFullYear());
-  const sortedYears = [...years].sort((a, b) => b - a);
-  const stats = yearAnimeStats(currentWrappedYear);
-  const topAnime = [...stats.list].filter(a => a.score > 0).sort((a, b) => b.score - a.score).slice(0, 5);
-  c.innerHTML = `<div class="fade-up"><div class="flex items-center justify-between flex-wrap gap-3 mb-6"><div><h2 class="heading text-2xl font-black text-white">✨ Итоги года</h2><p class="text-xs mt-1" style="color:var(--text-muted);">Скачать как PNG</p></div><div class="flex gap-2 items-center"><select class="form-select" style="width:auto;padding:8px 12px;font-size:13px;" onchange="currentWrappedYear=+this.value; renderWrapped()">${sortedYears.map(y => `<option value="${y}" ${y === currentWrappedYear ? 'selected' : ''}>${y}</option>`).join('')}</select><button onclick="downloadWrapped()" class="btn-primary">Скачать PNG</button></div></div><div class="flex justify-center mb-6"><canvas id="wrapped-canvas" width="900" height="1200"></canvas></div><div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">${[['Завершено', stats.finished, 'var(--accent-pink)'], ['Эпизодов', stats.episodes, 'var(--accent-purple)'], ['Часов', stats.hours, 'var(--accent-cyan)'], ['Ср. балл', stats.avg, 'var(--accent-yellow)']].map(([l, v, col]) => `<div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">${l}</div><div class="heading text-3xl font-black" style="color:${col};">${v}</div></div>`).join('')}</div>${topAnime.length > 0 ? `<div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-3">🏆 Топ-${topAnime.length} ${currentWrappedYear}</h3><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">${topAnime.map((a, i) => `<div class="text-center"><div class="relative aspect-[3/4] rounded-xl overflow-hidden mb-2 bg-[#0c0a1a] cursor-pointer" onclick="openEditModal('${a.id}')"><img src="${esc(posterOf(a))}" style="width:100%;height:100%;object-fit:cover;"><div class="absolute top-2 left-2 text-xs font-black px-2 py-1 rounded-lg" style="background:var(--accent-pink);color:#fff;">#${i + 1}</div></div><div class="text-xs font-bold text-white line-clamp-1">${esc(a.title)}</div><div class="text-[11px] font-black" style="color:var(--accent-pink);">★ ${a.score}</div></div>`).join('')}</div></div>` : ''}</div>`;
-  drawWrapped(stats, topAnime);
-}
-function drawWrapped(stats, topAnime) {
-  const canvas = document.getElementById('wrapped-canvas'); if (!canvas) return;
-  const ctx = canvas.getContext('2d'); const w = canvas.width, h = canvas.height;
-  const grad = ctx.createLinearGradient(0, 0, w, h); grad.addColorStop(0, '#0c0a1a'); grad.addColorStop(0.5, '#1e1a38'); grad.addColorStop(1, '#2d0b2a');
-  ctx.fillStyle = grad; ctx.fillRect(0, 0, w, h);
-  ctx.strokeStyle = 'rgba(255,110,199,0.4)'; ctx.lineWidth = 3; ctx.strokeRect(30, 30, w - 60, h - 60);
-  ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(255,110,199,0.7)'; ctx.font = 'bold 20px Outfit, sans-serif'; ctx.fillText('ANIME WRAPPED', w / 2, 100);
-  ctx.fillStyle = '#ffffff'; ctx.font = 'black 86px Outfit, sans-serif'; ctx.fillText(String(currentWrappedYear), w / 2, 200);
-  ctx.fillStyle = '#b8a8e0'; ctx.font = '500 18px "Plus Jakarta Sans", sans-serif'; ctx.fillText('Мой год в аниме', w / 2, 240);
-  const data = [['ТАЙТЛОВ', stats.finished], ['ЭПИЗОДОВ', stats.episodes], ['ЧАСОВ', stats.hours], ['СР. БАЛЛ', stats.avg]];
-  const bw = (w - 120) / 4 - 10;
-  data.forEach(([l, v], i) => { const x = 60 + i * (bw + 10); ctx.fillStyle = 'rgba(30,26,56,0.8)'; ctx.strokeStyle = 'rgba(255,110,199,0.3)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.roundRect(x, 280, bw, 110, 12); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#8574b0'; ctx.font = 'bold 12px "Plus Jakarta Sans"'; ctx.textAlign = 'center'; ctx.fillText(l, x + bw / 2, 310); ctx.fillStyle = '#ff6ec7'; ctx.font = 'black 42px Outfit'; ctx.fillText(String(v), x + bw / 2, 360); });
-  if (topAnime.length > 0) { ctx.fillStyle = '#ffffff'; ctx.font = 'black 22px Outfit'; ctx.textAlign = 'left'; ctx.fillText('ТОП АНИМЕ ГОДА', 60, 440);
-    topAnime.forEach((a, i) => { const y = 470 + i * 60; ctx.fillStyle = 'rgba(30,26,56,0.8)'; ctx.strokeStyle = 'rgba(255,110,199,0.2)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.roundRect(60, y, w - 120, 50, 10); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#ff6ec7'; ctx.font = 'black 20px Outfit'; ctx.textAlign = 'left'; ctx.fillText(`#${i + 1}`, 80, y + 32); ctx.fillStyle = '#ffffff'; ctx.font = 'bold 16px "Plus Jakarta Sans"'; ctx.fillText(a.title.length > 40 ? a.title.slice(0, 38) + '...' : a.title, 130, y + 30); ctx.fillStyle = '#fde047'; ctx.font = 'black 18px Outfit'; ctx.textAlign = 'right'; ctx.fillText(`★ ${a.score}`, w - 90, y + 32); });
+
+function renderEpModalContent(a) {
+  const progress = a.episodesTotal > 0 ? (a.episodesWatched / a.episodesTotal) * 100 : 0;
+  const nextEp = a.episodesWatched + 1;
+  const logs = [...(a.episodeLogs || [])].sort((x, y) => y.ep - x.ep);
+  const avg = episodeAvg(a);
+
+  // Reset form state for new entry
+  if (!isImpressionFormOpen) {
+    tempEpisodeLog = { ep: nextEp, rating: 0, note: '', mood: '' };
   }
-  ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(255,110,199,0.6)'; ctx.font = 'bold 16px "Plus Jakarta Sans"'; ctx.fillText('ANIME DIARY', w / 2, h - 60);
+
+  const formHTML = isImpressionFormOpen ? `
+    <div class="bg-[#0c0a1a]/50 border border-[#2e2852] rounded-2xl p-4 mb-4">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="heading text-sm font-black text-white">📝 Впечатление от эпизода</h3>
+        <button onclick="closeImpressionForm()" class="text-xs" style="color:var(--text-muted);">✕</button>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label class="block text-[10px] font-bold uppercase mb-1" style="color:var(--text-secondary);">Номер эпизода</label>
+          <input id="imp-ep" type="number" min="1" class="form-input" value="${tempEpisodeLog.ep}" style="padding:6px 10px;font-size:13px;" oninput="tempEpisodeLog.ep = parseInt(this.value) || 1">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold uppercase mb-1" style="color:var(--text-secondary);">Оценка серии</label>
+          <div class="flex items-center gap-2">
+            <input id="imp-rating" type="range" min="0" max="10" step="0.5" value="${tempEpisodeLog.rating}" class="score-slider flex-1" oninput="tempEpisodeLog.rating = parseFloat(this.value); document.getElementById('imp-rating-val').textContent = parseFloat(this.value) === 0 ? '—' : this.value">
+            <span id="imp-rating-val" class="heading font-black text-sm" style="color:var(--accent-yellow);min-width:24px;text-align:center;">${tempEpisodeLog.rating === 0 ? '—' : tempEpisodeLog.rating}</span>
+          </div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="block text-[10px] font-bold uppercase mb-1.5" style="color:var(--text-secondary);">Настроение</label>
+        <div class="emoji-picker">
+          ${MOOD_EMOJIS.map(e => `<button class="emoji-btn ${tempEpisodeLog.mood === e ? 'selected' : ''}" onclick="selectMood('${e}', this)">${e}</button>`).join('')}
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="block text-[10px] font-bold uppercase mb-1" style="color:var(--text-secondary);">Заметка (опционально)</label>
+        <textarea id="imp-note" class="form-textarea" rows="2" style="min-height:60px;" placeholder="Что запомнилось в этом эпизоде..." oninput="tempEpisodeLog.note = this.value">${esc(tempEpisodeLog.note)}</textarea>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="saveEpisodeLog(true)" class="btn-primary flex-1 justify-center">✓ +1 эп. и сохранить</button>
+        <button onclick="closeImpressionForm()" class="btn-secondary">Отмена</button>
+      </div>
+    </div>
+  ` : '';
+
+  const logsHTML = logs.length > 0 ? `
+    <div class="mt-4">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="heading text-sm font-black text-white">📖 Журнал эпизодов (${logs.length})</h3>
+        ${avg !== null ? `<span class="ep-avg-badge">📊 Средний: ${avg.toFixed(1)}</span>` : ''}
+      </div>
+      <div class="ep-log-timeline max-h-64 overflow-y-auto pr-1">
+        ${logs.map((log, idx) => `
+          <div class="ep-log-item">
+            <div class="flex items-start justify-between gap-2 mb-1">
+              <div class="flex items-center gap-2">
+                <b class="text-xs text-white">Эпизод ${log.ep}</b>
+                ${log.mood ? `<span class="ep-log-mood">${log.mood}</span>` : ''}
+                ${log.rating > 0 ? `<span class="text-xs font-black" style="color:var(--accent-yellow);">★ ${log.rating}</span>` : ''}
+              </div>
+              <div class="flex items-center gap-1">
+                <button onclick="editEpisodeLog(${a.episodeLogs.indexOf(log)})" class="text-xs opacity-60 hover:opacity-100" title="Редактировать">✏️</button>
+                <button onclick="deleteEpisodeLog(${a.episodeLogs.indexOf(log)})" class="text-xs opacity-60 hover:opacity-100" title="Удалить">🗑</button>
+              </div>
+            </div>
+            ${log.note ? `<p class="text-xs leading-relaxed" style="color:var(--text-secondary);">${esc(log.note)}</p>` : ''}
+            <div class="text-[10px] mt-1" style="color:var(--text-muted);">${log.date || ''}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  ` : '';
+
+  document.getElementById('ep-modal-content').innerHTML = `
+    <div class="text-center mb-4">
+      <div class="heading text-5xl font-black mb-1" style="color:var(--accent-pink);">${a.episodesWatched}<span class="text-2xl" style="color:var(--text-muted);">/${a.episodesTotal || '?'}</span></div>
+      <div class="text-xs font-bold uppercase tracking-wider" style="color:var(--text-muted);">эпизодов просмотрено</div>
+    </div>
+    <div class="ep-progress mb-4" style="height:10px;"><div class="ep-progress-fill" style="width:${progress}%"></div></div>
+
+    <div class="grid grid-cols-2 gap-2 mb-4">
+      <button onclick="quickIncrement()" class="btn-success justify-center">+1 эп. быстро</button>
+      <button onclick="openImpressionForm()" class="btn-primary justify-center">+1 с впечатлением</button>
+    </div>
+
+    ${formHTML}
+
+    <div class="grid grid-cols-3 gap-2 mb-4">
+      <button onclick="adjustEpisodes(-1)" class="ep-btn" style="height:40px;font-size:16px;">−</button>
+      <div class="flex items-center justify-center gap-2">
+        <input id="ep-manual" type="number" class="form-input text-center" value="${a.episodesWatched}" min="0" style="padding:8px;font-size:14px;font-weight:700;" onkeydown="if(event.key==='Enter') setEpisodesManual()">
+        <button onclick="setEpisodesManual()" class="ep-btn" style="height:40px;width:40px;">✓</button>
+      </div>
+      <button onclick="adjustEpisodes(1)" class="ep-btn" style="height:40px;font-size:16px;background:var(--accent-green);color:#fff;border-color:var(--accent-green);">+</button>
+    </div>
+
+    ${a.episodesTotal > 0 && a.episodesWatched >= a.episodesTotal ? `<button onclick="markCompleted('${a.id}')" class="btn-primary w-full justify-center mb-3">✓ Отметить завершённым</button>` : ''}
+
+    ${logsHTML}
+
+    <div class="flex gap-2 mt-4 pt-4 border-t" style="border-color:var(--border-subtle);">
+      <button onclick="closeEpModal()" class="btn-secondary w-full justify-center">Готово</button>
+    </div>
+  `;
 }
-function downloadWrapped() { const c = document.getElementById('wrapped-canvas'); if (!c) return; const a = document.createElement('a'); a.download = `Anime-Wrapped-${currentWrappedYear}.png`; a.href = c.toDataURL('image/png'); a.click(); showToast('Сохранено!', '✨'); }
+
+function quickIncrement() {
+  adjustEpisodes(1);
+  showToast('+1 эпизод', '✓');
+}
+
+function openImpressionForm() {
+  const a = animeList.find(x => x.id === currentEpisodeModalId);
+  if (!a) return;
+  isImpressionFormOpen = true;
+  tempEpisodeLog = { ep: a.episodesWatched + 1, rating: 0, note: '', mood: '' };
+  renderEpModalContent(a);
+}
+
+function closeImpressionForm() {
+  isImpressionFormOpen = false;
+  const a = animeList.find(x => x.id === currentEpisodeModalId);
+  if (a) renderEpModalContent(a);
+}
+
+function selectMood(emoji, btn) {
+  tempEpisodeLog.mood = tempEpisodeLog.mood === emoji ? '' : emoji;
+  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.toggle('selected', b.textContent === tempEpisodeLog.mood));
+}
+
+function saveEpisodeLog(alsoIncrement) {
+  const a = animeList.find(x => x.id === currentEpisodeModalId);
+  if (!a) return;
+  if (!a.episodeLogs) a.episodeLogs = [];
+
+  const epNum = tempEpisodeLog.ep || (a.episodesWatched + 1);
+  const today = new Date().toISOString().slice(0, 10);
+
+  // Update or add
+  if (editingEpisodeLogIndex >= 0 && a.episodeLogs[editingEpisodeLogIndex]) {
+    a.episodeLogs[editingEpisodeLogIndex] = { ...a.episodeLogs[editingEpisodeLogIndex], ep: epNum, rating: tempEpisodeLog.rating, note: tempEpisodeLog.note.trim(), mood: tempEpisodeLog.mood };
+    editingEpisodeLogIndex = -1;
+  } else {
+    a.episodeLogs.push({ ep: epNum, rating: tempEpisodeLog.rating, note: tempEpisodeLog.note.trim(), mood: tempEpisodeLog.mood, date: today });
+  }
+
+  if (alsoIncrement) {
+    a.episodesWatched = Math.min(a.episodesTotal || 9999, epNum);
+    if (a.episodesWatched > 0 && a.status === 'planned') {
+      a.status = 'watching';
+      if (!a.startDate) a.startDate = today;
+    }
+    if (a.episodesTotal > 0 && a.episodesWatched >= a.episodesTotal && a.status === 'watching') {
+      a.status = 'completed';
+      if (!a.finishDate) a.finishDate = today;
+    }
+  }
+
+  if (db) idbPut(a).catch(() => {});
+  saveAnime();
+  isImpressionFormOpen = false;
+  updateHeaderStats();
+  renderEpModalContent(a);
+  renderCurrentView();
+  showToast(`Эпизод ${epNum} сохранён${tempEpisodeLog.rating > 0 ? ' с оценкой ' + tempEpisodeLog.rating : ''}`, '✨');
+}
+
+function editEpisodeLog(idx) {
+  const a = animeList.find(x => x.id === currentEpisodeModalId);
+  if (!a || !a.episodeLogs[idx]) return;
+  const log = a.episodeLogs[idx];
+  tempEpisodeLog = { ep: log.ep, rating: log.rating, note: log.note, mood: log.mood };
+  editingEpisodeLogIndex = idx;
+  isImpressionFormOpen = true;
+  renderEpModalContent(a);
+  setTimeout(() => { const el = document.getElementById('imp-ep'); if (el) el.focus(); }, 100);
+}
+
+function deleteEpisodeLog(idx) {
+  const a = animeList.find(x => x.id === currentEpisodeModalId);
+  if (!a || !a.episodeLogs[idx]) return;
+  if (!confirm('Удалить эту запись?')) return;
+  a.episodeLogs.splice(idx, 1);
+  if (db) idbPut(a).catch(() => {});
+  saveAnime();
+  renderEpModalContent(a);
+  renderCurrentView();
+  showToast('Запись удалена', '🗑');
+}
+
+function adjustEpisodes(delta) {
+  const a = animeList.find(x => x.id === currentEpisodeModalId);
+  if (!a) return;
+  a.episodesWatched = Math.max(0, Math.min(a.episodesTotal || 9999, (a.episodesWatched || 0) + delta));
+  const today = new Date().toISOString().slice(0, 10);
+  if (a.episodesTotal > 0 && a.episodesWatched >= a.episodesTotal && a.status === 'watching') {
+    a.status = 'completed';
+    if (!a.finishDate) a.finishDate = today;
+  }
+  if (a.episodesWatched > 0 && a.status === 'planned') {
+    a.status = 'watching';
+    if (!a.startDate) a.startDate = today;
+  }
+  if (db) idbPut(a).catch(() => {});
+  saveAnime(); updateHeaderStats(); renderEpModalContent(a); renderCurrentView();
+}
+function setEpisodesManual() {
+  const v = parseInt(document.getElementById('ep-manual').value) || 0;
+  const a = animeList.find(x => x.id === currentEpisodeModalId);
+  if (!a) return;
+  a.episodesWatched = Math.max(0, v);
+  if (db) idbPut(a).catch(() => {});
+  saveAnime(); updateHeaderStats(); renderEpModalContent(a); renderCurrentView();
+}
+function markCompleted(id) {
+  const a = animeList.find(x => x.id === id);
+  if (!a) return;
+  a.status = 'completed'; a.episodesWatched = a.episodesTotal;
+  if (!a.finishDate) a.finishDate = new Date().toISOString().slice(0, 10);
+  if (db) idbPut(a).catch(() => {});
+  saveAnime(); closeEpModal(); updateHeaderStats(); renderCurrentView();
+  showToast('Поздравляю! 🎉', '🏆');
+}
+function closeEpModal() { document.getElementById('ep-modal').classList.remove('show'); currentEpisodeModalId = null; editingEpisodeLogIndex = -1; isImpressionFormOpen = false; }
 
 /* ==================== TITLE SUGGESTIONS ==================== */
-function parseSeasonInfo(title) { if (!title) return null; const t = title.toLowerCase(); let m = t.match(/season\s*(\d+)/i) || t.match(/(\d+)\s*сезон/i) || t.match(/сезон\s*(\d+)/i); if (m) return { type: 'season', value: parseInt(m[1] || m[2] || m[3], 10) }; if (/final\s*season|финальный\s*сезон/i.test(t)) return { type: 'season', value: 'финальный' }; m = t.match(/part\s*(\d+)/i) || t.match(/часть\s*(\d+)/i); if (m) return { type: 'part', value: parseInt(m[1] || m[2], 10) }; if (/\bmovie\b|фильм/i.test(t)) return { type: 'format', value: 'Movie' }; if (/\bova\b/i.test(t)) return { type: 'format', value: 'OVA' }; if (/\bona\b/i.test(t)) return { type: 'format', value: 'ONA' }; return null; }
+function parseSeasonInfo(title) { if (!title) return null; const t = title.toLowerCase(); let m = t.match(/season\s*(\d+)/i) || t.match(/(\d+)\s*сезон/i); if (m) return { type: 'season', value: parseInt(m[1] || m[2], 10) }; m = t.match(/part\s*(\d+)/i) || t.match(/часть\s*(\d+)/i); if (m) return { type: 'part', value: parseInt(m[1] || m[2], 10) }; if (/фильм|movie/i.test(t)) return { type: 'format', value: 'Movie' }; return null; }
 function updateTitleSuggestions() {
   const title = document.getElementById('f-title').value.trim();
   const hintEl = document.getElementById('franchise-hint');
@@ -965,12 +1312,10 @@ function updateTitleSuggestions() {
   if (title.length < 2) { hintEl.classList.add('hidden'); return; }
   const hints = [];
   const dup = animeList.find(a => a.title.toLowerCase() === title.toLowerCase() && a.id !== editingId);
-  if (dup) hints.push({ icon: '⚠', text: `«${dup.title}» уже есть в дневнике`, action: `openEditModal('${dup.id}');closeAddModal();`, label: 'Открыть' });
+  if (dup) hints.push({ icon: '⚠', text: `«${dup.title}» уже есть`, action: `openEditModal('${dup.id}');closeAddModal();`, label: 'Открыть' });
   const si = parseSeasonInfo(title);
-  if (si) { let l = ''; if (si.type === 'season') l = si.value === 'финальный' ? 'финальный сезон' : `сезон ${si.value}`; else if (si.type === 'part') l = `часть ${si.value}`; else if (si.type === 'format') l = si.value; if (l) hints.push({ icon: '📺', text: `Распознано: ${l}` }); }
-  const key = franchiseKey(title);
-  if (key) { const sim = animeList.filter(a => franchiseKey(a.title) === key && a.id !== editingId); if (sim.length > 0) hints.push({ icon: '🎬', text: `Франшиза: ${sim.slice(0, 3).map(a => a.title).join(', ')}${sim.length > 3 ? ` +${sim.length - 3}` : ''}` }); }
-  if (hints.length === 0) { hintEl.classList.add('hidden'); hintEl.innerHTML = ''; return; }
+  if (si) hints.push({ icon: '📺', text: `Распознано: ${si.type === 'season' ? 'сезон ' + si.value : si.type === 'part' ? 'часть ' + si.value : si.value}` });
+  if (hints.length === 0) { hintEl.classList.add('hidden'); return; }
   hintEl.innerHTML = hints.map(h => `<div class="hint-banner">${h.icon}<span class="flex-1">${esc(h.text)}</span>${h.action ? `<button onclick="${h.action}" class="text-[11px] font-bold px-2 py-1 rounded-lg" style="background:var(--accent-pink);color:#fff;">${h.label}</button>` : ''}</div>`).join('');
   hintEl.classList.remove('hidden');
 }
@@ -1001,7 +1346,7 @@ function resetForm() {
   ['story', 'animation', 'music', 'characters'].forEach(k => { document.getElementById('f-crit-' + k).value = 0; updateCriteriaDisplay(k, 0); });
   updatePosterPreview();
 }
-function updatePosterPreview() { const el = document.getElementById('poster-preview'); el.innerHTML = uploadedPoster ? `<img src="${esc(uploadedPoster)}" style="width:100%;height:100%;object-fit:cover;">` : '<span class="text-5xl" style="color:var(--border-glow);">🎴</span>'; }
+function updatePosterPreview() { document.getElementById('poster-preview').innerHTML = uploadedPoster ? `<img src="${esc(uploadedPoster)}" style="width:100%;height:100%;object-fit:cover;">` : '<span class="text-5xl" style="color:var(--border-glow);">🎴</span>'; }
 function handlePosterUpload(event) {
   const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
@@ -1011,25 +1356,24 @@ function handlePosterUpload(event) {
 function updateScoreDisplay(v) { document.getElementById('score-display').textContent = parseFloat(v) === 0 ? '—' : v; }
 function updateCriteriaDisplay(k, v) { const el = document.getElementById('crit-' + k + '-val'); if (el) el.textContent = parseFloat(v) === 0 ? '—' : v; }
 function applyCriteriaAverage() { const vals = ['story', 'animation', 'music', 'characters'].map(k => parseFloat(document.getElementById('f-crit-' + k).value) || 0).filter(v => v > 0); if (!vals.length) { showToast('Выставьте критерии', '⚠'); return; } const avg = (vals.reduce((s, v) => s + v, 0) / vals.length).toFixed(1); document.getElementById('f-score').value = avg; document.getElementById('score-display').textContent = avg; showToast(`Балл: ${avg}`, '✓'); }
+
 function saveAnime() {
   const title = document.getElementById('f-title').value.trim(); if (!title) { showToast('Введите название', '⚠'); return; }
   const criteria = {}; ['story', 'animation', 'music', 'characters'].forEach(k => { const v = parseFloat(document.getElementById('f-crit-' + k).value) || 0; if (v > 0) criteria[k] = v; });
   const data = { title, titleJP: document.getElementById('f-titleJP').value.trim(), type: document.getElementById('f-type').value, year: parseInt(document.getElementById('f-year').value) || null, studio: document.getElementById('f-studio').value.trim(), genres: document.getElementById('f-genres').value.split(',').map(g => g.trim()).filter(Boolean), episodesTotal: parseInt(document.getElementById('f-episodesTotal').value) || 0, episodesWatched: parseInt(document.getElementById('f-episodesWatched').value) || 0, status: document.getElementById('f-status').value, score: parseFloat(document.getElementById('f-score').value) || 0, startDate: document.getElementById('f-startDate').value || '', finishDate: document.getElementById('f-finishDate').value || '', notes: document.getElementById('f-notes').value.trim(), favorite: document.getElementById('f-favorite').checked, poster: uploadedPoster, criteria: Object.keys(criteria).length ? criteria : null };
-  if (editingId) { const idx = animeList.findIndex(a => a.id === editingId); if (idx !== -1) { animeList[idx] = { ...animeList[idx], ...data }; showToast('Обновлено!', '✓'); } else { animeList.push({ id: editingId, ...data, addedAt: Date.now() }); } }
-  else { animeList.push({ id: 'a_' + Date.now(), ...data, addedAt: Date.now() }); showToast('Добавлено!', '✨'); }
+  if (editingId) { const idx = animeList.findIndex(a => a.id === editingId); if (idx !== -1) { animeList[idx] = { ...animeList[idx], ...data }; showToast('Обновлено!', '✓'); } }
+  else { animeList.push({ id: 'a_' + Date.now(), ...data, addedAt: Date.now(), episodeLogs: [], shikimoriId: null }); showToast('Добавлено!', '✨'); }
   saveAnime(); closeAddModal(); populateGenreFilter(); updateHeaderStats(); renderCurrentView();
 }
-function deleteAnime(id) { const a = animeList.find(x => x.id === id); if (!a) return; if (!confirm(`Удалить «${a.title}»?`)) return; animeList = animeList.filter(x => x.id !== id); if (db) idbDelete(id).catch(() => {}); saveAnime(); populateGenreFilter(); updateHeaderStats(); renderCurrentView(); showToast('Удалено', '🗑'); }
+function deleteAnime(id) {
+  const a = animeList.find(x => x.id === id); if (!a) return;
+  if (!confirm(`Удалить «${a.title}»?`)) return;
+  animeList = animeList.filter(x => x.id !== id);
+  if (db) idbDelete(id).catch(() => {});
+  saveAnime(); populateGenreFilter(); updateHeaderStats(); renderCurrentView(); showToast('Удалено', '🗑');
+}
 
-/* ==================== EPISODES ==================== */
-function openEpModal(id) { const a = animeList.find(x => x.id === id); if (!a) return; editingId = id; document.getElementById('ep-modal-title').textContent = a.title; renderEpModalContent(a); document.getElementById('ep-modal').classList.add('show'); }
-function renderEpModalContent(a) { const progress = a.episodesTotal > 0 ? (a.episodesWatched / a.episodesTotal) * 100 : 0; document.getElementById('ep-modal-content').innerHTML = `<div class="text-center mb-4"><div class="heading text-5xl font-black mb-1" style="color:var(--accent-pink);">${a.episodesWatched}<span class="text-2xl" style="color:var(--text-muted);">/${a.episodesTotal || '?'}</span></div><div class="text-xs font-bold uppercase tracking-wider" style="color:var(--text-muted);">эпизодов</div></div><div class="ep-progress mb-4" style="height:10px;"><div class="ep-progress-fill" style="width:${progress}%"></div></div><div class="flex items-center justify-center gap-3 mb-4"><button onclick="adjustEpisodes(-1)" class="ep-btn" style="width:44px;height:44px;font-size:18px;">−</button><button onclick="adjustEpisodes(1)" class="btn-primary" style="padding:12px 24px;">+1</button><button onclick="adjustEpisodes(5)" class="btn-secondary">+5</button></div><div class="space-y-2"><label class="block text-xs font-bold uppercase tracking-wider" style="color:var(--text-secondary);">Вручную:</label><div class="flex gap-2"><input id="ep-manual" type="number" class="form-input" value="${a.episodesWatched}" min="0"><button onclick="setEpisodesManual()" class="btn-secondary">ОК</button></div></div><div class="flex gap-2 mt-4 pt-3 border-t" style="border-color:var(--border-subtle);">${a.episodesTotal > 0 && a.episodesWatched >= a.episodesTotal ? `<button onclick="markCompleted('${a.id}')" class="btn-primary w-full">✓ Завершено!</button>` : `<button onclick="closeEpModal()" class="btn-secondary w-full">Готово</button>`}</div>`; }
-function adjustEpisodes(delta) { const a = animeList.find(x => x.id === editingId); if (!a) return; a.episodesWatched = Math.max(0, Math.min(a.episodesTotal || 9999, (a.episodesWatched || 0) + delta)); if (a.episodesTotal > 0 && a.episodesWatched >= a.episodesTotal && a.status === 'watching') { a.status = 'completed'; if (!a.finishDate) a.finishDate = new Date().toISOString().slice(0, 10); } if (a.episodesWatched > 0 && a.status === 'planned') { a.status = 'watching'; if (!a.startDate) a.startDate = new Date().toISOString().slice(0, 10); } if (db) idbPut(a).catch(() => {}); saveAnime(); updateHeaderStats(); renderEpModalContent(a); renderCurrentView(); }
-function setEpisodesManual() { const v = parseInt(document.getElementById('ep-manual').value) || 0; const a = animeList.find(x => x.id === editingId); if (!a) return; a.episodesWatched = Math.max(0, v); if (db) idbPut(a).catch(() => {}); saveAnime(); updateHeaderStats(); renderEpModalContent(a); renderCurrentView(); }
-function markCompleted(id) { const a = animeList.find(x => x.id === id); if (!a) return; a.status = 'completed'; a.episodesWatched = a.episodesTotal; if (!a.finishDate) a.finishDate = new Date().toISOString().slice(0, 10); if (db) idbPut(a).catch(() => {}); saveAnime(); closeEpModal(); updateHeaderStats(); renderCurrentView(); showToast('Поздравляю! 🎉', '🏆'); }
-function closeEpModal() { document.getElementById('ep-modal').classList.remove('show'); editingId = null; }
-
-/* ==================== SEARCH (Shikimori + Jikan) with cache ==================== */
+/* ==================== SEARCH ==================== */
 async function searchShikimori(q) {
   const key = 'shiki:' + q.toLowerCase().trim();
   const cached = await apiCacheGet(key);
@@ -1042,7 +1386,7 @@ async function searchShikimori(q) {
     await apiCachePut(key, data);
     return { data, fromCache: false };
   } catch (e) {
-    if (cached) { console.warn('Using stale cache:', e.message); return { data: cached.data, fromCache: true, stale: true }; }
+    if (cached) return { data: cached.data, fromCache: true, stale: true };
     throw e;
   }
 }
@@ -1058,7 +1402,7 @@ async function searchJikanApi(q) {
     await apiCachePut(key, result);
     return { data: result, fromCache: false };
   } catch (e) {
-    if (cached) { console.warn('Using stale cache:', e.message); return { data: cached.data, fromCache: true, stale: true }; }
+    if (cached) return { data: cached.data, fromCache: true, stale: true };
     throw e;
   }
 }
@@ -1074,9 +1418,7 @@ async function searchAnime() {
   box.innerHTML = '<div class="text-center py-3 text-xs" style="color:var(--text-muted);"><svg class="inline w-4 h-4 spinner" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.2-8.55"/></svg> Ищу...</div>';
   let shikiResult = { data: [], fromCache: false }, jikanResult = { data: [], fromCache: false }, shikiError = null;
   try { shikiResult = await searchShikimori(q); } catch (e) { shikiError = e.message; }
-  if (shikiResult.data.length < 3) {
-    try { jikanResult = await searchJikanApi(q); } catch (e) { console.warn('Jikan:', e); }
-  }
+  if (shikiResult.data.length < 3) { try { jikanResult = await searchJikanApi(q); } catch (e) {} }
   if (shikiResult.data.length === 0 && jikanResult.data.length === 0) {
     const msg = shikiError === 'RATE_LIMIT' ? 'Shikimori: слишком много запросов. Подождите 5 сек.' : 'Ничего не найдено';
     box.innerHTML = `<div class="text-center py-3 text-xs" style="color:${shikiError === 'RATE_LIMIT' ? '#f43f5e' : 'var(--text-muted)'};">${msg}</div>`;
@@ -1094,8 +1436,8 @@ async function searchAnime() {
       const type = kindMap[d.kind] || 'TV';
       const studio = d.studios?.[0]?.name || '';
       const genres = (d.genres || []).map(g => g.russian || g.name).join(', ');
-      const payload = encodeURIComponent(JSON.stringify({ source: 'shikimori', title, titleJP: d.japanese || d.name || '', year, eps: d.episodes || 0, score: d.score || 0, studio, genres, type, poster: d.image?.original || img }));
-      const cacheBadge = item.fromCache ? '<span class="cache-badge">⚡ кэш</span>' : '';
+      const payload = encodeURIComponent(JSON.stringify({ source: 'shikimori', shikimoriId: d.id, title, titleJP: d.japanese || d.name || '', year, eps: d.episodes || 0, score: d.score || 0, studio, genres, type, poster: d.image?.original || img }));
+      const cacheBadge = item.fromCache ? '<span class="cache-badge">⚡</span>' : '';
       return `<div class="suggest-item" onclick="applySearchResult('${payload}')"><img src="${esc(img)}" alt=""><div class="flex-1 min-w-0"><div class="font-bold text-[13px] text-white truncate">${esc(title)}</div><div class="text-[11px] truncate" style="color:var(--text-muted);">${year ? year + ' • ' : ''}${type}${d.episodes ? ' • ' + d.episodes + ' эп.' : ''}${studio ? ' • ' + esc(studio) : ''}</div><div class="flex items-center gap-1.5 mt-0.5">${d.score ? `<span class="text-[11px] font-bold" style="color:var(--accent-pink);">★ ${d.score}</span>` : ''}${cacheBadge}</div></div><div class="text-[10px] px-2 py-1 rounded-md font-black" style="background:var(--accent-pink);color:#fff;">RU</div></div>`;
     } else {
       const d = item.data;
@@ -1108,8 +1450,8 @@ async function searchAnime() {
       const type = kindMap[d.type] || 'TV';
       const studio = d.studios?.[0]?.name || '';
       const genres = (d.genres || []).map(g => g.name).join(', ');
-      const payload = encodeURIComponent(JSON.stringify({ source: 'jikan', title, titleJP, year, eps: d.episodes || 0, score: d.score || 0, studio, genres, type, poster: d.images?.jpg?.large_image_url || img }));
-      const cacheBadge = item.fromCache ? '<span class="cache-badge">⚡ кэш</span>' : '';
+      const payload = encodeURIComponent(JSON.stringify({ source: 'jikan', malId: d.mal_id, title, titleJP, year, eps: d.episodes || 0, score: d.score || 0, studio, genres, type, poster: d.images?.jpg?.large_image_url || img }));
+      const cacheBadge = item.fromCache ? '<span class="cache-badge">⚡</span>' : '';
       return `<div class="suggest-item" onclick="applySearchResult('${payload}')"><img src="${esc(img)}" alt=""><div class="flex-1 min-w-0"><div class="font-bold text-[13px] text-white truncate">${esc(title)}${russianTitle ? '' : ' (RU нет)'}</div><div class="text-[11px] truncate" style="color:var(--text-muted);">${year ? year + ' • ' : ''}${type}${d.episodes ? ' • ' + d.episodes + ' эп.' : ''}${studio ? ' • ' + esc(studio) : ''}</div><div class="flex items-center gap-1.5 mt-0.5">${d.score ? `<span class="text-[11px] font-bold" style="color:var(--accent-purple);">★ ${d.score}</span>` : ''}${cacheBadge}</div></div><div class="text-[10px] px-2 py-1 rounded-md font-black" style="background:var(--accent-purple);color:#fff;">MAL</div></div>`;
     }
   }).join('');
@@ -1132,31 +1474,25 @@ function applySearchResult(encoded) {
   ['story', 'animation', 'music', 'characters'].forEach(k => { document.getElementById('f-crit-' + k).value = 0; updateCriteriaDisplay(k, 0); });
   uploadedPoster = d.poster || '';
   updatePosterPreview(); updateTitleSuggestions();
-  document.getElementById('search-results').innerHTML = ''; document.getElementById('search-anime-input').value = '';
+  // Store IDs for next-episode tracking
+  window._tempShikimoriId = d.shikimoriId || null;
+  window._tempMalId = d.malId || null;
+  document.getElementById('search-results').innerHTML = '';
+  document.getElementById('search-anime-input').value = '';
   showToast(d.source === 'shikimori' ? 'Из Shikimori (RU)' : 'Из MAL', '✓');
 }
 
-/* ==================== IMPORT FROM SHIKIMORI ==================== */
-function openImportModal() {
-  closeDataMenu();
-  document.getElementById('shiki-nickname').value = '';
-  document.getElementById('import-status').textContent = '';
-  document.getElementById('import-progress').classList.add('hidden');
-  document.getElementById('import-btn').disabled = false;
-  document.getElementById('import-btn').textContent = 'Импортировать';
-  document.getElementById('import-modal').classList.add('show');
-}
+/* ==================== IMPORT (with retry) ==================== */
+function openImportModal() { closeDataMenu(); document.getElementById('shiki-nickname').value = ''; document.getElementById('import-status').textContent = ''; document.getElementById('import-progress').classList.add('hidden'); document.getElementById('import-btn').disabled = false; document.getElementById('import-btn').textContent = 'Импортировать'; document.getElementById('import-modal').classList.add('show'); }
 function closeImportModal() { document.getElementById('import-modal').classList.remove('show'); }
-function mapShikimoriStatus(s) {
-  const map = { planned: 'planned', watching: 'watching', rewatching: 'rewatching', completed: 'completed', on_hold: 'on_hold', dropped: 'dropped' };
-  return map[s] || 'completed';
-}
+function mapShikimoriStatus(s) { const m = { planned: 'planned', watching: 'watching', rewatching: 'rewatching', completed: 'completed', on_hold: 'on_hold', dropped: 'dropped' }; return m[s] || 'completed'; }
 function mapShikimoriRate(rate) {
   const a = rate.anime || {};
   const kindMap = { tv: 'TV', movie: 'Movie', ova: 'OVA', ona: 'ONA', special: 'Special', tv_special: 'Special', music: 'Special' };
   const year = a.aired_on ? new Date(a.aired_on).getFullYear() : null;
   return {
     id: 'a_shiki_' + (a.id || Date.now()) + '_' + Math.random().toString(36).slice(2, 7),
+    shikimoriId: a.id || null,
     title: a.russian || a.name || 'Без названия',
     titleJP: a.japanese || a.name || '',
     type: kindMap[a.kind] || 'TV',
@@ -1172,10 +1508,38 @@ function mapShikimoriRate(rate) {
     favorite: false,
     poster: a.image?.original || a.image?.preview || '',
     criteria: null,
+    episodeLogs: [],
     addedAt: rate.created_at ? new Date(rate.created_at).getTime() : Date.now(),
     rewatches: rate.rewatches || 0
   };
 }
+
+// Retry with exponential backoff
+async function fetchWithRetry(url, options = {}, maxRetries = 3) {
+  const delays = [1000, 3000, 6000];
+  for (let i = 0; i <= maxRetries; i++) {
+    try {
+      const resp = await fetch(url, options);
+      if (resp.status === 503) {
+        if (i < maxRetries) {
+          document.getElementById('import-status').textContent = `Сервер недоступен (503). Попытка ${i + 2}/${maxRetries + 1} через ${delays[i] / 1000}с...`;
+          document.getElementById('import-status').style.color = 'var(--accent-yellow)';
+          await new Promise(r => setTimeout(r, delays[i]));
+          continue;
+        }
+        throw new Error('SERVER_UNAVAILABLE');
+      }
+      return resp;
+    } catch (e) {
+      if (i < maxRetries && e.message !== 'SERVER_UNAVAILABLE') {
+        await new Promise(r => setTimeout(r, delays[i]));
+        continue;
+      }
+      throw e;
+    }
+  }
+}
+
 async function startImport() {
   const nick = document.getElementById('shiki-nickname').value.trim();
   if (!nick) { showToast('Введите ник', '⚠'); return; }
@@ -1187,13 +1551,13 @@ async function startImport() {
   statusEl.textContent = 'Запрашиваю список с Shikimori...';
   statusEl.style.color = 'var(--text-secondary)';
   try {
-    const resp = await fetch(`https://shikimori.one/api/users/${encodeURIComponent(nick)}/anime_rates?limit=1000`);
+    const resp = await fetchWithRetry(`https://shikimori.one/api/users/${encodeURIComponent(nick)}/anime_rates?limit=1000`);
     if (resp.status === 404) throw new Error('Пользователь не найден');
-    if (resp.status === 429) throw new Error('Слишком много запросов. Подождите');
+    if (resp.status === 429) throw new Error('Слишком много запросов. Подождите 1-2 минуты');
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const rates = await resp.json();
     if (!Array.isArray(rates) || rates.length === 0) { statusEl.textContent = 'Список пуст'; btn.disabled = false; btn.textContent = 'Импортировать'; return; }
-    statusEl.textContent = `Найдено ${rates.length} тайтлов. Обработка...`;
+    statusEl.textContent = `Найдено ${rates.length}. Обработка...`;
     progressWrap.classList.remove('hidden');
     const existing = new Set(animeList.map(a => (a.title || '').toLowerCase()));
     let added = 0, skipped = 0;
@@ -1210,13 +1574,19 @@ async function startImport() {
     }
     animeList.push(...batch);
     saveAnime(); populateGenreFilter(); updateHeaderStats(); renderCurrentView();
-    statusEl.textContent = `✓ Добавлено ${added}, пропущено (дубликаты) ${skipped}`;
+    statusEl.textContent = `✓ Добавлено ${added}, пропущено ${skipped} дубликатов`;
     statusEl.style.color = 'var(--accent-green)';
     btn.textContent = 'Готово';
-    showToast(`Импорт завершён: ${added} новых`, '✓');
-    setTimeout(() => { closeImportModal(); switchView('grid'); }, 2200);
+    showToast(`Импорт: ${added} новых`, '✓');
+    // Refresh next episodes for watching titles
+    setTimeout(() => { refreshAllNextEpisodes(); }, 500);
+    setTimeout(() => { closeImportModal(); switchView('grid'); }, 2500);
   } catch (e) {
-    statusEl.textContent = 'Ошибка: ' + e.message;
+    if (e.message === 'SERVER_UNAVAILABLE') {
+      statusEl.innerHTML = '❌ Shikimori API временно недоступен (503).<br><span class="retry-info">Попробуйте через 5–10 минут. Проверьте статус на <a href="https://status.shikimori.one" target="_blank" style="color:var(--accent-pink);text-decoration:underline;">status.shikimori.one</a></span>';
+    } else {
+      statusEl.textContent = 'Ошибка: ' + e.message;
+    }
     statusEl.style.color = '#f43f5e';
     btn.disabled = false; btn.textContent = 'Повторить';
   }
@@ -1226,20 +1596,17 @@ async function startImport() {
 async function openDataMenu() {
   document.getElementById('info-count').textContent = animeList.length;
   document.getElementById('info-posters').textContent = animeList.filter(a => hasPoster(a)).length;
-  try { const size = new Blob([JSON.stringify(animeList)]).size; document.getElementById('info-size').textContent = size > 1048576 ? (size / 1048576).toFixed(1) + ' МБ' : (size / 1024).toFixed(1) + ' КБ'; } catch { document.getElementById('info-size').textContent = '—'; }
+  document.getElementById('info-logs').textContent = animeList.reduce((s, a) => s + ((a.episodeLogs || []).length), 0);
+  try { const size = new Blob([JSON.stringify(animeList)]).size; document.getElementById('info-size').textContent = size > 1048576 ? (size / 1048576).toFixed(1) + ' МБ' : (size / 1024).toFixed(1) + ' КБ'; } catch {}
   const swStatus = document.getElementById('info-sw');
   if ('serviceWorker' in navigator) {
-    try {
-      const reg = await navigator.serviceWorker.getRegistration();
-      swStatus.textContent = reg ? (reg.active ? '✓ Активен' : '⏳ Установка') : '✗ Не зарег.';
-      swStatus.style.color = reg && reg.active ? 'var(--accent-green)' : 'var(--accent-yellow)';
-    } catch { swStatus.textContent = '—'; }
-  } else { swStatus.textContent = '✗ Не поддерживается'; }
+    try { const reg = await navigator.serviceWorker.getRegistration(); swStatus.textContent = reg ? (reg.active ? '✓ Активен' : '⏳ Установка') : '✗ Не зарег.'; swStatus.style.color = reg && reg.active ? 'var(--accent-green)' : 'var(--accent-yellow)'; } catch { swStatus.textContent = '—'; }
+  } else { swStatus.textContent = '✗ Не подд.'; }
   document.getElementById('data-modal').classList.add('show');
 }
-function closeDataMenu() { document.getElementById('data-modal').classList.remove('show'); }
+function closeDataMenu() { document.getElementById('data-modal').classList.remove('show'); if (window._restoreDataModal) window._restoreDataModal(); }
 function exportData() {
-  const data = { version: 5, exportedAt: new Date().toISOString(), anime: animeList };
+  const data = { version: 6, exportedAt: new Date().toISOString(), anime: animeList };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = `anime-diary-backup-${new Date().toISOString().slice(0, 10)}.json`; a.click(); URL.revokeObjectURL(url);
@@ -1253,26 +1620,117 @@ function importData(event) {
       const data = JSON.parse(e.target.result);
       const incoming = Array.isArray(data) ? data : (data.anime || []);
       if (!Array.isArray(incoming) || incoming.length === 0) { showToast('Файл пуст', '⚠'); return; }
-      const mode = confirm(`Найдено ${incoming.length}.\n\nOK — добавить\nОтмена — заменить всё`);
+      const mode = confirm(`Найдено ${incoming.length}.\n\nOK — добавить к существующим\nОтмена — заменить всё`);
       if (mode) {
         const ids = new Set(animeList.map(a => a.id)); let added = 0;
         incoming.forEach(a => { if (a.id && !ids.has(a.id)) { animeList.push(a); added++; } else if (a.id) { const i = animeList.findIndex(x => x.id === a.id); if (i >= 0) animeList[i] = { ...animeList[i], ...a }; } else { animeList.push({ ...a, id: 'a_' + Date.now() + Math.random().toString(36).slice(2, 7) }); added++; } });
         showToast(`Добавлено ${added}`, '✓');
       } else { animeList = incoming; if (db) await idbClear(); showToast(`Загружено ${incoming.length}`, '✓'); }
+      migrateData();
       saveAnime(); populateGenreFilter(); updateHeaderStats(); renderCurrentView(); closeDataMenu();
     } catch { showToast('Ошибка чтения', '⚠'); }
   };
   reader.readAsText(file);
 }
 async function clearAllData() {
-  if (!confirm('Удалить ВСЕ данные? Убедитесь, что сделали бэкап!')) return;
+  if (!confirm('Удалить ВСЕ данные? Сделайте бэкап!')) return;
   if (!confirm('Точно?')) return;
   animeList = [];
   if (db) await idbClear();
-  localStorage.removeItem('anime_diary_backup_v4');
+  localStorage.removeItem('anime_diary_backup_v5');
   saveAnime(); populateGenreFilter(); updateHeaderStats(); renderCurrentView(); closeDataMenu();
   showToast('Всё удалено', '🗑');
 }
+
+/* ==================== HOTKEYS HELP ==================== */
+function openHotkeysHelp() { document.getElementById('hotkeys-modal').classList.add('show'); }
+function closeHotkeysHelp() { document.getElementById('hotkeys-modal').classList.remove('show'); }
+
+/* ==================== OTHER VIEWS (compact — unchanged from v5) ==================== */
+function franchiseKey(title) { if (!title) return ''; let t = title.toLowerCase().replace(/\s*[:\-–—].*$/, '').replace(/\b(season|part|movie|ova|ona|special|final|chapter|arc|episode|specials|сезон|часть|фильм|финальный|спешл|арка)\b/gi, ' ').replace(/[^\wа-яё\s]/gi, ' ').replace(/\d+/g, ''); return t.replace(/\s+/g, ' ').trim(); }
+function groupFranchises(list) { const g = {}; list.forEach(a => { const k = franchiseKey(a.title); if (!k) return; if (!g[k]) g[k] = []; g[k].push(a); }); return Object.entries(g).filter(([_, i]) => i.length > 1).map(([k, i]) => { const s = [...i].sort((a, b) => (a.year || 0) - (b.year || 0)); const sh = [...s].sort((a, b) => (a.title || '').length - (b.title || '').length)[0]; return { key: k, name: (sh.title || '').replace(/[:\-–—].*/, '').trim() || sh.title, items: s }; }).sort((a, b) => b.items.length - a.items.length); }
+function renderCollections() {
+  const c = document.getElementById('view-collections');
+  const fr = groupFranchises(animeList);
+  if (fr.length === 0) { c.innerHTML = `<div class="fade-up empty-state"><div class="empty-state-icon">🎬</div><h3 class="heading text-xl font-black text-white mb-2">Коллекций пока нет</h3><p class="text-sm mb-4" style="color:var(--text-muted);">Добавьте несколько сезонов одной серии — сгруппируются автоматически.</p></div>`; return; }
+  c.innerHTML = `<div class="fade-up"><div class="mb-4"><h2 class="heading text-xl font-black text-white">🎬 Коллекции</h2><p class="text-xs mt-1" style="color:var(--text-muted);">${fr.length} коллекций</p></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4">${fr.map(f => { const w = f.items.filter(a => a.status === 'completed').length; const p = f.items.length ? w / f.items.length * 100 : 0; const sc = f.items.filter(a => a.score > 0); const av = sc.length ? (sc.reduce((s, a) => s + a.score, 0) / sc.length).toFixed(1) : '—'; return `<div class="franchise-card"><div class="flex items-start justify-between gap-3 mb-3"><div class="flex-1 min-w-0"><h3 class="heading text-base font-black text-white line-clamp-1">${esc(f.name)}</h3><p class="text-xs mt-0.5" style="color:var(--text-muted);">${f.items.length} тайтлов</p></div><div class="text-right"><div class="text-xs font-bold" style="color:var(--accent-pink);">★ ${av}</div><div class="text-[10px]" style="color:var(--text-muted);">${w}/${f.items.length}</div></div></div><div class="ep-progress mb-2"><div class="ep-progress-fill" style="width:${p}%"></div></div><div class="space-y-1.5">${f.items.map(a => `<div class="flex items-center gap-2 p-2 rounded-lg cursor-pointer" style="background:rgba(128,128,128,0.06);" onclick="openEditModal('${a.id}')"><img src="${esc(posterOf(a))}" style="width:32px;height:44px;object-fit:cover;border-radius:5px;"><div class="flex-1 min-w-0"><div class="text-xs font-bold text-white truncate">${esc(a.title)}</div><div class="text-[10px]" style="color:var(--text-muted);">${a.year || ''} • ${STATUS_LABELS[a.status]}</div></div></div>`).join('')}</div></div>`; }).join('')}</div></div>`;
+}
+function calendarEvents() { const ev = {}; animeList.forEach(a => { if (a.startDate) (ev[a.startDate] = ev[a.startDate] || []).push({ type: 'start', anime: a }); if (a.finishDate) (ev[a.finishDate] = ev[a.finishDate] || []).push({ type: 'finish', anime: a }); }); return ev; }
+function renderCalendar() {
+  const c = document.getElementById('view-calendar');
+  const d = currentCalendarDate;
+  const y = d.getFullYear(), m = d.getMonth();
+  const mn = d.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+  const mnc = mn.charAt(0).toUpperCase() + mn.slice(1);
+  const ev = calendarEvents();
+  const fd = new Date(y, m, 1), ld = new Date(y, m + 1, 0);
+  const sw = (fd.getDay() + 6) % 7;
+  const dim = ld.getDate(), pml = new Date(y, m, 0).getDate();
+  const today = new Date();
+  const ts = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  let cells = [];
+  for (let i = sw - 1; i >= 0; i--) cells.push({ day: pml - i, other: true, dateStr: '' });
+  for (let dd = 1; dd <= dim; dd++) cells.push({ day: dd, other: false, dateStr: `${y}-${String(m + 1).padStart(2, '0')}-${String(dd).padStart(2, '0')}` });
+  const rem = (7 - (cells.length % 7)) % 7;
+  for (let i = 1; i <= rem; i++) cells.push({ day: i, other: true, dateStr: '' });
+  const me = Object.entries(ev).filter(([d]) => d.startsWith(`${y}-${String(m + 1).padStart(2, '0')}-`)).sort(([a], [b]) => a.localeCompare(b));
+  c.innerHTML = `<div class="fade-up"><div class="flex items-center justify-between mb-5 flex-wrap gap-3"><h2 class="heading text-xl font-black text-white">📅 Календарь</h2><div class="flex items-center gap-2"><button onclick="prevMonth()" class="btn-icon">←</button><span class="heading font-black text-base px-3" style="min-width:180px;text-align:center;">${mnc}</span><button onclick="nextMonth()" class="btn-icon">→</button><button onclick="currentCalendarDate=new Date(); renderCalendar();" class="btn-secondary" style="padding:6px 12px;font-size:12px;">Сегодня</button></div></div><div class="grid grid-cols-1 lg:grid-cols-3 gap-4"><div class="lg:col-span-2"><div class="grid grid-cols-7 gap-1.5 mb-2 text-center text-[11px] font-bold uppercase" style="color:var(--text-muted);"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div style="color:#f43f5e;">Сб</div><div style="color:#f43f5e;">Вс</div></div><div class="grid grid-cols-7 gap-1.5">${cells.map(cl => { if (!cl.dateStr) return '<div class="cal-day other-month"></div>'; const de = ev[cl.dateStr] || []; const it = cl.dateStr === ts; return `<div class="cal-day ${it ? 'today' : ''} ${de.length ? 'has-event' : ''}"><div class="font-bold text-xs" style="color:${it ? 'var(--accent-pink)' : 'var(--text-primary)'};">${cl.day}</div><div class="flex flex-wrap gap-0.5 mt-auto">${de.slice(0, 5).map(e => `<span class="cal-dot cal-dot-${e.type}"></span>`).join('')}</div></div>`; }).join('')}</div></div><div class="anime-card p-4"><h3 class="heading text-sm font-black text-white mb-3">📋 События</h3>${me.length === 0 ? '<p class="text-xs text-center py-6" style="color:var(--text-muted);">Нет событий</p>' : me.map(([date, list]) => `<div class="mb-3 pb-3 border-b last:border-0" style="border-color:var(--border-subtle);"><div class="text-[11px] font-bold mb-1" style="color:var(--accent-pink);">${new Date(date + 'T00:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}</div>${list.map(e => `<div class="flex items-center gap-2 py-1 cursor-pointer" onclick="openEditModal('${e.anime.id}')"><span class="text-xs" style="color:${e.type === 'start' ? 'var(--accent-cyan)' : 'var(--accent-pink)'};">${e.type === 'start' ? '▶' : '✓'}</span><span class="text-xs font-semibold text-white truncate flex-1">${esc(e.anime.title)}</span></div>`).join('')}</div>`).join('')}</div></div></div>`;
+}
+function prevMonth() { currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1); renderCalendar(); }
+function nextMonth() { currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1); renderCalendar(); }
+
+function renderStats() {
+  const c = document.getElementById('view-stats');
+  const byStatus = {}; Object.keys(STATUS_LABELS).forEach(s => byStatus[s] = animeList.filter(a => a.status === s).length);
+  const byGenre = {}; animeList.forEach(a => (a.genres || []).forEach(g => byGenre[g] = (byGenre[g] || 0) + 1));
+  const topGenres = Object.entries(byGenre).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  const byStudio = {}; animeList.forEach(a => { if (a.studio) byStudio[a.studio] = (byStudio[a.studio] || 0) + 1; });
+  const topStudios = Object.entries(byStudio).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const scoreDist = [10, 9, 8, 7, 6].map(thr => ({ label: thr === 10 ? '10.0' : `${thr}.0+`, count: animeList.filter(a => a.score >= thr && (thr === 10 ? a.score === 10 : a.score < thr + 1)).length }));
+  const totalLogs = animeList.reduce((s, a) => s + ((a.episodeLogs || []).length), 0);
+  c.innerHTML = `<div class="fade-up space-y-6">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Тайтлов</div><div class="heading text-3xl font-black" style="color:var(--accent-pink);">${animeList.length}</div></div>
+      <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Эпизодов</div><div class="heading text-3xl font-black" style="color:var(--accent-purple);">${animeList.reduce((s, a) => s + (a.episodesWatched || 0), 0)}</div></div>
+      <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Часов</div><div class="heading text-3xl font-black" style="color:var(--accent-cyan);">${totalTimeHours()}</div></div>
+      <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Заметок</div><div class="heading text-3xl font-black" style="color:var(--accent-yellow);">${totalLogs}</div></div>
+      <div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">Избранных</div><div class="heading text-3xl font-black" style="color:var(--accent-green);">${animeList.filter(a => a.favorite).length}</div></div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-4">📈 Статусы</h3><div class="space-y-2.5">${Object.entries(byStatus).filter(([_, n]) => n > 0).map(([s, n]) => { const pct = Math.round(n / (animeList.length || 1) * 100); return `<div><div class="flex justify-between text-xs mb-1"><span style="color:var(--text-secondary);">${STATUS_LABELS[s]}</span><span class="font-bold" style="color:${STATUS_COLORS[s]};">${n}</span></div><div style="height:6px;background:rgba(128,128,128,0.1);border-radius:999px;"><div style="height:100%;width:${pct}%;background:${STATUS_COLORS[s]};border-radius:999px;"></div></div></div>`; }).join('')}</div></div>
+      <div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-4">⭐ Оценки</h3><div class="space-y-2.5">${scoreDist.map(s => { const pct = Math.round(s.count / (animeList.length || 1) * 100); return `<div><div class="flex justify-between text-xs mb-1"><span style="color:var(--text-secondary);">★ ${s.label}</span><span class="font-bold" style="color:var(--accent-yellow);">${s.count}</span></div><div style="height:6px;background:rgba(128,128,128,0.1);border-radius:999px;"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent-pink),var(--accent-purple));border-radius:999px;"></div></div></div>`; }).join('')}</div></div>
+      <div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-4">🎭 Жанры</h3><div class="flex flex-wrap gap-2">${topGenres.map(([g, n]) => `<span class="badge" style="background:rgba(167,139,250,0.12);color:var(--accent-purple);border-color:rgba(167,139,250,0.4);">${esc(g)} <b>${n}</b></span>`).join('') || '—'}</div></div>
+      <div class="anime-card p-5"><h3 class="heading text-base font-black text-white mb-4">🏢 Студии</h3><div class="space-y-2">${topStudios.map(([s, n]) => `<div class="flex justify-between text-sm"><span style="color:var(--text-secondary);">${esc(s)}</span><span class="font-black" style="color:var(--accent-cyan);">${n}</span></div>`).join('') || '—'}</div></div>
+    </div>
+  </div>`;
+}
+function yearAnimeStats(year) { const inYear = animeList.filter(a => { if (a.finishDate) return new Date(a.finishDate).getFullYear() === year; if (a.status === 'completed') return new Date(a.addedAt || Date.now()).getFullYear() === year; return false; }); const eps = inYear.reduce((s, a) => s + (a.episodesWatched || 0), 0); const hours = Math.round(inYear.reduce((s, a) => s + (a.episodesWatched || 0) * (a.type === 'Movie' ? 100 : 24), 0) / 60); const scored = inYear.filter(a => a.score > 0); const avg = scored.length ? (scored.reduce((s, a) => s + a.score, 0) / scored.length).toFixed(2) : '—'; return { finished: inYear.length, episodes: eps, hours, avg, list: inYear }; }
+function renderWrapped() {
+  const c = document.getElementById('view-wrapped');
+  const years = new Set(); animeList.forEach(a => { if (a.finishDate) years.add(new Date(a.finishDate).getFullYear()); if (a.startDate) years.add(new Date(a.startDate).getFullYear()); if (a.year) years.add(a.year); }); years.add(new Date().getFullYear());
+  const sortedYears = [...years].sort((a, b) => b - a);
+  const stats = yearAnimeStats(currentWrappedYear);
+  const topAnime = [...stats.list].filter(a => a.score > 0).sort((a, b) => b.score - a.score).slice(0, 5);
+  c.innerHTML = `<div class="fade-up"><div class="flex items-center justify-between flex-wrap gap-3 mb-6"><div><h2 class="heading text-2xl font-black text-white">✨ Итоги года</h2></div><div class="flex gap-2 items-center"><select class="form-select" style="width:auto;padding:8px 12px;font-size:13px;" onchange="currentWrappedYear=+this.value; renderWrapped()">${sortedYears.map(y => `<option value="${y}" ${y === currentWrappedYear ? 'selected' : ''}>${y}</option>`).join('')}</select><button onclick="downloadWrapped()" class="btn-primary">Скачать PNG</button></div></div><div class="flex justify-center mb-6"><canvas id="wrapped-canvas" width="900" height="1200"></canvas></div><div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">${[['Завершено', stats.finished, 'var(--accent-pink)'], ['Эпизодов', stats.episodes, 'var(--accent-purple)'], ['Часов', stats.hours, 'var(--accent-cyan)'], ['Ср. балл', stats.avg, 'var(--accent-yellow)']].map(([l, v, col]) => `<div class="bento-card"><div class="text-[11px] font-bold uppercase mb-1" style="color:var(--text-muted);">${l}</div><div class="heading text-3xl font-black" style="color:${col};">${v}</div></div>`).join('')}</div></div>`;
+  drawWrapped(stats, topAnime);
+}
+function drawWrapped(stats, topAnime) {
+  const canvas = document.getElementById('wrapped-canvas'); if (!canvas) return;
+  const ctx = canvas.getContext('2d'); const w = canvas.width, h = canvas.height;
+  const grad = ctx.createLinearGradient(0, 0, w, h); grad.addColorStop(0, '#0c0a1a'); grad.addColorStop(0.5, '#1e1a38'); grad.addColorStop(1, '#2d0b2a');
+  ctx.fillStyle = grad; ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = 'rgba(255,110,199,0.4)'; ctx.lineWidth = 3; ctx.strokeRect(30, 30, w - 60, h - 60);
+  ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(255,110,199,0.7)'; ctx.font = 'bold 20px Outfit, sans-serif'; ctx.fillText('ANIME WRAPPED', w / 2, 100);
+  ctx.fillStyle = '#ffffff'; ctx.font = 'black 86px Outfit'; ctx.fillText(String(currentWrappedYear), w / 2, 200);
+  ctx.fillStyle = '#b8a8e0'; ctx.font = '500 18px "Plus Jakarta Sans"'; ctx.fillText('Мой год в аниме', w / 2, 240);
+  const data = [['ТАЙТЛОВ', stats.finished], ['ЭПИЗОДОВ', stats.episodes], ['ЧАСОВ', stats.hours], ['СР. БАЛЛ', stats.avg]];
+  const bw = (w - 120) / 4 - 10;
+  data.forEach(([l, v], i) => { const x = 60 + i * (bw + 10); ctx.fillStyle = 'rgba(30,26,56,0.8)'; ctx.strokeStyle = 'rgba(255,110,199,0.3)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.roundRect(x, 280, bw, 110, 12); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#8574b0'; ctx.font = 'bold 12px "Plus Jakarta Sans"'; ctx.textAlign = 'center'; ctx.fillText(l, x + bw / 2, 310); ctx.fillStyle = '#ff6ec7'; ctx.font = 'black 42px Outfit'; ctx.fillText(String(v), x + bw / 2, 360); });
+  if (topAnime.length > 0) { ctx.fillStyle = '#ffffff'; ctx.font = 'black 22px Outfit'; ctx.textAlign = 'left'; ctx.fillText('ТОП АНИМЕ ГОДА', 60, 440);
+    topAnime.forEach((a, i) => { const y = 470 + i * 60; ctx.fillStyle = 'rgba(30,26,56,0.8)'; ctx.strokeStyle = 'rgba(255,110,199,0.2)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.roundRect(60, y, w - 120, 50, 10); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#ff6ec7'; ctx.font = 'black 20px Outfit'; ctx.textAlign = 'left'; ctx.fillText(`#${i + 1}`, 80, y + 32); ctx.fillStyle = '#ffffff'; ctx.font = 'bold 16px "Plus Jakarta Sans"'; ctx.fillText(a.title.length > 40 ? a.title.slice(0, 38) + '...' : a.title, 130, y + 30); ctx.fillStyle = '#fde047'; ctx.font = 'black 18px Outfit'; ctx.textAlign = 'right'; ctx.fillText(`★ ${a.score}`, w - 90, y + 32); });
+  }
+}
+function downloadWrapped() { const c = document.getElementById('wrapped-canvas'); if (!c) return; const a = document.createElement('a'); a.download = `Anime-Wrapped-${currentWrappedYear}.png`; a.href = c.toDataURL('image/png'); a.click(); showToast('Сохранено!', '✨'); }
 
 /* ==================== BACKGROUND ==================== */
 function spawnSakura() {
@@ -1288,14 +1746,52 @@ function injectManifest() {
   const link = document.createElement('link'); link.rel = 'manifest'; link.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(m)); document.head.appendChild(link);
 }
 
+/* ==================== HOTKEYS ==================== */
+function isInInputField(el) {
+  if (!el) return false;
+  const tag = el.tagName;
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+}
+
+document.addEventListener('keydown', e => {
+  // Skip if in input or has ctrl/meta
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const inInput = isInInputField(document.activeElement);
+
+  // Esc always works
+  if (e.key === 'Escape') {
+    closeAddModal(); closeEpModal(); closeDataMenu(); closeImportModal(); closeRandomModal(); closeHotkeysHelp();
+    return;
+  }
+
+  // ? — help (always works)
+  if (e.key === '?' && !inInput) { e.preventDefault(); openHotkeysHelp(); return; }
+  if (e.key === '/' && !inInput) { e.preventDefault(); document.getElementById('search-input').focus(); return; }
+
+  if (inInput) return;
+
+  // N — new
+  if (e.key === 'n' || e.key === 'N' || e.key === 'т' || e.key === 'Т') { e.preventDefault(); openAddModal(); return; }
+  // R — random
+  if (e.key === 'r' || e.key === 'R' || e.key === 'к' || e.key === 'К') { e.preventDefault(); openRandomModal(); return; }
+  // T — theme
+  if (e.key === 't' || e.key === 'T' || e.key === 'е' || e.key === 'Е') { e.preventDefault(); toggleTheme(); return; }
+  // 1-9 — tabs
+  const num = parseInt(e.key, 10);
+  if (num >= 1 && num <= 9 && TAB_ORDER[num - 1]) { e.preventDefault(); switchView(TAB_ORDER[num - 1]); return; }
+  // Arrow keys in calendar
+  if (currentView === 'calendar') {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prevMonth(); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); nextMonth(); }
+  }
+});
+
 /* ==================== EVENTS ==================== */
 const debouncedSearch = debounce(() => { currentFilters.search = document.getElementById('search-input').value.trim().toLowerCase(); saveFiltersState(); renderCurrentView(); }, 250);
 document.getElementById('search-input').addEventListener('input', debouncedSearch);
-document.getElementById('add-modal').addEventListener('click', e => { if (e.target.id === 'add-modal') closeAddModal(); });
-document.getElementById('ep-modal').addEventListener('click', e => { if (e.target.id === 'ep-modal') closeEpModal(); });
-document.getElementById('data-modal').addEventListener('click', e => { if (e.target.id === 'data-modal') closeDataMenu(); });
-document.getElementById('import-modal').addEventListener('click', e => { if (e.target.id === 'import-modal') closeImportModal(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAddModal(); closeEpModal(); closeDataMenu(); closeImportModal(); } });
+['add-modal', 'ep-modal', 'data-modal', 'import-modal', 'random-modal', 'hotkeys-modal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => { if (e.target.id === id) { e.target.classList.remove('show'); if (id === 'data-modal' && window._restoreDataModal) window._restoreDataModal(); } });
+});
 
 /* ==================== INIT ==================== */
 async function init() {
@@ -1306,10 +1802,9 @@ async function init() {
   apiCacheCleanup();
   bgAnimationEnabled = localStorage.getItem('anime_diary_bg_enabled') !== '0';
   const bg = document.getElementById('sakura-bg');
-  const onIcon = document.getElementById('anim-icon-on'), offIcon = document.getElementById('anim-icon-off');
+  const on = document.getElementById('anim-icon-on'), off = document.getElementById('anim-icon-off');
   bg.style.display = bgAnimationEnabled ? '' : 'none';
-  if (bgAnimationEnabled) { onIcon.classList.remove('hidden'); offIcon.classList.add('hidden'); }
-  else { onIcon.classList.add('hidden'); offIcon.classList.remove('hidden'); }
+  if (bgAnimationEnabled) { on.classList.remove('hidden'); off.classList.add('hidden'); } else { on.classList.add('hidden'); off.classList.remove('hidden'); }
   spawnSakura();
   populateGenreFilter();
   loadFiltersState();
@@ -1317,6 +1812,9 @@ async function init() {
   updateHeaderStats();
   switchView('overview');
   applyFilters();
+  renderNextEpisodesWidget();
+  // Auto-refresh next episodes for watching titles on start (delayed to not block)
+  setTimeout(() => { if (animeList.some(a => a.status === 'watching' && a.shikimoriId)) refreshAllNextEpisodes(); }, 3000);
 }
 init();
 </script>
